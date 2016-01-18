@@ -177,7 +177,7 @@ public class DemoClientFoAuthUiMain {
 		System.out
 				.println("Now open your browser and show the 'inspect' window to monitor the url redirection");
 		System.out
-				.println("Copy the following url and visit it on your browser. And then extract the code accoring to: ");
+				.println("Copy the following url and visit it on your browser. And then extract the code accoring to\n https://raw.githubusercontent.com/chenjianjx/srb4j/master/src/main/resources/archetype-resources/demo-client/doc/fo/extract-facebook-code.png: ");
 		System.out.println(authorizationUrl);
 		System.out.print(">>");
 		Verifier verifier = new Verifier(consoleInput.readLine());
