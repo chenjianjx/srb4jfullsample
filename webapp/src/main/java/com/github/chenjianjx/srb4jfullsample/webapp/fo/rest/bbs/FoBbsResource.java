@@ -40,7 +40,7 @@ import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoResourceBa
 import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoRestUtils;
 
 /**
- * rest resource for authentication
+ * An exemplary rest resource.
  * 
  * @author chenjianjx@gmail.com
  *
