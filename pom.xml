@@ -178,7 +178,7 @@
 				<version>1.8.6</version>
 			</dependency>
 
-			<!-- embedded jetty for pso -->
+			 
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-servlet</artifactId>

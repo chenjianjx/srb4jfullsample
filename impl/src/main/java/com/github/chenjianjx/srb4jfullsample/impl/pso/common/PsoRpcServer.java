@@ -11,7 +11,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
-import com.github.chenjianjx.srb4jfullsample.impl.pso.celebritysystem.bbs.CsBbsRpcServlet;
+import com.github.chenjianjx.srb4jfullsample.impl.pso.celebritysystem.bbs.PsoBbsRpcServlet;
 
 /**
  * The class to initialize an embedded server to host rpc endpoints
@@ -42,7 +42,7 @@ public class PsoRpcServer implements ApplicationContextAware {
 
 		ServletContextHandler context = new ServletContextHandler();
 		context.setContextPath("/");
-		context.addServlet(CsBbsRpcServlet.class, "/pso/cs/bbs");
+		context.addServlet(PsoBbsRpcServlet.class, "/pso/bbs");
 		server.setHandler(context);
 		server.start();
 	}

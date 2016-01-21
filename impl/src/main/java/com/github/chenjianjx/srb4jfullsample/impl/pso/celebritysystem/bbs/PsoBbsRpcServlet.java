@@ -8,20 +8,21 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+
 import com.github.chenjianjx.srb4jfullsample.impl.biz.bbs.Post;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.bbs.PostRepo;
 import com.github.chenjianjx.srb4jfullsample.impl.pso.common.PsoAbstractHessianServlet;
 import com.github.chenjianjx.srb4jfullsample.impl.util.tools.lang.MyLangUtils;
-import com.github.chenjianjx.srb4jfullsample.pso.celebritysystem.bbs.CsBbsRpc;
-import com.github.chenjianjx.srb4jfullsample.pso.celebritysystem.bbs.CsPost;
+import com.github.chenjianjx.srb4jfullsample.pso.bbs.PsoBbsRpc;
+import com.github.chenjianjx.srb4jfullsample.pso.bbs.PsoPost;
 
 /**
  * 
  * @author chenjianjx@gmail.com
  *
  */
-public class CsBbsRpcServlet extends PsoAbstractHessianServlet implements
-		CsBbsRpc {
+public class PsoBbsRpcServlet extends PsoAbstractHessianServlet implements
+		PsoBbsRpc {
 
 	private static final long serialVersionUID = 7698725957127177454L;
 
@@ -30,12 +31,12 @@ public class CsBbsRpcServlet extends PsoAbstractHessianServlet implements
 	PostRepo postRepo;
 
 	@Override
-	public List<CsPost> getPostsByCelebrity(String celebrity) {
+	public List<PsoPost> getPostsByCelebrity(String celebrity) {
 		if (celebrity == null) {
 			throw new IllegalArgumentException("celebrity name cannot be null");
 		}
 
-		List<CsPost> csList = new ArrayList<CsPost>();
+		List<PsoPost> csList = new ArrayList<PsoPost>();
 
 		List<Post> bizPosts = postRepo.getAllPosts();
 		for (Post biz : bizPosts) {
@@ -46,7 +47,7 @@ public class CsBbsRpcServlet extends PsoAbstractHessianServlet implements
 				continue;
 			}
 
-			CsPost cs = new CsPost();
+			PsoPost cs = new PsoPost();
 			MyLangUtils.copyProperties(cs, biz);
 			Map<String, Integer> occMap = new HashMap<String, Integer>();
 			occMap.put(celebrity.toLowerCase(), count);

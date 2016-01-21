@@ -4,11 +4,10 @@ import java.net.MalformedURLException;
 import java.util.List;
 
 import org.junit.Test;
-import com.github.chenjianjx.srb4jfullsample.democlient.util.DemoClientConstants;
-import com.github.chenjianjx.srb4jfullsample.pso.celebritysystem.bbs.CsBbsRpc;
-import com.github.chenjianjx.srb4jfullsample.pso.celebritysystem.bbs.CsPost;
 
 import com.caucho.hessian.client.HessianProxyFactory;
+import com.github.chenjianjx.srb4jfullsample.pso.bbs.PsoBbsRpc;
+import com.github.chenjianjx.srb4jfullsample.pso.bbs.PsoPost;
 
 /**
  * 
@@ -16,12 +15,15 @@ import com.caucho.hessian.client.HessianProxyFactory;
  *
  */
 public class DemoClientPsoRpcTest {
+
+	private static final String PSO_TEST_URL = "http://localhost:9090/pso/bbs";
+
 	@Test
 	public void invokePso() throws MalformedURLException {
 		HessianProxyFactory factory = new HessianProxyFactory();
-		CsBbsRpc rpc = (CsBbsRpc) factory.create(CsBbsRpc.class,
-				DemoClientConstants.PSO_TEST_URL);
-		List<CsPost> result = rpc.getPostsByCelebrity("tom");
+		PsoBbsRpc rpc = (PsoBbsRpc) factory.create(PsoBbsRpc.class,
+				PSO_TEST_URL);
+		List<PsoPost> result = rpc.getPostsByCelebrity("tom");
 		System.out.println("Posts: " + result);
 	}
 }

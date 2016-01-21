@@ -1,4 +1,4 @@
-package com.github.chenjianjx.srb4jfullsample.pso.celebritysystem.bbs;
+package com.github.chenjianjx.srb4jfullsample.pso.bbs;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -8,13 +8,13 @@ import com.github.chenjianjx.srb4jfullsample.pso.common.PsoEntityBase;
 
 
 /**
- * post for celebrity system. (An exemplary pso bean)
+ * post for partner systems. (An exemplary pso bean)
  * 
  * @author chenjianjx@gmail.com
  *
  */
 	
-public class CsPost extends PsoEntityBase  implements Serializable{
+public class PsoPost extends PsoEntityBase  implements Serializable{
 
  
 	private static final long serialVersionUID = 771086654014396291L;
