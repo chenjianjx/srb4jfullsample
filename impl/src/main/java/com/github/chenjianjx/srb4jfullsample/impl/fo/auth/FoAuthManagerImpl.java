@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.AccessToken;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.AccessTokenRepo;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.AuthService;
@@ -25,13 +26,12 @@ import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoAuthManager;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoAuthTokenResult;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoGenRandomLoginCodeRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoLocalLoginRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialLoginRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRandomCodeLoginRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRefreshTokenRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRegisterRequest;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialLoginRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
-
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.HttpTransport;
@@ -152,17 +152,18 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 			boolean longSession) {
 		AccessToken at = authService
 				.genNewAccessTokenForUser(user, longSession);
-		return buildAuthTokenResponse(at);
+		return buildAuthTokenResponse(at, user);
 
 	}
 
 	private FoResponse<FoAuthTokenResult> buildAuthTokenResponse(
-			AccessToken accessToken) {
+			AccessToken accessToken, User user) {
 		FoAuthTokenResult result = new FoAuthTokenResult();
 		result.setAccessToken(accessToken.getTokenStr());
 		result.setRefreshToken(accessToken.getRefreshTokenStr());
 		result.setExpiresIn(accessToken.getLifespan());
 		result.defaultTokenType();
+		result.setUserPrincipal(user.getPrincipal());
 		return FoResponse.success(result);
 	}
 
@@ -336,7 +337,9 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 			String socialToken) {
 		FacebookClient facebookClient = new DefaultFacebookClient(socialToken,
 				Version.VERSION_2_5);
-		com.restfb.types.User user = facebookClient.fetchObject("me", com.restfb.types.User.class, Parameter.with("fields", "id,name,email"));
+		com.restfb.types.User user = facebookClient.fetchObject("me",
+				com.restfb.types.User.class,
+				Parameter.with("fields", "id,name,email"));
 		if (user == null) {
 			FoResponse<FoAuthTokenResult> errResp = FoResponse.devErrResponse(
 					FoConstants.FEC_OAUTH2_INVALID_REQUEST,
@@ -411,13 +414,15 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 					"invalid refresh token", null);
 		}
 
+		User user = userRepo.getUserById(at.getUserId());
+
 		at.setTokenStr(authService.generateAccessTokenStr());
 		at.setRefreshTokenStr(authService.generateRefreshTokenStr());
 		at.setExpiresAt(authService.calExpiresAt(at.getLifespan()));
 		accessTokenRepo.updateAccessToken(at);
 
 		// ok, do the token
-		return buildAuthTokenResponse(at);
+		return buildAuthTokenResponse(at, user);
 
 	}
 

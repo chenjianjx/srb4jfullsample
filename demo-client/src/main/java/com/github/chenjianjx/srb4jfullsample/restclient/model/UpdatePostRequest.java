@@ -1,16 +1,16 @@
 package com.github.chenjianjx.srb4jfullsample.restclient.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 
 
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-01-08T20:25:00.614+08:00")
+
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-01-27T19:43:25.580+08:00")
 public class UpdatePostRequest   {
   
   private String content = null;
