@@ -1,7 +1,5 @@
 package com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.auth;
 
-import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
-import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.ACCESS_TOKEN_HEADER_DEFAULT;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.ACCESS_TOKEN_HEADER_KEY;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.BIZ_ERR_TIP;
@@ -14,10 +12,14 @@ import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.OA
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.OAUTH2_TOKEN_ENDPOINT_ERR_TIP;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.OAUTH2_TOKEN_ENDPOINT_TIP;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.OK_TIP;
+import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.SOCIAL_SITE_SOURCE_PARAM;
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
@@ -28,6 +30,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
@@ -44,14 +47,16 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.springframework.stereotype.Service;
+
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoAuthManager;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoAuthTokenResult;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoGenRandomLoginCodeRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoLocalLoginRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialLoginRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRandomCodeLoginRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRefreshTokenRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRegisterRequest;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialAuthCodeLoginRequest;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialLoginRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoErrorResult;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
@@ -157,8 +162,7 @@ public class FoAuthTokenResource extends FoResourceBase {
 		return oauth2PasswordFlow(servletRequest, appLayerAuth);
 
 	}
-	
-	
+
 	@POST
 	@Path("/new/facebook")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -200,6 +204,48 @@ public class FoAuthTokenResource extends FoResourceBase {
 
 	}
 
+	@POST
+	@Path("/new/social/with-auth-code/{source}")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@ApiOperation(value = OAUTH2_TOKEN_ENDPOINT_TIP
+			+ " login with social sites authorization code. The backend will exchagne the code for access token, and extracts the user's email"
+			+ "", notes = OAUTH2_FLOW_TIP)
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "grant_type", value = OAUTH2_GRANT_TYPE_TIP, required = true, dataType = "string", paramType = "form", defaultValue = "password"),
+			@ApiImplicitParam(name = "username", value = "The authorization code you obtained from social sites after an OAuth2 code flow with them", required = true, dataType = "string", paramType = "form"),
+			@ApiImplicitParam(name = "password", value = "anything but null", required = true, dataType = "string", paramType = "form"),
+			@ApiImplicitParam(name = LONG_SESSION_PARAM, value = LONG_SESSION_TIP, required = true, dataType = "boolean", paramType = "form") })
+	@ApiResponses(value = {
+			@ApiResponse(code = SC_OK, message = OK_TIP, response = FoAuthTokenResult.class),
+			@ApiResponse(code = SC_BAD_REQUEST, message = OAUTH2_TOKEN_ENDPOINT_ERR_TIP, response = FoErrorResult.class) })
+	public Response socialAuthCodeLogin(
+			@Context HttpServletRequest rawRequest,
+			final @ApiParam(required = true, value = "Currently it supports: 'google' and 'facebook' ") @PathParam(SOCIAL_SITE_SOURCE_PARAM) String source,
+			MultivaluedMap<String, String> form) throws OAuthSystemException {
+
+		OAuth2RequestWrapper servletRequest = new OAuth2RequestWrapper(
+				rawRequest, form);
+
+		AppLayerAuthCommand appLayerAuth = new AppLayerAuthCommand() {
+
+			@Override
+			public FoResponse<FoAuthTokenResult> doAuth(
+					HttpServletRequest servletRequest,
+					OAuthUnauthenticatedTokenRequest oltuRequest) {
+				boolean longSession = Boolean.TRUE.toString().equals(
+						servletRequest.getParameter(LONG_SESSION_PARAM));
+				FoSocialAuthCodeLoginRequest foRequest = new FoSocialAuthCodeLoginRequest();
+				foRequest.setAuthCode(oltuRequest.getUsername());
+				foRequest.setLongSession(longSession);
+				foRequest.setSource(source);
+				FoResponse<FoAuthTokenResult> foResponse = foAuthManager
+						.socialAuthCodeLogin(foRequest);
+				return foResponse;
+			}
+		};
+		return oauth2PasswordFlow(servletRequest, appLayerAuth);
+
+	}
 
 	@POST
 	@Path("/new/by-random-code/local")

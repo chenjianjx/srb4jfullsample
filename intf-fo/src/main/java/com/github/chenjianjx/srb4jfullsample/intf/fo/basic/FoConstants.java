@@ -35,6 +35,7 @@ public interface FoConstants {
 
 	/* Other fields */
 	public static final String LONG_SESSION_PARAM = "long_session";
+	public static final String SOCIAL_SITE_SOURCE_PARAM = "source";
 
 	/* biz error http code */
 	public static final int FO_SC_BIZ_ERROR = 460;

@@ -29,9 +29,15 @@ import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoLocalLoginRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRandomCodeLoginRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRefreshTokenRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRegisterRequest;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialAuthCodeLoginRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialLoginRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
+import com.github.scribejava.apis.GoogleApi20;
+import com.github.scribejava.apis.google.GoogleToken;
+import com.github.scribejava.core.builder.ServiceBuilder;
+import com.github.scribejava.core.model.Verifier;
+import com.github.scribejava.core.oauth.OAuth20Service;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.HttpTransport;
@@ -287,9 +293,42 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 					"unsupported source: " + source, null);
 		}
 
+		boolean longSession = request.isLongSession();
+
 		String socialToken = request.getToken();
 		MyDuplet<String, FoResponse<FoAuthTokenResult>> emailOrErrResp = getEmailFromSocialSiteToken(
 				source, socialToken);
+		return handleSocialSiteEmailResult(source, longSession, emailOrErrResp);
+	}
+
+	@Override
+	public FoResponse<FoAuthTokenResult> socialAuthCodeLogin(
+			FoSocialAuthCodeLoginRequest request) {
+
+		String error = myValidator.validateBeanFastFail(request,
+				NULL_REQUEST_BEAN_TIP);
+		if (error != null) {
+			return FoResponse.devErrResponse(
+					FoConstants.FEC_OAUTH2_INVALID_REQUEST, error, null);
+		}
+		String source = request.getSource();
+		if (!User.isValidSocialAccountSource(source)) {
+			return FoResponse.devErrResponse(
+					FoConstants.FEC_OAUTH2_INVALID_REQUEST,
+					"unsupported source: " + source, null);
+		}
+
+		boolean longSession = request.isLongSession();
+
+		String authCode = request.getAuthCode();
+		MyDuplet<String, FoResponse<FoAuthTokenResult>> emailOrErrResp = getEmailFromSocialSiteAuthCode(
+				source, authCode);
+		return handleSocialSiteEmailResult(source, longSession, emailOrErrResp);
+	}
+
+	private FoResponse<FoAuthTokenResult> handleSocialSiteEmailResult(
+			String source, boolean longSession,
+			MyDuplet<String, FoResponse<FoAuthTokenResult>> emailOrErrResp) {
 		if (emailOrErrResp.right != null) {
 			return emailOrErrResp.right;
 		}
@@ -307,9 +346,8 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 			userRepo.saveNewUser(existingUser);
 
 		}
-
 		// ok, do the token
-		return buildAuthTokenResponse(existingUser, request.isLongSession());
+		return buildAuthTokenResponse(existingUser, longSession);
 	}
 
 	/**
@@ -328,6 +366,23 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 
 		if (User.SOURCE_FACEBOOK.equals(source)) {
 			return getEmailFromFacebook(socialToken);
+		}
+
+		throw new IllegalStateException("Unreachable code");
+	}
+
+	/**
+	 * 
+	 * @param source
+	 * @param authCode
+	 *            left = email, right = error response if any
+	 * @return
+	 */
+	private MyDuplet<String, FoResponse<FoAuthTokenResult>> getEmailFromSocialSiteAuthCode(
+			String source, String authCode) {
+
+		if (User.SOURCE_GOOGLE.equals(source)) {
+			return getEmailFromGoogleAuthCode(authCode);
 		}
 
 		throw new IllegalStateException("Unreachable code");
@@ -380,6 +435,22 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 			return MyDuplet.newInstance(null, errResp);
 		}
 		return MyDuplet.newInstance(email, null);
+	}
+
+	private MyDuplet<String, FoResponse<FoAuthTokenResult>> getEmailFromGoogleAuthCode(
+			String authCode) {
+		// exchange the code for token
+		final OAuth20Service service = new ServiceBuilder()
+				.apiKey("437482577983-kseksjgvmlrd1es4nvknd9p5r9o3fg35.apps.googleusercontent.com")
+				.apiSecret("toBzFftPyErgmaRW0qCdCzxe").scope("email")
+				// replace with desired scope
+				.callback("urn:ietf:wg:oauth:2.0:oob")
+				.build(GoogleApi20.instance());
+		GoogleToken googleTokenObj = (GoogleToken) service
+				.getAccessToken(new Verifier(authCode));
+		String idToken = googleTokenObj.getOpenIdToken();
+		// get email by token
+		return this.getEmailFromGoogleToken(idToken);
 	}
 
 	private GoogleIdToken verifyGoogleIdToken(GoogleIdTokenVerifier verifier,

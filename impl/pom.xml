@@ -189,6 +189,12 @@
 			<artifactId>junit</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>com.github.scribejava</groupId>
+			<artifactId>scribejava-apis</artifactId>
+		</dependency>
+
+
 	</dependencies>
 
 </project>
