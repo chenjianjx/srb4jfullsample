@@ -44,9 +44,10 @@ public class DemoClientFoAuthUiMain {
 
 	public static void main(String[] args) throws Exception {
 
-		googleLoginFlow();
+		facebookLoginByTokenFlow();
+		googleLoginByTokenFlow();		
 		randomCodeLoginFlow();
-		facebookLoginFlow();
+		
 
 	}
 
@@ -108,7 +109,7 @@ public class DemoClientFoAuthUiMain {
 
 	}
 
-	private static void googleLoginFlow() throws IOException {
+	private static void googleLoginByTokenFlow() throws IOException {
 		BufferedReader consoleInput = new BufferedReader(new InputStreamReader(
 				System.in));
 
@@ -139,7 +140,7 @@ public class DemoClientFoAuthUiMain {
 		System.out.println("the idToken is: " + googleIdToken);
 
 		WebTarget target = restClient.target(BACKEND_FO_REST_URL).path(
-				DemoClientConstants.GOOGLE_LOGIN_URL);
+				DemoClientConstants.SOCIAL_LOGIN_BY_TOKEN_URL_PREFIX + "google");
 		Form form = new Form();
 		form.param("grant_type", "password");
 		form.param("username", googleIdToken);
@@ -157,7 +158,7 @@ public class DemoClientFoAuthUiMain {
 
 	}
 
-	private static void facebookLoginFlow() throws IOException {
+	private static void facebookLoginByTokenFlow() throws IOException {
 		BufferedReader consoleInput = new BufferedReader(new InputStreamReader(
 				System.in));
 
@@ -173,7 +174,7 @@ public class DemoClientFoAuthUiMain {
 				.scope("email")
 				// replace with desired scope
 				.callback("https://www.facebook.com/connect/login_success.html")
-				.build(GoogleApi20.instance());
+				.build(new DemoClientFacebookApi());
 
 		final String authorizationUrl = service.getAuthorizationUrl();
 		System.out
@@ -188,7 +189,7 @@ public class DemoClientFoAuthUiMain {
 		System.out.println("the access token is: " + accessToken.getToken());
 
 		WebTarget target = restClient.target(BACKEND_FO_REST_URL).path(
-				DemoClientConstants.FACEBOOK_LOGIN_URL);
+				DemoClientConstants.SOCIAL_LOGIN_BY_TOKEN_URL_PREFIX + "facebook");
 		Form form = new Form();
 		form.param("grant_type", "password");
 		form.param("username", accessToken.getToken());

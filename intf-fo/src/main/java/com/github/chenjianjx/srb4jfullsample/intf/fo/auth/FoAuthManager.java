@@ -29,7 +29,7 @@ public interface FoAuthManager {
 	 * @param request
 	 * @return
 	 */
-	public FoResponse<FoAuthTokenResult> socialLogin(FoSocialLoginRequest request);
+	public FoResponse<FoAuthTokenResult> socialLoginByToken(FoSocialLoginByTokenRequest request);
 	
 	
 	/**
@@ -38,7 +38,7 @@ public interface FoAuthManager {
 	 * @param request
 	 * @return
 	 */
-	public FoResponse<FoAuthTokenResult> socialAuthCodeLogin(FoSocialAuthCodeLoginRequest request);	
+	public FoResponse<FoAuthTokenResult> socialLoginByAuthCode(FoSocialAuthCodeLoginRequest request);	
 
 	/**
 	 * refresh token

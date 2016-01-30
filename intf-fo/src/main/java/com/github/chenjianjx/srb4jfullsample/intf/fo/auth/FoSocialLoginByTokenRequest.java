@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author chenjianjx@gmail.com
  *
  */
-public class FoSocialLoginRequest {
+public class FoSocialLoginByTokenRequest {
 
 	@NotNull(message = "social source not specified")
 	private String source;

@@ -56,7 +56,7 @@ import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRandomCodeLoginReque
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRefreshTokenRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRegisterRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialAuthCodeLoginRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialLoginRequest;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialLoginByTokenRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoErrorResult;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
@@ -123,51 +123,11 @@ public class FoAuthTokenResource extends FoResourceBase {
 	}
 
 	@POST
-	@Path("/new/google")
+	@Path("/new/social/by-token/{source}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@ApiOperation(value = OAUTH2_TOKEN_ENDPOINT_TIP
-			+ " login with google's open-id token" + "", notes = OAUTH2_FLOW_TIP)
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "grant_type", value = OAUTH2_GRANT_TYPE_TIP, required = true, dataType = "string", paramType = "form", defaultValue = "password"),
-			@ApiImplicitParam(name = "username", value = "The open id token you obtained after logining into Google. The token should have the scope of 'email'", required = true, dataType = "string", paramType = "form"),
-			@ApiImplicitParam(name = "password", value = "Anything but null", required = true, dataType = "string", paramType = "form"),
-			@ApiImplicitParam(name = LONG_SESSION_PARAM, value = LONG_SESSION_TIP, required = true, dataType = "boolean", paramType = "form") })
-	@ApiResponses(value = {
-			@ApiResponse(code = SC_OK, message = OK_TIP, response = FoAuthTokenResult.class),
-			@ApiResponse(code = SC_BAD_REQUEST, message = OAUTH2_TOKEN_ENDPOINT_ERR_TIP, response = FoErrorResult.class) })
-	public Response googleLogin(@Context HttpServletRequest rawRequest,
-			MultivaluedMap<String, String> form) throws OAuthSystemException {
-
-		OAuth2RequestWrapper servletRequest = new OAuth2RequestWrapper(
-				rawRequest, form);
-
-		AppLayerAuthCommand appLayerAuth = new AppLayerAuthCommand() {
-
-			@Override
-			public FoResponse<FoAuthTokenResult> doAuth(
-					HttpServletRequest servletRequest,
-					OAuthUnauthenticatedTokenRequest oltuRequest) {
-				boolean longSession = Boolean.TRUE.toString().equals(
-						servletRequest.getParameter(LONG_SESSION_PARAM));
-				FoSocialLoginRequest foRequest = new FoSocialLoginRequest();
-				foRequest.setToken(oltuRequest.getUsername());
-				foRequest.setLongSession(longSession);
-				foRequest.setSource("google");
-				FoResponse<FoAuthTokenResult> foResponse = foAuthManager
-						.socialLogin(foRequest);
-				return foResponse;
-			}
-		};
-
-		return oauth2PasswordFlow(servletRequest, appLayerAuth);
-
-	}
-
-	@POST
-	@Path("/new/facebook")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@ApiOperation(value = OAUTH2_TOKEN_ENDPOINT_TIP
-			+ " login with facebook's access token" + "", notes = OAUTH2_FLOW_TIP)
+			+ " login with social sites's token. The backend will verify this token and obtain the user's email. Mainly used for mobile clients which can obtain token directly. "
+			+ "", notes = OAUTH2_FLOW_TIP)
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "grant_type", value = OAUTH2_GRANT_TYPE_TIP, required = true, dataType = "string", paramType = "form", defaultValue = "password"),
 			@ApiImplicitParam(name = "username", value = "The access token you obtained after logining into Facebook. The token should have the scope of 'email'", required = true, dataType = "string", paramType = "form"),
@@ -176,7 +136,9 @@ public class FoAuthTokenResource extends FoResourceBase {
 	@ApiResponses(value = {
 			@ApiResponse(code = SC_OK, message = OK_TIP, response = FoAuthTokenResult.class),
 			@ApiResponse(code = SC_BAD_REQUEST, message = OAUTH2_TOKEN_ENDPOINT_ERR_TIP, response = FoErrorResult.class) })
-	public Response facebookLogin(@Context HttpServletRequest rawRequest,
+	public Response facebookLogin(
+			@Context HttpServletRequest rawRequest,
+			final @ApiParam(required = true, value = "Currently it supports: 'google' and 'facebook' . For google, plaease pass the id token; for facebook, please pass the access token") @PathParam(SOCIAL_SITE_SOURCE_PARAM) String source,
 			MultivaluedMap<String, String> form) throws OAuthSystemException {
 
 		OAuth2RequestWrapper servletRequest = new OAuth2RequestWrapper(
@@ -190,12 +152,12 @@ public class FoAuthTokenResource extends FoResourceBase {
 					OAuthUnauthenticatedTokenRequest oltuRequest) {
 				boolean longSession = Boolean.TRUE.toString().equals(
 						servletRequest.getParameter(LONG_SESSION_PARAM));
-				FoSocialLoginRequest foRequest = new FoSocialLoginRequest();
+				FoSocialLoginByTokenRequest foRequest = new FoSocialLoginByTokenRequest();
 				foRequest.setToken(oltuRequest.getUsername());
 				foRequest.setLongSession(longSession);
-				foRequest.setSource("facebook");
+				foRequest.setSource(source);
 				FoResponse<FoAuthTokenResult> foResponse = foAuthManager
-						.socialLogin(foRequest);
+						.socialLoginByToken(foRequest);
 				return foResponse;
 			}
 		};
@@ -205,10 +167,12 @@ public class FoAuthTokenResource extends FoResourceBase {
 	}
 
 	@POST
-	@Path("/new/social/with-auth-code/{source}")
+	@Path("/new/social/by-auth-code/{source}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@ApiOperation(value = OAUTH2_TOKEN_ENDPOINT_TIP
-			+ " login with social sites authorization code. The backend will exchagne the code for access token, and extracts the user's email"
+			+ " login with social sites authorization code. The backend will exchange the code for access token, and extracts the user's email. "
+			+ " This is mainly used for desktop clients where there are no corresponding login SDK. "
+			+ " Note that you must set up social clientId/clientSecret on the backend, and set up social clientId on the client side "
 			+ "", notes = OAUTH2_FLOW_TIP)
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "grant_type", value = OAUTH2_GRANT_TYPE_TIP, required = true, dataType = "string", paramType = "form", defaultValue = "password"),
@@ -218,7 +182,7 @@ public class FoAuthTokenResource extends FoResourceBase {
 	@ApiResponses(value = {
 			@ApiResponse(code = SC_OK, message = OK_TIP, response = FoAuthTokenResult.class),
 			@ApiResponse(code = SC_BAD_REQUEST, message = OAUTH2_TOKEN_ENDPOINT_ERR_TIP, response = FoErrorResult.class) })
-	public Response socialAuthCodeLogin(
+	public Response socialLoginByAuthCode(
 			@Context HttpServletRequest rawRequest,
 			final @ApiParam(required = true, value = "Currently it supports: 'google' and 'facebook' ") @PathParam(SOCIAL_SITE_SOURCE_PARAM) String source,
 			MultivaluedMap<String, String> form) throws OAuthSystemException {
@@ -239,7 +203,7 @@ public class FoAuthTokenResource extends FoResourceBase {
 				foRequest.setLongSession(longSession);
 				foRequest.setSource(source);
 				FoResponse<FoAuthTokenResult> foResponse = foAuthManager
-						.socialAuthCodeLogin(foRequest);
+						.socialLoginByAuthCode(foRequest);
 				return foResponse;
 			}
 		};
