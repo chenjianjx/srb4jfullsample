@@ -141,7 +141,8 @@ public class DemoClientFoAuthTest {
 	}
 
 	@Test
-	public void testLocalLogin_UsingOAuth2Library() throws OAuthSystemException, OAuthProblemException {
+	public void testLocalLogin_UsingOAuth2Library()
+			throws OAuthSystemException, OAuthProblemException {
 
 		// register one first
 		String username = RandomStringUtils.randomAlphanumeric(10)
@@ -276,7 +277,7 @@ public class DemoClientFoAuthTest {
 		Assert.assertNotNull(response.getAccessToken());
 		Assert.assertNotNull(response.getRefreshToken());
 		Assert.assertTrue(response.getExpiresIn() > 0);
-
+		Assert.assertNotNull(response.getParam("user_principal"));
 		Assert.assertEquals(200, tryProctedResource(response.getAccessToken()));
 	}
 
@@ -287,7 +288,7 @@ public class DemoClientFoAuthTest {
 			saveErrorToFile(clientResponse);
 
 		}
-		
+
 		Assert.assertTrue(clientResponse.isSuccessful());
 		Assert.assertNotNull(clientResponse.tokenResult);
 		Assert.assertNotNull(clientResponse.tokenResult.getAccessToken());

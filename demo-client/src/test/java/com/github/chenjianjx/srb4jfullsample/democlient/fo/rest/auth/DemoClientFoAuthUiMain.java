@@ -45,9 +45,14 @@ public class DemoClientFoAuthUiMain {
 	public static void main(String[] args) throws Exception {
 
 		facebookLoginByTokenFlow();
-		googleLoginByTokenFlow();		
+		googleLoginByTokenFlow();
+
+		/**
+		 * for social login by code, see <a
+		 * href="https://github.com/chenjianjx/srb4j-desktop-client">here</a>
+		 */
+
 		randomCodeLoginFlow();
-		
 
 	}
 
@@ -139,8 +144,9 @@ public class DemoClientFoAuthUiMain {
 		String googleIdToken = accessToken.getOpenIdToken();
 		System.out.println("the idToken is: " + googleIdToken);
 
-		WebTarget target = restClient.target(BACKEND_FO_REST_URL).path(
-				DemoClientConstants.SOCIAL_LOGIN_BY_TOKEN_URL_PREFIX + "google");
+		WebTarget target = restClient.target(BACKEND_FO_REST_URL)
+				.path(DemoClientConstants.SOCIAL_LOGIN_BY_TOKEN_URL_PREFIX
+						+ "google");
 		Form form = new Form();
 		form.param("grant_type", "password");
 		form.param("username", googleIdToken);
@@ -189,7 +195,8 @@ public class DemoClientFoAuthUiMain {
 		System.out.println("the access token is: " + accessToken.getToken());
 
 		WebTarget target = restClient.target(BACKEND_FO_REST_URL).path(
-				DemoClientConstants.SOCIAL_LOGIN_BY_TOKEN_URL_PREFIX + "facebook");
+				DemoClientConstants.SOCIAL_LOGIN_BY_TOKEN_URL_PREFIX
+						+ "facebook");
 		Form form = new Form();
 		form.param("grant_type", "password");
 		form.param("username", accessToken.getToken());
