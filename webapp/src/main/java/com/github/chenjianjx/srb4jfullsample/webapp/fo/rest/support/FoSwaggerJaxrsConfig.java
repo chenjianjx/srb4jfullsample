@@ -59,13 +59,13 @@ public class FoSwaggerJaxrsConfig extends HttpServlet {
 			}
 		}
 
-		String title = "Your Backend System's Name (Please change me by editing " + this.getClass().getSimpleName() + ".java";
-		String email = "your-backend-developer@some-org.com";
+		String title = "Srb4j Demo";
+		String email = "chenjianjx@gmail.com";
 		String desc = getDesc();
 
 		swaggerConfig.setSchemes(new String[] { scheme });
 		swaggerConfig.setTitle(title);
-		swaggerConfig.setVersion("Your Version Number");
+		swaggerConfig.setVersion("1.0-SNAPSHOT");
 		swaggerConfig.setDescription(desc.toString());
 
 		swaggerConfig.setContact(email);
