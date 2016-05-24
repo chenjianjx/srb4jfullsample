@@ -3,6 +3,7 @@ package com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.auth;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.ACCESS_TOKEN_HEADER_DEFAULT;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.ACCESS_TOKEN_HEADER_KEY;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.BIZ_ERR_TIP;
+import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.CLIENT_TYPE_PARAM;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.FO_SC_BIZ_ERROR;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.LONG_SESSION_PARAM;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.LONG_SESSION_TIP;
@@ -167,11 +168,11 @@ public class FoAuthTokenResource extends FoResourceBase {
 	}
 
 	@POST
-	@Path("/new/social/by-auth-code/{source}")
+	@Path("/new/social/by-auth-code/{source}/{clientType}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@ApiOperation(value = OAUTH2_TOKEN_ENDPOINT_TIP
 			+ " login with social sites authorization code. The backend will exchange the code for access token, and extracts the user's email. "
-			+ " This is mainly used for desktop clients where there are no corresponding login SDK. "
+			+ " This is mainly used for desktop clients and web clients. "
 			+ " Note that you must set up social clientId/clientSecret on the backend, and set up social clientId on the client side "
 			+ "", notes = OAUTH2_FLOW_TIP)
 	@ApiImplicitParams({
@@ -185,6 +186,7 @@ public class FoAuthTokenResource extends FoResourceBase {
 	public Response socialLoginByAuthCode(
 			@Context HttpServletRequest rawRequest,
 			final @ApiParam(required = true, value = "Currently it supports: 'google' and 'facebook' ") @PathParam(SOCIAL_SITE_SOURCE_PARAM) String source,
+			final @ApiParam(required = true, value = "The client type, including 'desktop', 'web' and 'mobile'.") @PathParam(CLIENT_TYPE_PARAM) String clientType,
 			MultivaluedMap<String, String> form) throws OAuthSystemException {
 
 		OAuth2RequestWrapper servletRequest = new OAuth2RequestWrapper(
@@ -202,6 +204,7 @@ public class FoAuthTokenResource extends FoResourceBase {
 				foRequest.setAuthCode(oltuRequest.getUsername());
 				foRequest.setLongSession(longSession);
 				foRequest.setSource(source);
+				foRequest.setClientType(clientType);
 				FoResponse<FoAuthTokenResult> foResponse = foAuthManager
 						.socialLoginByAuthCode(foRequest);
 				return foResponse;

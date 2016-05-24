@@ -22,6 +22,16 @@ public class FoSocialAuthCodeLoginRequest {
 
 	private Boolean longSession;
 
+	private String clientType;
+
+	public String getClientType() {
+		return clientType;
+	}
+
+	public void setClientType(String clientType) {
+		this.clientType = clientType;
+	}
+
 	public String getSource() {
 		return source;
 	}

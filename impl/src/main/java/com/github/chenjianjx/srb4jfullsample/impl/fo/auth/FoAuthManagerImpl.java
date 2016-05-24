@@ -18,6 +18,7 @@ import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.AccessTokenRepo;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.AuthService;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.RandomLoginCode;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.RandomLoginCodeRepo;
+import com.github.chenjianjx.srb4jfullsample.impl.biz.client.Client;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.User;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.UserRepo;
 import com.github.chenjianjx.srb4jfullsample.impl.fo.common.FoManagerImplBase;
@@ -82,8 +83,17 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 	HttpTransport googleHttpTransport = new ApacheHttpTransport();
 	JsonFactory googleJsonFactory = new JacksonFactory();
 
+	/**
+	 * for desktop clients (non-web, non-mobile)
+	 */
 	private String googleClientId;
 	private String googleClientSecret;
+
+	/**
+	 * for web clients which uses google's javascript SDK
+	 */
+	private String googleWebClientId;
+	private String googleWebClientSecret;
 
 	private String facebookClientId;
 	private String facebookClientSecret;
@@ -327,11 +337,23 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 					"unsupported source: " + source, null);
 		}
 
+		String clientType = request.getClientType();
+		if (clientType == null) {
+			clientType = Client.TYPE_DESKTOP; // to be compatible with previous
+												// versions
+		}
+
+		if (!Client.isValidClientType(clientType)) {
+			return FoResponse.devErrResponse(
+					FoConstants.FEC_OAUTH2_INVALID_REQUEST,
+					"unsupported client type: " + clientType, null);
+		}
+
 		boolean longSession = request.isLongSession();
 
 		String authCode = request.getAuthCode();
 		MyDuplet<String, FoResponse<FoAuthTokenResult>> emailOrErrResp = getEmailFromSocialSiteAuthCode(
-				source, authCode);
+				source, clientType, authCode);
 		return handleSocialSiteEmailResult(source, longSession, emailOrErrResp);
 	}
 
@@ -383,14 +405,15 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 	/**
 	 * 
 	 * @param source
+	 * @param clientType
 	 * @param authCode
-	 *            left = email, right = error response if any
-	 * @return
+	 * 
+	 * @return left = email, right = error response if any
 	 */
 	private MyDuplet<String, FoResponse<FoAuthTokenResult>> getEmailFromSocialSiteAuthCode(
-			String source, String authCode) {
+			String source, String clientType, String authCode) {
 		if (User.SOURCE_GOOGLE.equals(source)) {
-			return getEmailFromGoogleAuthCode(authCode);
+			return getEmailFromGoogleAuthCode(authCode, clientType);
 		}
 
 		if (User.SOURCE_FACEBOOK.equals(source)) {
@@ -467,13 +490,29 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 	}
 
 	private MyDuplet<String, FoResponse<FoAuthTokenResult>> getEmailFromGoogleAuthCode(
-			String authCode) {
+			String authCode, String clientType) {
+
+		String clientId = null;
+		String clientSecret = null;
+		String callback = null;
+
+		if (Client.TYPE_DESKTOP.equals(clientType)) {
+			clientId = googleClientId;
+			clientSecret = googleClientSecret;
+			callback = "urn:ietf:wg:oauth:2.0:oob";
+		} else if (Client.TYPE_WEB.equals(clientType)) {
+			clientId = googleWebClientId;
+			clientSecret = googleWebClientSecret;
+			callback = "postmessage";
+		} else {
+			throw new IllegalArgumentException(
+					"Currently we don't support google login with client type = "
+							+ clientType);
+		}
+
 		// exchange the code for token
-		final OAuth20Service service = new ServiceBuilder()
-				.apiKey(googleClientId).apiSecret(googleClientSecret)
-				.scope("email")
-				// replace with desired scope
-				.callback("urn:ietf:wg:oauth:2.0:oob")
+		final OAuth20Service service = new ServiceBuilder().apiKey(clientId)
+				.apiSecret(clientSecret).scope("email").callback(callback)
 				.build(GoogleApi20.instance());
 		GoogleToken googleTokenObj = (GoogleToken) service
 				.getAccessToken(new Verifier(authCode));
@@ -546,4 +585,16 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 		this.facebookClientSecret = StringUtils
 				.trimToNull(facebookClientSecret);
 	}
+
+	@Value("${googleWebClientId}")
+	public void setGoogleWebClientId(String googleWebClientId) {
+		this.googleWebClientId = StringUtils.trimToNull(googleWebClientId);
+	}
+
+	@Value("${googleWebClientSecret}")
+	public void setGoogleWebClientSecret(String googleWebClientSecret) {
+		this.googleWebClientSecret = StringUtils
+				.trimToNull(googleWebClientSecret);
+	}
+
 }
