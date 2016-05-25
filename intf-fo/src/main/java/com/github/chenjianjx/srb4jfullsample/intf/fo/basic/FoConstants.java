@@ -34,9 +34,16 @@ public interface FoConstants {
 	public static final String ERROR_DESC_FN = "error_description";
 
 	/* Other fields */
-	public static final String LONG_SESSION_PARAM = "long_session";
+	public static final String LONG_SESSION_PARAM = "long_session";	
 	public static final String SOCIAL_SITE_SOURCE_PARAM = "source";
 	public static final String CLIENT_TYPE_PARAM = "clientType";
+	public static final String REDIRECT_URI_PARAM = "redirectUri";
+	
+	/*social login redirect uris*/
+	public static final String GOOGLE_REDIRECT_URI_POSTMESSAGE = "postmessage";
+	public static final String GOOGLE_REDIRECT_URI_OOB = "urn:ietf:wg:oauth:2.0:oob";
+	public static final String FACEBOOK_REDIRECT_URI_LOGIN_SUCCESS = "https://www.facebook.com/connect/login_success.html";
+	
 
 	/* biz error http code */
 	public static final int FO_SC_BIZ_ERROR = 460;

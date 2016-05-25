@@ -4,7 +4,10 @@ import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.AC
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.ACCESS_TOKEN_HEADER_KEY;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.BIZ_ERR_TIP;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.CLIENT_TYPE_PARAM;
+import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.FACEBOOK_REDIRECT_URI_LOGIN_SUCCESS;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.FO_SC_BIZ_ERROR;
+import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.GOOGLE_REDIRECT_URI_OOB;
+import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.GOOGLE_REDIRECT_URI_POSTMESSAGE;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.LONG_SESSION_PARAM;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.LONG_SESSION_TIP;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.OAUTH2_ACCESS_TOKEN_NAME_TIP;
@@ -13,6 +16,7 @@ import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.OA
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.OAUTH2_TOKEN_ENDPOINT_ERR_TIP;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.OAUTH2_TOKEN_ENDPOINT_TIP;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.OK_TIP;
+import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.REDIRECT_URI_PARAM;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.SOCIAL_SITE_SOURCE_PARAM;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
@@ -39,6 +43,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.oltu.oauth2.as.request.OAuthUnauthenticatedTokenRequest;
 import org.apache.oltu.oauth2.as.response.OAuthASResponse;
 import org.apache.oltu.oauth2.common.OAuth;
@@ -179,7 +184,12 @@ public class FoAuthTokenResource extends FoResourceBase {
 			@ApiImplicitParam(name = "grant_type", value = OAUTH2_GRANT_TYPE_TIP, required = true, dataType = "string", paramType = "form", defaultValue = "password"),
 			@ApiImplicitParam(name = "username", value = "The authorization code you obtained from social sites after an OAuth2 code flow with them", required = true, dataType = "string", paramType = "form"),
 			@ApiImplicitParam(name = "password", value = "anything but null", required = true, dataType = "string", paramType = "form"),
-			@ApiImplicitParam(name = LONG_SESSION_PARAM, value = LONG_SESSION_TIP, required = true, dataType = "boolean", paramType = "form") })
+			@ApiImplicitParam(name = LONG_SESSION_PARAM, value = LONG_SESSION_TIP, required = true, dataType = "boolean", paramType = "form"), 
+			@ApiImplicitParam(name = "redirectUri", value = "The redirect uri for this social login. \n "
+					+ "1. For google + desktop, it CAN be '"+ GOOGLE_REDIRECT_URI_OOB + "' \n"
+					+ "2. For google + web, it MUST be '" + GOOGLE_REDIRECT_URI_POSTMESSAGE +"' \n "
+					+ "3. For facebook + desktop, it CAN be '" + FACEBOOK_REDIRECT_URI_LOGIN_SUCCESS + "' \n"
+					+ "4. For facebook + web, it is a url of your html client", required = true, dataType = "string", paramType = "form") })
 	@ApiResponses(value = {
 			@ApiResponse(code = SC_OK, message = OK_TIP, response = FoAuthTokenResult.class),
 			@ApiResponse(code = SC_BAD_REQUEST, message = OAUTH2_TOKEN_ENDPOINT_ERR_TIP, response = FoErrorResult.class) })
@@ -200,11 +210,13 @@ public class FoAuthTokenResource extends FoResourceBase {
 					OAuthUnauthenticatedTokenRequest oltuRequest) {
 				boolean longSession = Boolean.TRUE.toString().equals(
 						servletRequest.getParameter(LONG_SESSION_PARAM));
+				String redirectUri = StringUtils.trimToNull(servletRequest.getParameter(REDIRECT_URI_PARAM));
 				FoSocialAuthCodeLoginRequest foRequest = new FoSocialAuthCodeLoginRequest();
 				foRequest.setAuthCode(oltuRequest.getUsername());
 				foRequest.setLongSession(longSession);
 				foRequest.setSource(source);
 				foRequest.setClientType(clientType);
+				foRequest.setRedirectUri(redirectUri);
 				FoResponse<FoAuthTokenResult> foResponse = foAuthManager
 						.socialLoginByAuthCode(foRequest);
 				return foResponse;

@@ -338,22 +338,19 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 		}
 
 		String clientType = request.getClientType();
-		if (clientType == null) {
-			clientType = Client.TYPE_DESKTOP; // to be compatible with previous
-												// versions
-		}
-
 		if (!Client.isValidClientType(clientType)) {
 			return FoResponse.devErrResponse(
 					FoConstants.FEC_OAUTH2_INVALID_REQUEST,
 					"unsupported client type: " + clientType, null);
 		}
 
+		String redirectUri = request.getRedirectUri();
+
 		boolean longSession = request.isLongSession();
 
 		String authCode = request.getAuthCode();
 		MyDuplet<String, FoResponse<FoAuthTokenResult>> emailOrErrResp = getEmailFromSocialSiteAuthCode(
-				source, clientType, authCode);
+				source, clientType, authCode, redirectUri);
 		return handleSocialSiteEmailResult(source, longSession, emailOrErrResp);
 	}
 
@@ -411,27 +408,43 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 	 * @return left = email, right = error response if any
 	 */
 	private MyDuplet<String, FoResponse<FoAuthTokenResult>> getEmailFromSocialSiteAuthCode(
-			String source, String clientType, String authCode) {
+			String source, String clientType, String authCode,
+			String redirectUri) {
 		if (User.SOURCE_GOOGLE.equals(source)) {
-			return getEmailFromGoogleAuthCode(authCode, clientType);
+			return getEmailFromGoogleAuthCode(authCode, clientType, redirectUri);
 		}
 
 		if (User.SOURCE_FACEBOOK.equals(source)) {
-			return getEmailFromFacebookAuthCode(authCode);
+			return getEmailFromFacebookAuthCode(authCode, clientType, redirectUri);
 		}
 
 		throw new IllegalStateException("Unreachable code");
 	}
 
 	private MyDuplet<String, FoResponse<FoAuthTokenResult>> getEmailFromFacebookAuthCode(
-			String authCode) {
+			String authCode, String clientType, String redirectUri) {
 
+		if (Client.TYPE_DESKTOP.equals(clientType)) {
+		 	if (redirectUri == null) {
+				redirectUri = FoConstants.FACEBOOK_REDIRECT_URI_LOGIN_SUCCESS;
+			}
+		} else if (Client.TYPE_WEB.equals(clientType)) {
+			if (redirectUri == null) {
+				FoResponse<FoAuthTokenResult> errResp =  FoResponse.devErrResponse(
+						FoConstants.FEC_OAUTH2_INVALID_REQUEST,
+						"redirect uri must not be empty for facebook + web " , null);
+				return MyDuplet.newInstance(null, errResp);
+			}
+		} else {
+			throw new IllegalArgumentException(
+					"Currently we don't support google login with client type = "
+							+ clientType);
+		}
+		
 		// exchange the code for token
 		final OAuth20Service service = new ServiceBuilder()
-				.apiKey(facebookClientId)
-				.apiSecret(facebookClientSecret)
-				.scope("email")
-				.callback("https://www.facebook.com/connect/login_success.html")
+				.apiKey(facebookClientId).apiSecret(facebookClientSecret)
+				.scope("email").callback(redirectUri)
 				.build(FacebookApi.instance());
 		Token facebookTokenObj = service.getAccessToken(new Verifier(authCode));
 		String token = facebookTokenObj.getToken();
@@ -490,20 +503,23 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 	}
 
 	private MyDuplet<String, FoResponse<FoAuthTokenResult>> getEmailFromGoogleAuthCode(
-			String authCode, String clientType) {
+			String authCode, String clientType, String redirectUri) {
 
 		String clientId = null;
 		String clientSecret = null;
-		String callback = null;
 
 		if (Client.TYPE_DESKTOP.equals(clientType)) {
 			clientId = googleClientId;
 			clientSecret = googleClientSecret;
-			callback = "urn:ietf:wg:oauth:2.0:oob";
+			if (redirectUri == null) {
+				redirectUri = FoConstants.GOOGLE_REDIRECT_URI_OOB;
+			}
 		} else if (Client.TYPE_WEB.equals(clientType)) {
 			clientId = googleWebClientId;
 			clientSecret = googleWebClientSecret;
-			callback = "postmessage";
+			if (redirectUri == null) {
+				redirectUri = FoConstants.GOOGLE_REDIRECT_URI_POSTMESSAGE;
+			}
 		} else {
 			throw new IllegalArgumentException(
 					"Currently we don't support google login with client type = "
@@ -512,7 +528,7 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 
 		// exchange the code for token
 		final OAuth20Service service = new ServiceBuilder().apiKey(clientId)
-				.apiSecret(clientSecret).scope("email").callback(callback)
+				.apiSecret(clientSecret).scope("email").callback(redirectUri)
 				.build(GoogleApi20.instance());
 		GoogleToken googleTokenObj = (GoogleToken) service
 				.getAccessToken(new Verifier(authCode));
