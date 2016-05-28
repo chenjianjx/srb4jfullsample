@@ -4,6 +4,7 @@ import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.NU
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 
 import javax.annotation.Resource;
 
@@ -415,7 +416,8 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 		}
 
 		if (User.SOURCE_FACEBOOK.equals(source)) {
-			return getEmailFromFacebookAuthCode(authCode, clientType, redirectUri);
+			return getEmailFromFacebookAuthCode(authCode, clientType,
+					redirectUri);
 		}
 
 		throw new IllegalStateException("Unreachable code");
@@ -425,14 +427,16 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 			String authCode, String clientType, String redirectUri) {
 
 		if (Client.TYPE_DESKTOP.equals(clientType)) {
-		 	if (redirectUri == null) {
+			if (redirectUri == null) {
 				redirectUri = FoConstants.FACEBOOK_REDIRECT_URI_LOGIN_SUCCESS;
 			}
 		} else if (Client.TYPE_WEB.equals(clientType)) {
 			if (redirectUri == null) {
-				FoResponse<FoAuthTokenResult> errResp =  FoResponse.devErrResponse(
-						FoConstants.FEC_OAUTH2_INVALID_REQUEST,
-						"redirect uri must not be empty for facebook + web " , null);
+				FoResponse<FoAuthTokenResult> errResp = FoResponse
+						.devErrResponse(
+								FoConstants.FEC_OAUTH2_INVALID_REQUEST,
+								"redirect uri must not be empty for facebook + web ",
+								null);
 				return MyDuplet.newInstance(null, errResp);
 			}
 		} else {
@@ -440,7 +444,7 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 					"Currently we don't support google login with client type = "
 							+ clientType);
 		}
-		
+
 		// exchange the code for token
 		final OAuth20Service service = new ServiceBuilder()
 				.apiKey(facebookClientId).apiSecret(facebookClientSecret)
@@ -482,7 +486,16 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 	private MyDuplet<String, FoResponse<FoAuthTokenResult>> getEmailFromGoogleToken(
 			String idToken) {
 		GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
-				googleHttpTransport, googleJsonFactory).build();
+				googleHttpTransport, googleJsonFactory)
+		//according to https://developers.google.com/identity/sign-in/android/backend-auth#send-the-id-token-to-your-server, 
+		//the web client Id will be used even for native login 
+				.setAudience(Arrays.asList(this.googleWebClientId))
+				// If you retrieved the token on Android using the Play Services
+				// 8.3 API or newer, set
+				// the issuer to "https://accounts.google.com". Otherwise, set
+				// the issuer to
+				// "accounts.google.com".
+				.setIssuer("https://accounts.google.com").build();
 		GoogleIdToken git = verifyGoogleIdToken(verifier, idToken);
 		if (git == null) {
 			FoResponse<FoAuthTokenResult> errResp = FoResponse.devErrResponse(

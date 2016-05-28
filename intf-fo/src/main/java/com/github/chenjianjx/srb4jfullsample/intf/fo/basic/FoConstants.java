@@ -82,5 +82,7 @@ public interface FoConstants {
 	//public static final String PASSWORD_ERR_TIP = "Password should contain at least 1 digit and 1 English letter, 6-20 characters long and should only digits, English letters and punctuations.";
 	public static final String PASSWORD_ERR_TIP = "Password too weak.";
 	public static final String NULL_REQUEST_BEAN_TIP = "Please input the required fields.";
+	public static final String SOCIAL_LOGIN_CLIENT_TYPE_TIP = "The client type, including 'desktop', 'web' and 'mobile'.";
+	public static final String SOCIAL_LOGIN_SOURCE_TIP = "Currently it supports: 'google' and 'facebook' .";
 
 }

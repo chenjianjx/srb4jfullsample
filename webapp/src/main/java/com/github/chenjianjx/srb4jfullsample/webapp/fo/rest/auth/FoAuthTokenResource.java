@@ -17,6 +17,8 @@ import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.OA
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.OAUTH2_TOKEN_ENDPOINT_TIP;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.OK_TIP;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.REDIRECT_URI_PARAM;
+import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.SOCIAL_LOGIN_CLIENT_TYPE_TIP;
+import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.SOCIAL_LOGIN_SOURCE_TIP;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.SOCIAL_SITE_SOURCE_PARAM;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
@@ -129,7 +131,7 @@ public class FoAuthTokenResource extends FoResourceBase {
 	}
 
 	@POST
-	@Path("/new/social/by-token/{source}")
+	@Path("/new/social/by-token/{source}/{clientType}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@ApiOperation(value = OAUTH2_TOKEN_ENDPOINT_TIP
 			+ " login with social sites's token. The backend will verify this token and obtain the user's email. Mainly used for mobile clients which can obtain token directly. "
@@ -142,9 +144,10 @@ public class FoAuthTokenResource extends FoResourceBase {
 	@ApiResponses(value = {
 			@ApiResponse(code = SC_OK, message = OK_TIP, response = FoAuthTokenResult.class),
 			@ApiResponse(code = SC_BAD_REQUEST, message = OAUTH2_TOKEN_ENDPOINT_ERR_TIP, response = FoErrorResult.class) })
-	public Response facebookLogin(
+	public Response socialLoginByToken(
 			@Context HttpServletRequest rawRequest,
-			final @ApiParam(required = true, value = "Currently it supports: 'google' and 'facebook' . For google, plaease pass the id token; for facebook, please pass the access token") @PathParam(SOCIAL_SITE_SOURCE_PARAM) String source,
+			final @ApiParam(required = true, value = SOCIAL_LOGIN_SOURCE_TIP + "For google, plaease pass the id token; for facebook, please pass the access token") @PathParam(SOCIAL_SITE_SOURCE_PARAM) String source,
+			final @ApiParam(required = true, value = SOCIAL_LOGIN_CLIENT_TYPE_TIP) @PathParam(CLIENT_TYPE_PARAM) String clientType,
 			MultivaluedMap<String, String> form) throws OAuthSystemException {
 
 		OAuth2RequestWrapper servletRequest = new OAuth2RequestWrapper(
@@ -162,6 +165,7 @@ public class FoAuthTokenResource extends FoResourceBase {
 				foRequest.setToken(oltuRequest.getUsername());
 				foRequest.setLongSession(longSession);
 				foRequest.setSource(source);
+				foRequest.setClientType(clientType);
 				FoResponse<FoAuthTokenResult> foResponse = foAuthManager
 						.socialLoginByToken(foRequest);
 				return foResponse;
@@ -195,8 +199,8 @@ public class FoAuthTokenResource extends FoResourceBase {
 			@ApiResponse(code = SC_BAD_REQUEST, message = OAUTH2_TOKEN_ENDPOINT_ERR_TIP, response = FoErrorResult.class) })
 	public Response socialLoginByAuthCode(
 			@Context HttpServletRequest rawRequest,
-			final @ApiParam(required = true, value = "Currently it supports: 'google' and 'facebook' ") @PathParam(SOCIAL_SITE_SOURCE_PARAM) String source,
-			final @ApiParam(required = true, value = "The client type, including 'desktop', 'web' and 'mobile'.") @PathParam(CLIENT_TYPE_PARAM) String clientType,
+			final @ApiParam(required = true, value = SOCIAL_LOGIN_SOURCE_TIP) @PathParam(SOCIAL_SITE_SOURCE_PARAM) String source,
+			final @ApiParam(required = true, value = SOCIAL_LOGIN_CLIENT_TYPE_TIP) @PathParam(CLIENT_TYPE_PARAM) String clientType,
 			MultivaluedMap<String, String> form) throws OAuthSystemException {
 
 		OAuth2RequestWrapper servletRequest = new OAuth2RequestWrapper(
