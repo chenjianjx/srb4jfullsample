@@ -485,18 +485,7 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 
 	private MyDuplet<String, FoResponse<FoAuthTokenResult>> getEmailFromGoogleToken(
 			String idToken) {
-		GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
-				googleHttpTransport, googleJsonFactory)
-		//according to https://developers.google.com/identity/sign-in/android/backend-auth#send-the-id-token-to-your-server, 
-		//the web client Id will be used even for native login 
-				.setAudience(Arrays.asList(this.googleWebClientId))
-				// If you retrieved the token on Android using the Play Services
-				// 8.3 API or newer, set
-				// the issuer to "https://accounts.google.com". Otherwise, set
-				// the issuer to
-				// "accounts.google.com".
-				.setIssuer("https://accounts.google.com").build();
-		GoogleIdToken git = verifyGoogleIdToken(verifier, idToken);
+		GoogleIdToken git = verifyGoogleIdToken(idToken);
 		if (git == null) {
 			FoResponse<FoAuthTokenResult> errResp = FoResponse.devErrResponse(
 					FoConstants.FEC_OAUTH2_INVALID_REQUEST,
@@ -513,6 +502,33 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 			return MyDuplet.newInstance(null, errResp);
 		}
 		return MyDuplet.newInstance(email, null);
+	}
+
+	private GoogleIdToken verifyGoogleIdToken(String idToken) {
+		GoogleIdToken git = verifyGoogleIdToken(idToken,
+				"https://accounts.google.com");
+		if (git == null) {
+			// stupid compatibility google bug. You have to try both issuers
+			git = verifyGoogleIdToken(idToken, "accounts.google.com");
+		}
+		return git;
+	}
+
+	private GoogleIdToken verifyGoogleIdToken(String idToken, String issuer) {
+		GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
+				googleHttpTransport, googleJsonFactory)
+				// according to
+				// https://developers.google.com/identity/sign-in/android/backend-auth#send-the-id-token-to-your-server,
+				// the web client Id will be used even for native login
+				.setAudience(Arrays.asList(this.googleWebClientId))
+				.setIssuer(issuer).build();
+		try {
+			return verifier.verify(idToken);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} catch (GeneralSecurityException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private MyDuplet<String, FoResponse<FoAuthTokenResult>> getEmailFromGoogleAuthCode(
@@ -548,17 +564,6 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 		String idToken = googleTokenObj.getOpenIdToken();
 		// get email by token
 		return this.getEmailFromGoogleToken(idToken);
-	}
-
-	private GoogleIdToken verifyGoogleIdToken(GoogleIdTokenVerifier verifier,
-			String idToken) {
-		try {
-			return verifier.verify(idToken);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} catch (GeneralSecurityException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	@Override
