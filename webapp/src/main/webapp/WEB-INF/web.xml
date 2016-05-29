@@ -29,6 +29,8 @@ http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 
 
 
+
+
 	<servlet>
 		<servlet-name>fo-rest</servlet-name>
 		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
@@ -39,6 +41,10 @@ http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 				com.github.chenjianjx.srb4jfullsample.webapp.fo.rest
 			</param-value>
 		</init-param>
+		<init-param>
+		    <param-name>javax.ws.rs.Application</param-name>
+		    <param-value>com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoRestApplication</param-value>
+		</init-param>		
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 

@@ -34,7 +34,8 @@ public class FoCorsFilter implements ContainerResponseFilter {
 				"GET, POST, PUT, DELETE, OPTIONS, HEAD");
 		headers.add(
 				"Access-Control-Allow-Headers",
-				"Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization");
+				"Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization");		
+		headers.add("Access-Control-Expose-Headers", "WWW-Authenticate");
 	}
 
 	@Value("${corsOriginHeader}")

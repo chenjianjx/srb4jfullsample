@@ -89,11 +89,6 @@ public class DemoClientForDocTest {
 			System.out.println(error.get("exception_id")); // "the server side developer can use this id to do troubleshooting"
 		}
 
-		else {
-			System.out.println(bizResponse.getStatus());
-			System.out.println(bizResponse.getStatusText());
-			System.out.println(bizResponse.getBody());
-		}
 
 		// logout
 		Unirest.post("http://localhost:8080/fo/rest/bbs/posts/delete")
