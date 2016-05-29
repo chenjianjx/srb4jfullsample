@@ -2,10 +2,9 @@ package com.github.chenjianjx.srb4jfullsample.democlient.util;
 
 import java.net.URLDecoder;
 
-import com.github.chenjianjx.srb4jfullsample.restclient.model.ErrorResult;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.chenjianjx.srb4jfullsample.restclient.model.ErrorResult;
 
 /**
  * 
@@ -25,6 +24,15 @@ public class DemoClientUtils {
 		}
 	}
 
+	public static <T> T fromJson(String json, Class<T> clazz) {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			return mapper.readValue(json, clazz);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public static String urlDecode(String s) {
 		try {
 			return URLDecoder.decode(s, "UTF-8");
@@ -32,7 +40,7 @@ public class DemoClientUtils {
 			throw new RuntimeException(wow);
 		}
 	}
-	
+
 	public static void printErrorResult(ErrorResult errorResult) {
 		System.out.println("error code: " + errorResult.getError());
 		System.out.println("error msg for developer: "
