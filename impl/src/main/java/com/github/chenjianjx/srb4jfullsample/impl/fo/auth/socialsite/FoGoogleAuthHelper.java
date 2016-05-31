@@ -5,6 +5,7 @@ import java.security.GeneralSecurityException;
 import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.NoHttpResponseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -87,6 +88,7 @@ public class FoGoogleAuthHelper implements FoSocialSiteAuthHelper {
 			String clientType, String issuer) {
 		GoogleIdTokenVerifier.Builder vb = new GoogleIdTokenVerifier.Builder(
 				googleHttpTransport, googleJsonFactory).setIssuer(issuer);
+		
 
 		if (clientType.equals(Client.TYPE_DESKTOP)) {
 			vb.setAudience(Arrays.asList(this.googleClientId));
@@ -100,9 +102,11 @@ public class FoGoogleAuthHelper implements FoSocialSiteAuthHelper {
 			vb.setAudience(Arrays.asList(this.googleWebClientId));
 		}
 
-		GoogleIdTokenVerifier verifier = vb.build();
+		GoogleIdTokenVerifier verifier = vb.build();		
 		try {
 			return verifier.verify(idToken);
+		} catch (NoHttpResponseException e) {
+			throw new RuntimeException(e); //TODO: retry the verification or prompt user to retry   
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		} catch (GeneralSecurityException e) {
