@@ -2,8 +2,12 @@ package com.github.chenjianjx.srb4jfullsample.democlient.util;
 
 import java.net.URLDecoder;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.github.chenjianjx.srb4jfullsample.restclient.model.ErrorResult;
 
 /**
@@ -12,6 +16,11 @@ import com.github.chenjianjx.srb4jfullsample.restclient.model.ErrorResult;
  *
  */
 public class DemoClientUtils {
+
+	public static Client createRestClient() {
+		return ClientBuilder.newBuilder()
+				.register(JacksonJaxbJsonProvider.class).build();
+	}
 
 	public static String toJson(Object response) {
 		ObjectMapper mapper = new ObjectMapper();

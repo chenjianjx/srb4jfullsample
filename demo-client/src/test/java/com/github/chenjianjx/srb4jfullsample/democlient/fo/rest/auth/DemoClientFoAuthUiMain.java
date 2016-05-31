@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response;
 import org.junit.Assert;
 
 import com.github.chenjianjx.srb4jfullsample.democlient.util.DemoClientConstants;
+import com.github.chenjianjx.srb4jfullsample.democlient.util.DemoClientUtils;
 import com.github.chenjianjx.srb4jfullsample.restclient.model.GenRandomLoginCodeRequest;
 
 /**
@@ -27,7 +28,7 @@ import com.github.chenjianjx.srb4jfullsample.restclient.model.GenRandomLoginCode
  *
  */
 public class DemoClientFoAuthUiMain {
-	private static Client restClient = ClientBuilder.newClient();
+	private static Client restClient = DemoClientUtils.createRestClient();
 
 	public static void main(String[] args) throws Exception {
 

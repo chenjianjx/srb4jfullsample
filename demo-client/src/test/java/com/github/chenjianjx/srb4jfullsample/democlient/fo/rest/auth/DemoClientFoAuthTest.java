@@ -5,7 +5,6 @@ import static com.github.chenjianjx.srb4jfullsample.democlient.util.DemoClientCo
 import java.io.File;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
@@ -37,10 +36,10 @@ import com.github.chenjianjx.srb4jfullsample.restclient.model.AuthTokenResult;
  */
 public class DemoClientFoAuthTest {
 
-	private static Client restClient = ClientBuilder.newClient();
+	private static Client restClient = DemoClientUtils.createRestClient();
 
 	@Test
-	public void testProtectedResourceWithoutLogin() {
+	public void testProtectedResourceWithoutLogin() {		
 		Response restResponse = restClient.target(BACKEND_FO_REST_URL)
 				.path(DemoClientConstants.PROCTED_RESOURCE_URL)
 				.request(MediaType.APPLICATION_JSON_TYPE).get();

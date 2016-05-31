@@ -27,6 +27,8 @@ import com.mashape.unirest.http.Unirest;
  *
  */
 public class DemoClientForDocTest {
+	 
+	
 
 	@Test
 	public void allInOneTest() throws Exception {

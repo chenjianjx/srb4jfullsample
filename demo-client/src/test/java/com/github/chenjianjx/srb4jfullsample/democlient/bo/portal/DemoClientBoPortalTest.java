@@ -8,7 +8,9 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Assert;
 import org.junit.Test;
+
 import com.github.chenjianjx.srb4jfullsample.democlient.util.DemoClientConstants;
+import com.github.chenjianjx.srb4jfullsample.democlient.util.DemoClientUtils;
 
 /**
  * 
@@ -18,7 +20,7 @@ import com.github.chenjianjx.srb4jfullsample.democlient.util.DemoClientConstants
 public class DemoClientBoPortalTest {
 
 	private static final String BBSADMIN_EMAIL = "bbsadmin@nonexist.com";
-	private static Client mockClient = ClientBuilder.newClient();
+	private static Client mockClient = DemoClientUtils.createRestClient();
 
 	@Test
 	public void loginFormTest() {
