@@ -53,7 +53,13 @@ public class FoGoogleAuthHelper implements FoSocialSiteAuthHelper {
 	public MyDuplet<String, FoResponse<FoAuthTokenResult>> getEmailFromToken(
 			String token, String clientType) {
 		String idToken = token;
-		GoogleIdToken git = verifyGoogleIdToken(idToken, clientType);
+		MyDuplet<GoogleIdToken, FoResponse<FoAuthTokenResult>> gitResult = verifyGoogleIdToken(
+				idToken, clientType);
+		GoogleIdToken git = gitResult.left;
+		FoResponse<FoAuthTokenResult> gitError = gitResult.right;
+		if (gitError != null) {
+			return MyDuplet.newInstance(null, gitError);
+		}
 		if (git == null) {
 			FoResponse<FoAuthTokenResult> errResp = FoResponse.devErrResponse(
 					FoConstants.FEC_OAUTH2_INVALID_REQUEST,
@@ -73,22 +79,29 @@ public class FoGoogleAuthHelper implements FoSocialSiteAuthHelper {
 
 	}
 
-	private GoogleIdToken verifyGoogleIdToken(String idToken, String clientType) {
-		GoogleIdToken git = verifyGoogleIdToken(idToken, clientType,
-				"https://accounts.google.com");
-		if (git == null) {
+	private MyDuplet<GoogleIdToken, FoResponse<FoAuthTokenResult>> verifyGoogleIdToken(
+			String idToken, String clientType) {
+		MyDuplet<GoogleIdToken, FoResponse<FoAuthTokenResult>> gitResult = verifyGoogleIdToken(
+				idToken, clientType, "https://accounts.google.com");
+		if (gitResult.left == null && gitResult.right == null) {
 			// stupid compatibility google bug. You have to try both issuers
-			git = verifyGoogleIdToken(idToken, clientType,
+			gitResult = verifyGoogleIdToken(idToken, clientType,
 					"accounts.google.com");
 		}
-		return git;
+		return gitResult;
 	}
 
-	private GoogleIdToken verifyGoogleIdToken(String idToken,
-			String clientType, String issuer) {
+	/**
+	 * 
+	 * @param idToken
+	 * @param clientType
+	 * @param issuer
+	 * @return token + error (Note token can be null)
+	 */
+	private MyDuplet<GoogleIdToken, FoResponse<FoAuthTokenResult>> verifyGoogleIdToken(
+			String idToken, String clientType, String issuer) {
 		GoogleIdTokenVerifier.Builder vb = new GoogleIdTokenVerifier.Builder(
 				googleHttpTransport, googleJsonFactory).setIssuer(issuer);
-		
 
 		if (clientType.equals(Client.TYPE_DESKTOP)) {
 			vb.setAudience(Arrays.asList(this.googleClientId));
@@ -102,11 +115,15 @@ public class FoGoogleAuthHelper implements FoSocialSiteAuthHelper {
 			vb.setAudience(Arrays.asList(this.googleWebClientId));
 		}
 
-		GoogleIdTokenVerifier verifier = vb.build();		
+		GoogleIdTokenVerifier verifier = vb.build();
 		try {
-			return verifier.verify(idToken);
+			GoogleIdToken token = verifier.verify(idToken);
+			return MyDuplet.newInstance(token, null);
 		} catch (NoHttpResponseException e) {
-			throw new RuntimeException(e); //TODO: retry the verification or prompt user to retry   
+			FoResponse<FoAuthTokenResult> errResp = FoResponse.userErrResponse(
+					FoConstants.FEC_ERR_BUT_CAN_RETRY,
+					"Google didn't response. Please try again.");
+			return MyDuplet.newInstance(null, errResp);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		} catch (GeneralSecurityException e) {
