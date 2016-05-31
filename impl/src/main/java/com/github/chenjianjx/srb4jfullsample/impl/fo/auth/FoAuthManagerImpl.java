@@ -2,10 +2,6 @@ package com.github.chenjianjx.srb4jfullsample.impl.fo.auth;
 
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.NULL_REQUEST_BEAN_TIP;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.Arrays;
-
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
@@ -22,6 +18,7 @@ import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.RandomLoginCodeRepo;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.client.Client;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.User;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.UserRepo;
+import com.github.chenjianjx.srb4jfullsample.impl.fo.auth.socialsite.FoGoogleAuthHelper;
 import com.github.chenjianjx.srb4jfullsample.impl.fo.common.FoManagerImplBase;
 import com.github.chenjianjx.srb4jfullsample.impl.util.infrahelp.beanvalidae.MyValidator;
 import com.github.chenjianjx.srb4jfullsample.impl.util.tools.lang.MyDuplet;
@@ -37,18 +34,10 @@ import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialLoginByTokenRe
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
 import com.github.scribejava.apis.FacebookApi;
-import com.github.scribejava.apis.GoogleApi20;
-import com.github.scribejava.apis.google.GoogleToken;
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.model.Token;
 import com.github.scribejava.core.model.Verifier;
 import com.github.scribejava.core.oauth.OAuth20Service;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.apache.ApacheHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
@@ -81,20 +70,8 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 	@Resource
 	AuthService authService;
 
-	HttpTransport googleHttpTransport = new ApacheHttpTransport();
-	JsonFactory googleJsonFactory = new JacksonFactory();
-
-	/**
-	 * for desktop clients (non-web, non-mobile)
-	 */
-	private String googleClientId;
-	private String googleClientSecret;
-
-	/**
-	 * for web clients which uses google's javascript SDK
-	 */
-	private String googleWebClientId;
-	private String googleWebClientSecret;
+	@Resource
+	FoGoogleAuthHelper googleAuthHelper;
 
 	private String facebookClientId;
 	private String facebookClientSecret;
@@ -316,8 +293,9 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 		boolean longSession = request.isLongSession();
 
 		String socialToken = request.getToken();
-		MyDuplet<String, FoResponse<FoAuthTokenResult>> emailOrErrResp = getEmailFromSocialSiteToken(
-				source, socialToken);
+		MyDuplet<String, FoResponse<FoAuthTokenResult>> emailOrErrResp = this
+				.getEmailFromSocialSiteToken(source, socialToken,
+						request.getClientType());
 		return handleSocialSiteEmailResult(source, longSession, emailOrErrResp);
 	}
 
@@ -387,10 +365,10 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 	 * @return
 	 */
 	private MyDuplet<String, FoResponse<FoAuthTokenResult>> getEmailFromSocialSiteToken(
-			String source, String socialToken) {
+			String source, String socialToken, String clientType) {
 
 		if (User.SOURCE_GOOGLE.equals(source)) {
-			return getEmailFromGoogleToken(socialToken);
+			return googleAuthHelper.getEmailFromToken(socialToken, clientType);
 		}
 
 		if (User.SOURCE_FACEBOOK.equals(source)) {
@@ -412,7 +390,8 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 			String source, String clientType, String authCode,
 			String redirectUri) {
 		if (User.SOURCE_GOOGLE.equals(source)) {
-			return getEmailFromGoogleAuthCode(authCode, clientType, redirectUri);
+			return googleAuthHelper.getEmailFromCode(authCode, clientType,
+					redirectUri);
 		}
 
 		if (User.SOURCE_FACEBOOK.equals(source)) {
@@ -483,89 +462,6 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 		return MyDuplet.newInstance(email, null);
 	}
 
-	private MyDuplet<String, FoResponse<FoAuthTokenResult>> getEmailFromGoogleToken(
-			String idToken) {
-		GoogleIdToken git = verifyGoogleIdToken(idToken);
-		if (git == null) {
-			FoResponse<FoAuthTokenResult> errResp = FoResponse.devErrResponse(
-					FoConstants.FEC_OAUTH2_INVALID_REQUEST,
-					"invalid google open id token", null);
-			return MyDuplet.newInstance(null, errResp);
-		}
-		String email = git.getPayload().getEmail();
-		if (email == null) {
-			FoResponse<FoAuthTokenResult> errResp = FoResponse
-					.devErrResponse(
-							FoConstants.FEC_OAUTH2_INVALID_REQUEST,
-							"cannot extract email from this open id token. please check the scope used for google sign-in",
-							null);
-			return MyDuplet.newInstance(null, errResp);
-		}
-		return MyDuplet.newInstance(email, null);
-	}
-
-	private GoogleIdToken verifyGoogleIdToken(String idToken) {
-		GoogleIdToken git = verifyGoogleIdToken(idToken,
-				"https://accounts.google.com");
-		if (git == null) {
-			// stupid compatibility google bug. You have to try both issuers
-			git = verifyGoogleIdToken(idToken, "accounts.google.com");
-		}
-		return git;
-	}
-
-	private GoogleIdToken verifyGoogleIdToken(String idToken, String issuer) {
-		GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
-				googleHttpTransport, googleJsonFactory)
-				// according to
-				// https://developers.google.com/identity/sign-in/android/backend-auth#send-the-id-token-to-your-server,
-				// the web client Id will be used even for native login
-				.setAudience(Arrays.asList(this.googleWebClientId))
-				.setIssuer(issuer).build();
-		try {
-			return verifier.verify(idToken);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} catch (GeneralSecurityException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private MyDuplet<String, FoResponse<FoAuthTokenResult>> getEmailFromGoogleAuthCode(
-			String authCode, String clientType, String redirectUri) {
-
-		String clientId = null;
-		String clientSecret = null;
-
-		if (Client.TYPE_DESKTOP.equals(clientType)) {
-			clientId = googleClientId;
-			clientSecret = googleClientSecret;
-			if (redirectUri == null) {
-				redirectUri = FoConstants.GOOGLE_REDIRECT_URI_OOB;
-			}
-		} else if (Client.TYPE_WEB.equals(clientType)) {
-			clientId = googleWebClientId;
-			clientSecret = googleWebClientSecret;
-			if (redirectUri == null) {
-				redirectUri = FoConstants.GOOGLE_REDIRECT_URI_POSTMESSAGE;
-			}
-		} else {
-			throw new IllegalArgumentException(
-					"Currently we don't support google login with client type = "
-							+ clientType);
-		}
-
-		// exchange the code for token
-		final OAuth20Service service = new ServiceBuilder().apiKey(clientId)
-				.apiSecret(clientSecret).scope("email").callback(redirectUri)
-				.build(GoogleApi20.instance());
-		GoogleToken googleTokenObj = (GoogleToken) service
-				.getAccessToken(new Verifier(authCode));
-		String idToken = googleTokenObj.getOpenIdToken();
-		// get email by token
-		return this.getEmailFromGoogleToken(idToken);
-	}
-
 	@Override
 	public FoResponse<FoAuthTokenResult> oauth2RefreshToken(
 			FoRefreshTokenRequest request) {
@@ -599,16 +495,6 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 
 	}
 
-	@Value("${googleClientId}")
-	public void setGoogleClientId(String googleClientId) {
-		this.googleClientId = StringUtils.trimToNull(googleClientId);
-	}
-
-	@Value("${googleClientSecret}")
-	public void setGoogleClientSecret(String googleClientSecret) {
-		this.googleClientSecret = StringUtils.trimToNull(googleClientSecret);
-	}
-
 	@Value("${facebookClientId}")
 	public void setFacebookClientId(String facebookClientId) {
 		this.facebookClientId = StringUtils.trimToNull(facebookClientId);
@@ -618,17 +504,6 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 	public void setFacebookClientSecret(String facebookClientSecret) {
 		this.facebookClientSecret = StringUtils
 				.trimToNull(facebookClientSecret);
-	}
-
-	@Value("${googleWebClientId}")
-	public void setGoogleWebClientId(String googleWebClientId) {
-		this.googleWebClientId = StringUtils.trimToNull(googleWebClientId);
-	}
-
-	@Value("${googleWebClientSecret}")
-	public void setGoogleWebClientSecret(String googleWebClientSecret) {
-		this.googleWebClientSecret = StringUtils
-				.trimToNull(googleWebClientSecret);
 	}
 
 }
