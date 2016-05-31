@@ -27,8 +27,6 @@ import com.mashape.unirest.http.Unirest;
  *
  */
 public class DemoClientForDocTest {
-	 
-	
 
 	@Test
 	public void allInOneTest() throws Exception {
@@ -44,7 +42,7 @@ public class DemoClientForDocTest {
 
 		if (loginResponse.getStatus() == 200) {
 			JSONObject token = loginResponse.getBody().getObject();
-			System.out.println(token.get("access_token"));
+			System.out.println(token.get("access_token")); //You can save the token for later use
 			System.out.println(token.get("refresh_token"));
 			System.out.println(token.get("expires_in"));
 			System.out.println(token.get("user_principal")); // "the full user name"
@@ -75,12 +73,10 @@ public class DemoClientForDocTest {
 
 		else if (Arrays.asList(400, 401, 403).contains(bizResponse.getStatus())) { // "token error"
 			String authHeader = bizResponse.getHeaders()
-					.get("WWW-Authenticate").get(0);// "See https://tools.ietf.org/html/rfc6750#page-7"
-			Map<String, String> error = decodeOAuthHeader(authHeader);
-			System.out.println(error.get("error")); // "the error code"
-			System.out.println(error.get("error_description")); // "the error description for developers"
-			System.out.println(error.get("error_description_for_user")); // "user-friendly error desc for users"
-			System.out.println(error.get("exception_id")); // "the server side developer can use this id to do troubleshooting"
+					.get("WWW-Authenticate").get(0);// "See https://tools.ietf.org/html/rfc6750#page-7"			
+			System.out.println(bizResponse.getStatus());
+			System.out.println(authHeader); //You can also further parse auth header if needed. Search "decodeOAuthHeader" in this repository.  
+			//You should then redirect the user to login UI
 		}
 
 		else if (bizResponse.getStatus() == 460) { // "biz error"
@@ -89,8 +85,10 @@ public class DemoClientForDocTest {
 			System.out.println(error.get("error_description")); // "the error description for developers"
 			System.out.println(error.get("error_description_for_user")); // "user-friendly error desc for users"
 			System.out.println(error.get("exception_id")); // "the server side developer can use this id to do troubleshooting"
+		} else {
+			System.out.println(bizResponse.getStatus());
+			System.out.println(bizResponse.getBody());
 		}
-
 
 		// logout
 		Unirest.post("http://localhost:8080/fo/rest/bbs/posts/delete")
