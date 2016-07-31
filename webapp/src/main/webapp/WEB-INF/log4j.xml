@@ -54,6 +54,11 @@
 	</logger>
 
 
+	<logger name="org.springframework" additivity="false">
+		<level value="info" />
+		<appender-ref ref="auto-task-appender" />
+	</logger>
+
 	<root>
 		<level value="error" />
 		<appender-ref ref="root-appender" />
