@@ -56,7 +56,7 @@
 
 
 	<root>
-		<level value="info" />
+		<level value="debug" />
 		<appender-ref ref="root-appender" />
 		<appender-ref ref="console" />
 	</root>
