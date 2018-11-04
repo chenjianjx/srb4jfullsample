@@ -24,6 +24,9 @@ public interface UserRepo {
 	@Select("select * from User where  principal = #{principal}")
 	public User getUserByPrincipal(String principal);
 
+	@Select("select * from User where  email = #{email}")
+	public User getUserByEmail(String email);
+
 	@Select("select * from User where  id = #{id}")
 	public User getUserById(long id);
 

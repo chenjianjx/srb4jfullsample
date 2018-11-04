@@ -1,14 +1,5 @@
 package com.github.chenjianjx.srb4jfullsample.impl.fo.auth;
 
-import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.NULL_REQUEST_BEAN_TIP;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.AccessToken;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.AccessTokenRepo;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.AuthService;
@@ -32,6 +23,14 @@ import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialAuthCodeLoginR
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialLoginByTokenRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
+import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.NULL_REQUEST_BEAN_TIP;
 
 /**
  * 
@@ -174,9 +173,7 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 		}
 
 		// validate user existence
-
-		String principalName = User.decidePrincipalFromLocal(email);
-		User existingUser = userRepo.getUserByPrincipal(principalName);
+		User existingUser = userRepo.getUserByEmail(email);
 
 		if (existingUser != null) {
 			String err = "This email already exists";
@@ -332,19 +329,33 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 
 		String email = emailOrErrResp.left;
 		String principal = User.decidePrincipal(source, email);
-		User existingUser = userRepo.getUserByPrincipal(principal);
 
-		if (existingUser == null) {
-			existingUser = new User();
-			existingUser.setEmail(email);
-			existingUser.setPassword(null);
-			existingUser.setSource(source);
-			existingUser.setCreatedBy(existingUser.getPrincipal());
-			userRepo.saveNewUser(existingUser);
+		User existingUserWithTheSameEmail = userRepo.getUserByEmail(email);
 
+		User user;
+		if (existingUserWithTheSameEmail == null) {
+			//a new user should be created
+			User newUser = new User();
+			newUser.setEmail(email);
+			newUser.setPassword(null);
+			newUser.setSource(source);
+			newUser.setCreatedBy(principal);
+			userRepo.saveNewUser(newUser);
+
+			user = newUser;
+		} else { //existingUserWithTheSameEmail != null
+			if (existingUserWithTheSameEmail.getPrincipal().equals(principal)) {
+				//The user account has been created.
+				user = existingUserWithTheSameEmail;
+			} else {
+				//A user who has the same email, but not the same source, exists
+				String err = "A user with the same email (" + email + ") already exists.";
+				return FoResponse.userErrResponse(
+						FoConstants.FEC_OAUTH2_INVALID_REQUEST, err);
+			}
 		}
 		// ok, do the token
-		return buildAuthTokenResponse(existingUser, longSession);
+		return buildAuthTokenResponse(user, longSession);
 	}
 
 	@Override

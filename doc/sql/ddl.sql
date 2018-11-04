@@ -11,6 +11,7 @@ create table User (
   updatedAt timestamp null,
   primary key (id),
   unique key uni_idx_principal (principal),
+  unique key uni_idx_user_email (email),
   key idx_user_src (source)
 ) engine=innodb  default charset=utf8;
  
