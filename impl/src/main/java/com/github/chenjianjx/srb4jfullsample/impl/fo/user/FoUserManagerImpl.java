@@ -12,6 +12,7 @@ import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoChangePasswordReques
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoUserManager;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -113,6 +114,10 @@ public class FoUserManagerImpl extends FoManagerImplBase implements
 
 	@Override
 	public FoResponse<Void> verifyEmail(String digestStr) {
+		digestStr = StringUtils.trimToNull(digestStr);
+		if (digestStr == null) {
+			return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, "Invalid request");
+		}
 
 		EmailVerificationDigest digest = emailVerificationDigestRepo.getByDigestStr(digestStr);
 		if (digest == null) {
