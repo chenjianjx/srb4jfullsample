@@ -35,6 +35,7 @@ public class UserRepoITCase {
 		repo.saveNewUser(user);
 		Assert.assertNotNull(user.getId());
 		Assert.assertNotNull(user.getCreatedAt());
+		Assert.assertFalse(user.isEmailVerified());
 		System.out.println(user);
 		
 
@@ -45,19 +46,21 @@ public class UserRepoITCase {
 		//query		
 		user = repo.getUserById(userId);
 		Assert.assertNotNull(user);
+		Assert.assertFalse(user.isEmailVerified());
 		
 		user = repo.getUserByPrincipal(principal);
 		Assert.assertNotNull(user);
 		
 		//update
 		user.setPassword("newPassword");
+		user.setEmailVerified(true);
 		user.setUpdatedBy("newUpdatedBy");		
 		repo.updateUser(user);
 		Assert.assertNotNull(user.getUpdatedAt());
 		user = repo.getUserById(userId);
 		Assert.assertEquals("newPassword", user.getPassword());
 		Assert.assertEquals("newUpdatedBy", user.getUpdatedBy());
-
+		Assert.assertTrue(user.isEmailVerified());
 	}
 	
 	

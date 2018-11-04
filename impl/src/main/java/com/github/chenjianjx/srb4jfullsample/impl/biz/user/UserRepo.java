@@ -16,8 +16,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepo {
 
-	@Insert("insert into User(principal, password, source, email, createdAt, createdBy) "
-			+ "values (#{principal}, #{password}, #{source}, #{email}, #{createdAt}, #{createdBy})")
+	@Insert("insert into User(principal, password, source, email, emailVerified, createdAt, createdBy) "
+			+ "values (#{principal}, #{password}, #{source}, #{email}, #{emailVerified}, #{createdAt}, #{createdBy})")
 	@SelectKey(statement = "select last_insert_id() as id", keyProperty = "id", keyColumn = "id", before = false, resultType = long.class)
 	public void saveNewUser(User user);
 
@@ -30,7 +30,7 @@ public interface UserRepo {
 	@Select("select * from User where  id = #{id}")
 	public User getUserById(long id);
 
-	@Update("update User set password = #{password}, updatedBy = #{updatedBy}, updatedAt = #{updatedAt}  where id = #{id}")
+	@Update("update User set password = #{password}, emailVerified = #{emailVerified}, updatedBy = #{updatedBy}, updatedAt = #{updatedAt}  where id = #{id}")
 	public void updateUser(User newUser);
 
 }

@@ -185,14 +185,14 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 		String source = User.SOURCE_LOCAL;
 		String encodedPassword = authService.encodePasswordOrRandomCode(request
 				.getPassword());
-		User user1 = new User();
-		user1.setEmail(email);
-		user1.setPassword(encodedPassword);
-		user1.setSource(source);
-		user1.setCreatedBy(user1.getPrincipal());
-		userRepo.saveNewUser(user1);
+		User user = new User();
+		user.setEmail(email);
+		user.setEmailVerified(false);
+		user.setPassword(encodedPassword);
+		user.setSource(source);
+		user.setCreatedBy(user.getPrincipal());
+		userRepo.saveNewUser(user);
 
-		User user = user1;
 		return buildAuthTokenResponse(user, false);
 	}
 
@@ -337,6 +337,7 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 			//a new user should be created
 			User newUser = new User();
 			newUser.setEmail(email);
+			newUser.setEmailVerified(true);  //social-account user's email is always considered to be verified
 			newUser.setPassword(null);
 			newUser.setSource(source);
 			newUser.setCreatedBy(principal);

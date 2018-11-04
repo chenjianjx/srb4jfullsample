@@ -5,6 +5,7 @@ create table User (
   password varchar(255) default null,
   source varchar(255) not null,
   email varchar(255) not null,
+  emailVerified boolean not null default false,
   createdBy varchar(255) not null,
   updatedBy varchar(255) null,
   createdAt timestamp not null,
