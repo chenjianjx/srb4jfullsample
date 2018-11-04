@@ -86,7 +86,7 @@ public class FoUserResource extends FoResourceBase {
 	public Response startEmailVerification(@Context ContainerRequestContext context) {
 		String contextPath = servletRequestProvider.get().getContextPath();
 		String emailVerifyResourceUrl =
-				FoRestUtils.getResourceBasePath(webAppEnvProp, contextPath) + PATH_EMAIL_VERIFICATION_PROCESS_VERIFY;
+				FoRestUtils.getResourceBasePath(webAppEnvProp, contextPath) + "/user" + PATH_EMAIL_VERIFICATION_PROCESS_VERIFY;
 		FoResponse<Void> foResponse = userManager.startEmailVerification(getUserId(context), emailVerifyResourceUrl, EMAIL_VERIFICATION_DIGEST_PARAM_NAME);
 		return FoRestUtils.fromFoResponse(foResponse, context);
 	}

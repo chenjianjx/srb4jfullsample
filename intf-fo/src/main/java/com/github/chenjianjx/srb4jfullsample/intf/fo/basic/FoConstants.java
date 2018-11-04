@@ -91,7 +91,7 @@ public interface FoConstants {
 	public static final String SOCIAL_LOGIN_SOURCE_TIP = "Currently it supports: 'google' and 'facebook' .";
 
 	/*email verification related*/
-	public static final String PATH_EMAIL_VERIFICATION_PROCESS_VERIFY = "/email-verification-process/verify";
+	public static final String PATH_EMAIL_VERIFICATION_PROCESS_VERIFY = "/email-verification-process/verify"; //please prepend "/user" for the whole path
 	public static final String EMAIL_VERIFICATION_DIGEST_PARAM_NAME = "d";
 	public static final int EMAIL_VERIFICATION_DIGEST_LIFESPAN = 3600 * 24 * 14;
 }

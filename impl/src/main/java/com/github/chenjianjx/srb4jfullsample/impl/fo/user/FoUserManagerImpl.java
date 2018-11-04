@@ -141,8 +141,6 @@ public class FoUserManagerImpl extends FoManagerImplBase implements
 
 		user.setEmailVerified(true);
 		userRepo.updateUser(user);
-		// finally delete the digest
-		emailVerificationDigestRepo.deleteByUserId(user.getId());
 		return FoResponse.success(null);
 	}
 }
