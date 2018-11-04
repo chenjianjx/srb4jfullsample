@@ -37,4 +37,6 @@ public interface EmailVerificationDigestRepo {
 	@Delete("delete from EmailVerificationDigest where  expiresAt < #{timestamp}")
 	int deleteDigestsExpiresBefore(Timestamp timestamp);
 
+	@Select("select * from EmailVerificationDigest where  digestStr = #{digestStr}")
+	EmailVerificationDigest getByDigestStr(String digestStr);
 }

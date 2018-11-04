@@ -58,6 +58,8 @@ public interface FoConstants {
 
 	public static final String FEC_INVALID_INPUT = "INVALID_INPUT";
 
+	public static final String FEC_ILLEGAL_STATUS = "ILLEGAL_STATUS";
+
 	public static final String FEC_RECORD_ALREADY_EXISTS = "RECORD_ALREADY_EXISTS";
 	
 	public static final String FEC_ERR_BUT_CAN_RETRY = "ERR_BUT_CAN_RETRY";

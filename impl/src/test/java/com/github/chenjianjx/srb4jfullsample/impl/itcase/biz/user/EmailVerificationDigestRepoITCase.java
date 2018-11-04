@@ -41,6 +41,10 @@ public class EmailVerificationDigestRepoITCase {
 		t = repo.getByUserId(userId);
 		Assert.assertNotNull(t);
 
+		// get by digest str
+		t = repo.getByDigestStr(digestStr);
+		Assert.assertEquals(userId, t.getUserId());
+
 		// delete by userId
 		repo.deleteByUserId(userId);
 		t = repo.getByUserId(userId);
@@ -48,10 +52,21 @@ public class EmailVerificationDigestRepoITCase {
 	}
 
 	@Test(expected = DuplicateKeyException.class)
-	public void duplicateTest() throws Exception {
+	public void duplicateTest_userDuplicated() throws Exception {
 		long userId = System.currentTimeMillis();
 		EmailVerificationDigest t1 = buildDigest(userId, "digest1");
 		EmailVerificationDigest t2 = buildDigest(userId, "digest2");
+		repo.saveNewDigest(t1);
+		repo.saveNewDigest(t2);
+	}
+
+	@Test(expected = DuplicateKeyException.class)
+	public void duplicateTest_digestDuplicated() throws Exception {
+		long userId1 = System.currentTimeMillis();
+		Thread.sleep(5);
+		long userId2 = System.currentTimeMillis();
+		EmailVerificationDigest t1 = buildDigest(userId1, "digest");
+		EmailVerificationDigest t2 = buildDigest(userId2, "digest");
 		repo.saveNewDigest(t1);
 		repo.saveNewDigest(t2);
 	}

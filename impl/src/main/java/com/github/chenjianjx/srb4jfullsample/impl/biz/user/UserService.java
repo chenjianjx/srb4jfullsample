@@ -5,6 +5,7 @@ import com.github.chenjianjx.srb4jfullsample.impl.support.mail.MailEngine;
 import com.github.chenjianjx.srb4jfullsample.impl.util.tools.lang.MyLangUtils;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import static com.github.chenjianjx.srb4jfullsample.impl.util.tools.lang.MyLangU
 /**
  * Created by chenjianjx@gmail.com on 4/11/18.
  */
+@Service
 public class UserService {
 
     @Resource

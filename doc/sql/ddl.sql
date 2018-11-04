@@ -61,7 +61,8 @@ create table EmailVerificationDigest (
   createdAt timestamp not null,
   updatedAt timestamp null ,
   primary key (id),
-  unique key uni__email_verification_digest_uid(userId)
+  unique key uni_email_verification_digest_uid(userId),
+  unique key uni_email_verification_digest_digest(digestStr)
 ) engine=innodb  default charset=utf8;
 
 

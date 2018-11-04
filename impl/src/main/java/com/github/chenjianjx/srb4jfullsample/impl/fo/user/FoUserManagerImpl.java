@@ -2,6 +2,7 @@ package com.github.chenjianjx.srb4jfullsample.impl.fo.user;
 
 import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.AuthService;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.EmailVerificationDigest;
+import com.github.chenjianjx.srb4jfullsample.impl.biz.user.EmailVerificationDigestRepo;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.User;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.UserRepo;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.UserService;
@@ -41,6 +42,9 @@ public class FoUserManagerImpl extends FoManagerImplBase implements
 
 	@Resource
 	UserService userService;
+
+	@Resource
+	EmailVerificationDigestRepo emailVerificationDigestRepo;
 
 	@Override
 	public FoResponse<Void> changePassword(Long currentUserId,
@@ -91,7 +95,7 @@ public class FoUserManagerImpl extends FoManagerImplBase implements
 		User user = currentUser;
 		if (user.isEmailVerified()) {
 			return FoResponse.userErrResponse(
-					FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Your email has been verified.");
+					FoConstants.FEC_ILLEGAL_STATUS, "Your email is already verified.");
 		}
 
 		EmailVerificationDigest digest = userService.saveNewEmailVerificationDigestForUser(user);
@@ -108,7 +112,32 @@ public class FoUserManagerImpl extends FoManagerImplBase implements
 	}
 
 	@Override
-	public FoResponse<Void> verifyEmail(String digest) {
-		return null;
+	public FoResponse<Void> verifyEmail(String digestStr) {
+
+		EmailVerificationDigest digest = emailVerificationDigestRepo.getByDigestStr(digestStr);
+		if (digest == null) {
+			return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, "Invalid request");
+		}
+
+		User user = userRepo.getUserById(digest.getUserId());
+
+		if (user == null) {
+			return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, "Invalid request");
+		}
+
+		if (user.isEmailVerified()) {
+			//verified already? Just say congratulations
+			return FoResponse.success(null);
+		}
+
+		if (digest.hasExpired()) {
+			return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, "The link has expired.");
+		}
+
+		user.setEmailVerified(true);
+		userRepo.updateUser(user);
+		// finally delete the digest
+		emailVerificationDigestRepo.deleteByUserId(user.getId());
+		return FoResponse.success(null);
 	}
 }
