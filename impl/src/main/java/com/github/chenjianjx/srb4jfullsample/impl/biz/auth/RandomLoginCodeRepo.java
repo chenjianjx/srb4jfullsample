@@ -19,7 +19,7 @@ import org.springframework.stereotype.Repository;
 public interface RandomLoginCodeRepo {
 
 	/**
-	 * save new code; if the user has already the code, overwrite it
+	 * save new code
 	 * 
 	 * @param code
 	 */

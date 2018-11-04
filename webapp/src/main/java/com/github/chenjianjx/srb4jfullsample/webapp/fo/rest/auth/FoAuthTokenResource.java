@@ -397,21 +397,6 @@ public class FoAuthTokenResource extends FoResourceBase {
 		return FoRestUtils.fromFoResponse(foResponse, context);
 	}
 
-	@POST
-	@Path("/email-verification-process/new")
-	@ApiOperation(value = "Start an email verification process. After calling this the user will receive an email containing the verificaiton link")
-	@ApiResponses(value = {
-			@ApiResponse(code = SC_OK, message = OK_TIP, response = Void.class),
-			@ApiResponse(code = FO_SC_BIZ_ERROR, message = BIZ_ERR_TIP, response = FoErrorResult.class) })
-	public Response randomLoginCode(@Context ContainerRequestContext context,
-									FoGenRandomLoginCodeRequest request) {
-		FoResponse<Void> foResponse = foAuthManager
-				.generateRandomLoginCode(request);
-		return FoRestUtils.fromFoResponse(foResponse, context);
-	}
-
-
-
 	private Response toRestResponse(OAuthResponse oltuOauthResponse) {
 		return Response.status(oltuOauthResponse.getResponseStatus())
 				.entity(oltuOauthResponse.getBody()).build();

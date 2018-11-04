@@ -46,7 +46,22 @@ create table RandomLoginCode (
   createdAt timestamp not null,
   updatedAt timestamp null ,
   primary key (id),
-  unique key uni_uid(userId)
+  unique key uni_random_code_uid(userId)
+) engine=innodb  default charset=utf8;
+
+
+drop table if exists EmailVerificationDigest;
+create table EmailVerificationDigest (
+  id bigint(15) not null auto_increment,
+  digestStr varchar(255) not null,
+  expiresAt datetime not null,
+  userId bigint(15) not null,
+  createdBy varchar(255) not null,
+  updatedBy varchar(255) null,
+  createdAt timestamp not null,
+  updatedAt timestamp null ,
+  primary key (id),
+  unique key uni__email_verification_digest_uid(userId)
 ) engine=innodb  default charset=utf8;
 
 

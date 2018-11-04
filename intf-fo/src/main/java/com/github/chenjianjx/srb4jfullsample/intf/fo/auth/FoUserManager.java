@@ -15,7 +15,17 @@ public interface FoUserManager {
 	 * @param request
 	 * @return
 	 */
-	public FoResponse<Void> changePassword(Long currentUserId,
+	FoResponse<Void> changePassword(Long currentUserId,
 			FoChangePasswordRequest request);
 
+	/**
+	 * start email verification.  An email containing the email verification link will be sent
+     */
+	FoResponse<Void> startEmailVerification(Long currentUserId, String verificationUrlBase, String digestParamName);
+
+	/**
+	 * verify the email verification link
+	 * @param digest the key information in the verification link
+     */
+	FoResponse<Void> verifyEmail(String digest);
 }

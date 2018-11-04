@@ -79,6 +79,7 @@ public interface FoConstants {
 	public static final int LONG_SESSION_ACCESS_TOKEN_LIFESPAN = 3600 * 24 * 14;
 	public static final int RANDOM_LOGIN_CODE_LIFESPAN = 3600 / 2;
 
+
 	/* some validation constants */
 	public static final String PASSWORD_PATTERN = "((?=.*\\d)(?=.*[a-zA-Z]).{6,20})";	
 	//public static final String PASSWORD_ERR_TIP = "Password should contain at least 1 digit and 1 English letter, 6-20 characters long and should only digits, English letters and punctuations.";
@@ -87,4 +88,8 @@ public interface FoConstants {
 	public static final String SOCIAL_LOGIN_CLIENT_TYPE_TIP = "The client type, including 'desktop', 'web' and 'mobile'.";
 	public static final String SOCIAL_LOGIN_SOURCE_TIP = "Currently it supports: 'google' and 'facebook' .";
 
+	/*email verification related*/
+	public static final String PATH_EMAIL_VERIFICATION_PROCESS_VERIFY = "/email-verification-process/verify";
+	public static final String EMAIL_VERIFICATION_DIGEST_PARAM_NAME = "d";
+	public static final int EMAIL_VERIFICATION_DIGEST_LIFESPAN = 3600 * 24 * 14;
 }

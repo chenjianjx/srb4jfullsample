@@ -1,19 +1,23 @@
 package com.github.chenjianjx.srb4jfullsample.impl.fo.user;
 
-import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.NULL_REQUEST_BEAN_TIP;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.AuthService;
+import com.github.chenjianjx.srb4jfullsample.impl.biz.user.EmailVerificationDigest;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.User;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.UserRepo;
+import com.github.chenjianjx.srb4jfullsample.impl.biz.user.UserService;
 import com.github.chenjianjx.srb4jfullsample.impl.fo.common.FoManagerImplBase;
 import com.github.chenjianjx.srb4jfullsample.impl.util.infrahelp.beanvalidae.MyValidator;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoChangePasswordRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoUserManager;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
+import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.NULL_REQUEST_BEAN_TIP;
 
 /**
  * 
@@ -24,6 +28,8 @@ import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
 public class FoUserManagerImpl extends FoManagerImplBase implements
 		FoUserManager {
 
+	private static final Logger logger = LoggerFactory.getLogger(FoUserManagerImpl.class);
+
 	@Resource
 	MyValidator myValidator;
 
@@ -32,6 +38,9 @@ public class FoUserManagerImpl extends FoManagerImplBase implements
 
 	@Resource
 	UserRepo userRepo;
+
+	@Resource
+	UserService userService;
 
 	@Override
 	public FoResponse<Void> changePassword(Long currentUserId,
@@ -69,5 +78,37 @@ public class FoUserManagerImpl extends FoManagerImplBase implements
 
 		return FoResponse.success(null);
 
+	}
+
+	@Override
+	public FoResponse<Void> startEmailVerification(Long currentUserId, String verificationUrlBase, String digestParamName) {
+
+		User currentUser = getCurrentUserConsideringInvalidId(currentUserId);
+		if (currentUser == null) {
+			return buildNotLoginErr();
+		}
+
+		User user = currentUser;
+		if (user.isEmailVerified()) {
+			return FoResponse.userErrResponse(
+					FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Your email has been verified.");
+		}
+
+		EmailVerificationDigest digest = userService.saveNewEmailVerificationDigestForUser(user);
+
+		// send the email
+		try {
+			userService.sendEmailForEmailVerificationAsync(user, digest, verificationUrlBase, digestParamName);
+		} catch (Exception e) {
+			logger.error("fail to send email verification link asyncly  for user "
+					+ user.getPrincipal(), e);
+		}
+
+		return FoResponse.success(null);
+	}
+
+	@Override
+	public FoResponse<Void> verifyEmail(String digest) {
+		return null;
 	}
 }

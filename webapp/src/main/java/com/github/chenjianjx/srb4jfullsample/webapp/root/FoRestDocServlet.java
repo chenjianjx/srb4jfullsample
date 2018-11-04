@@ -9,11 +9,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoRestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoSwaggerJaxrsConfig;
 import com.github.chenjianjx.srb4jfullsample.webapp.infrahelper.WebAppEnvProp;
 import org.swagger2html.Swagger2Html;
 
@@ -38,8 +38,8 @@ public class FoRestDocServlet extends HttpServlet {
 		WebApplicationContext ctx = WebApplicationContextUtils
 				.getRequiredWebApplicationContext(getServletContext());
 		props = ctx.getBean(WebAppEnvProp.class);
-		swaggerUrl = FoSwaggerJaxrsConfig.getResourceBasePath(servletConfig,
-				props) + "/swagger.json";
+		String contextPath = servletConfig.getServletContext().getContextPath();
+		swaggerUrl = FoRestUtils.getResourceBasePath(props, contextPath) + "/swagger.json";
 	}
 
 	@Override

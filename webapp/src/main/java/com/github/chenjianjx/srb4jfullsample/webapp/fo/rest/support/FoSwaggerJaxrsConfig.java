@@ -7,7 +7,6 @@ import java.io.IOException;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServlet;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.FrPlaceholder;
@@ -39,7 +38,8 @@ public class FoSwaggerJaxrsConfig extends HttpServlet {
 			return;
 		}
 
-		String basePath = getResourceBasePath(servletConfig, props);
+		String contextPath = servletConfig.getServletContext().getContextPath();
+		String basePath = FoRestUtils.getResourceBasePath(props, contextPath);
 		BeanConfig swaggerConfig = new BeanConfig();
 
 		String scheme = null;
@@ -76,26 +76,6 @@ public class FoSwaggerJaxrsConfig extends HttpServlet {
 				.getName());
 		swaggerConfig.setScan(true);
 
-	}
-
-	/**
-	 * will not end with "/"
-	 * 
-	 * @param servletConfig
-	 * @param props
-	 * @return
-	 */
-	public static String getResourceBasePath(ServletConfig servletConfig,
-			WebAppEnvProp props) {
-		String contextPath = servletConfig.getServletContext().getContextPath();
-		String schemeAndHost = props.getSchemeAndHost();
-		String afterHost = StringUtils.replace(contextPath + "/fo/rest", "//",
-				"/");
-		if (afterHost.startsWith("/")) {
-			afterHost = afterHost.substring(1);
-		}
-		String url = schemeAndHost + afterHost;
-		return url;
 	}
 
 
