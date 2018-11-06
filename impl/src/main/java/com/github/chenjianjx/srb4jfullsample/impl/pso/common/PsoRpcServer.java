@@ -34,7 +34,7 @@ public class PsoRpcServer implements ApplicationContextAware {
 			throw new IllegalArgumentException(
 					"You have included the partner system oriented rpc module, but you didn't set up the hostname and port well. "
 							+ "Please set up 'psoRpcServerHost' and 'psoRpcServerHostPort' in the properties file. "
-							+ "VERY IMPORTANT: The host and port should only be accessble from intranet");
+							+ "VERY IMPORTANT: The host and port should only be accessible from intranet");
 		}
 		InetSocketAddress address = new InetSocketAddress(psoConfig.getHost(),
 				psoConfig.getPort());

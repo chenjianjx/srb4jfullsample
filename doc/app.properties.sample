@@ -1,6 +1,6 @@
 #note: no whitespace before or after a value
 #note: the keys should look like a java variable
-#note: don't remove any placeholder even if you don't the configuration
+#note: don't remove any placeholder entry even if you don't need to configure its value
 
 dbHost=someHost
 dbPort=3306
