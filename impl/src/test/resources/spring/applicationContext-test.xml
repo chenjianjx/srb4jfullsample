@@ -41,12 +41,6 @@
 	</bean>
 
 
-	<bean id="psoConfig" class="com.github.chenjianjx.srb4jfullsample.impl.pso.common.PsoConfig">
-		<property name="host" value="localhost" />
-		<property name="port" value="7070" />
-	</bean>
-
-
 	<import resource="classpath*:spring/spring-impl.xml" />
 
 </beans>

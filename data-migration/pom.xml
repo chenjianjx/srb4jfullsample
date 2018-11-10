@@ -36,7 +36,8 @@
                         </goals>
                         <configuration>
                             <files>
-                                <file>${user.home}/srb4jfullsample/app.properties</file>
+                                <file>${project.parent.basedir}/webapp/src/main/resources/config/app.properties</file>
+                                <file>${project.parent.basedir}/webapp/src/main/resources/config/app.override.${env}.properties</file>
                             </files>
                         </configuration>
                     </execution>

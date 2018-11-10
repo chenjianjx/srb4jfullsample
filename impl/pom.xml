@@ -26,12 +26,6 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>com.github.chenjianjx</groupId>
-			<artifactId>srb4jfullsample-intf-pso</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-
 
 
 		<dependency>

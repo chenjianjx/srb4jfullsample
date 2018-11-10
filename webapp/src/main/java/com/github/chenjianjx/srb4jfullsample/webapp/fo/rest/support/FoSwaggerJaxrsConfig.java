@@ -59,14 +59,14 @@ public class FoSwaggerJaxrsConfig extends HttpServlet {
 			}
 		}
 
-		String title = "Srb4j Demo";
-		String email = "chenjianjx@gmail.com";
+		String title = "srb4jfullsample";
+		String email = "srb4jfullsample@gmail.com";
 		String desc = getDesc();
 
 		swaggerConfig.setSchemes(new String[] { scheme });
 		swaggerConfig.setTitle(title);
 		swaggerConfig.setVersion("1.0-SNAPSHOT");
-		swaggerConfig.setDescription(desc.toString());
+		swaggerConfig.setDescription(desc);
 
 		swaggerConfig.setContact(email);
 		swaggerConfig.setHost(host);

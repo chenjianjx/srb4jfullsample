@@ -163,12 +163,15 @@
 									<mainClass>com.github.chenjianjx.srb4jfullsample.webapp.system.WebAppStartup
 									</mainClass>
 								</transformer>
+
+								<!-- https://stackoverflow.com/a/34333708/301447 -->
 								<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
 									<resource>META-INF/spring.handlers</resource>
 								</transformer>
 								<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
 									<resource>META-INF/spring.schemas</resource>
 								</transformer>
+
 							</transformers>
 
 						</configuration>
