@@ -3,12 +3,13 @@ package com.github.chenjianjx.srb4jfullsample.impl.itcase.biz.user;
 
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.EmailVerificationDigest;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.EmailVerificationDigestRepo;
-import com.github.chenjianjx.srb4jfullsample.impl.itcase.support.MySpringJunit4ClassRunner;
+import com.github.chenjianjx.srb4jfullsample.impl.itcase.BaseITCase;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import java.util.GregorianCalendar;
@@ -18,9 +19,9 @@ import java.util.GregorianCalendar;
  * @author chenjianjx@gmail.com
  *
  */
-@RunWith(MySpringJunit4ClassRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/spring/applicationContext-test.xml" })
-public class EmailVerificationDigestRepoITCase {
+public class EmailVerificationDigestRepoITCase extends BaseITCase {
 
 	@Resource
 	EmailVerificationDigestRepo repo;

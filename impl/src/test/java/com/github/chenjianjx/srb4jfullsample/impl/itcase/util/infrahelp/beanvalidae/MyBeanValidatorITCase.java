@@ -5,21 +5,22 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
+import com.github.chenjianjx.srb4jfullsample.impl.itcase.BaseITCase;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
-import com.github.chenjianjx.srb4jfullsample.impl.itcase.support.MySpringJunit4ClassRunner;
 import com.github.chenjianjx.srb4jfullsample.impl.util.infrahelp.beanvalidae.MyValidator;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * 
  * @author chenjianjx@gmail.com
  *
  */
-@RunWith(MySpringJunit4ClassRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/spring/applicationContext-test.xml" })
-public class MyBeanValidatorITCase {
+public class MyBeanValidatorITCase extends BaseITCase {
 
 	@Resource
 	MyValidator myBeanValidator;

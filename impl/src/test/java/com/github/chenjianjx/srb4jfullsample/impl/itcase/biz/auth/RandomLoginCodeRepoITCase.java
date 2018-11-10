@@ -4,6 +4,7 @@ import java.util.GregorianCalendar;
 
 import javax.annotation.Resource;
 
+import com.github.chenjianjx.srb4jfullsample.impl.itcase.BaseITCase;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,16 +12,16 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.ContextConfiguration;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.RandomLoginCode;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.RandomLoginCodeRepo;
-import com.github.chenjianjx.srb4jfullsample.impl.itcase.support.MySpringJunit4ClassRunner;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * 
  * @author chenjianjx@gmail.com
  *
  */
-@RunWith(MySpringJunit4ClassRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/spring/applicationContext-test.xml" })
-public class RandomLoginCodeRepoITCase {
+public class RandomLoginCodeRepoITCase extends BaseITCase {
 
 	@Resource
 	RandomLoginCodeRepo repo;

@@ -26,12 +26,24 @@ public class AppPropertiesFactory implements FactoryBean<Properties> {
     private static final String ENVIRONMENT_KEY = "environment";
     private static final String DEFAULT_ENV = "dev";
 
+    private Properties properties;
+
     static {
         decideEnvironment();
     }
 
+    public AppPropertiesFactory() {
+    }
+
 
     public Properties getProperties() throws Exception {
+        if (properties == null) {
+            properties = buildProperties();
+        }
+        return this.properties;
+    }
+
+    private Properties buildProperties() throws org.apache.commons.configuration2.ex.ConfigurationException {
         String overridePropFilename = "app.override." + environment + ".properties";
 
         Parameters params = new Parameters();
