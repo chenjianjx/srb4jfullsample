@@ -6,6 +6,7 @@ import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.DockerClient.LogsParam;
 import com.spotify.docker.client.LogStream;
 import com.spotify.docker.client.exceptions.DockerException;
+import com.spotify.docker.client.messages.Container;
 import com.spotify.docker.client.messages.ContainerConfig;
 import com.spotify.docker.client.messages.ContainerCreation;
 import com.spotify.docker.client.messages.ContainerInfo;
@@ -22,12 +23,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by chenjianjx@gmail.com on 10/11/18.
  */
 public class BaseITCase {
 
+    private static final String MYSQL_CONTAINER_NAME = "srb4jfullsample_db_container";
     private static Logger logger;
     private static final int MYSQL_PORT = 10603;
     private static final String MYSQL_SCHEMA = "srb4jfullsample_integration_test";
@@ -44,7 +47,12 @@ public class BaseITCase {
         logger = LoggerFactory.getLogger(BaseITCase.class);
 
         docker = new DefaultDockerClient("unix:///var/run/docker.sock");
-        createMySqlContainer(docker);
+
+        logger.info("mysqlContainerId is " + mysqlContainerId);
+        if (mysqlContainerId == null) {
+            createMySqlContainer(docker);
+        }
+
     }
 
     private static void createMySqlContainer(DockerClient docker) throws DockerException, InterruptedException {
@@ -57,6 +65,13 @@ public class BaseITCase {
         }
 
         logger.info("Mysql docker image is ready");
+
+        Optional<Container> runningContainer = docker.listContainers().stream().filter(c -> c.names().get(0).contains(MYSQL_CONTAINER_NAME)).findFirst();
+        if (runningContainer.isPresent()) {
+            logger.info("Mysql docker container is already running. Killing it.");
+            docker.killContainer(runningContainer.get().id());
+            docker.removeContainer(runningContainer.get().id());
+        }
 
         final Map<String, List<PortBinding>> portBindings = new HashMap<>();
         portBindings.put("3306", Arrays.asList(PortBinding.of("127.0.0.1", MYSQL_PORT)));
@@ -72,7 +87,7 @@ public class BaseITCase {
                 .env("MYSQL_ROOT_PASSWORD=" + MYSQL_ROOT_PASSWORD)
                 .build();
 
-        final ContainerCreation creation = docker.createContainer(containerConfig);
+        final ContainerCreation creation = docker.createContainer(containerConfig, MYSQL_CONTAINER_NAME);
         mysqlContainerId = creation.id();
         docker.startContainer(mysqlContainerId);
         logger.info("Mysql docker container is starting up...");
@@ -111,9 +126,16 @@ public class BaseITCase {
 
     @AfterClass
     public static void tearDown() throws DockerException, InterruptedException {
-        docker.killContainer(mysqlContainerId);
-        docker.removeContainer(mysqlContainerId);
-        docker.close();
+        for (int i = 0; i < 5; i++) {
+            System.out.println("===================================================");
+        }
+        for (int i = 0; i < 1; i++) {
+            System.out.println("====Separator of integration tests=================");
+        }
+        for (int i = 0; i < 5; i++) {
+            System.out.println("===================================================");
+        }
+
     }
 
 }

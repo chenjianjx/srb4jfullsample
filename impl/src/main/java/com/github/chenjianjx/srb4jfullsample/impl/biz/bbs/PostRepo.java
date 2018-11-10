@@ -34,7 +34,7 @@ public interface PostRepo {
 	@Update("update Post set content = #{content}, updatedBy = #{updatedBy}, updatedAt = #{updatedAt}  where Id = #{id}")
 	public void updatePost(Post newPost);
 
-	@Delete("delete from post where id = #{id}")
+	@Delete("delete from Post where id = #{id}")
 	public void deletePostById(long id);
 
 }
