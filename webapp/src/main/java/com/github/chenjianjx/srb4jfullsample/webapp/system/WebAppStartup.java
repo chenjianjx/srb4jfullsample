@@ -4,15 +4,8 @@ package com.github.chenjianjx.srb4jfullsample.webapp.system;
 import com.github.chenjianjx.srb4jfullsample.datamigration.MigrationRunner;
 import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.BoAllInOneServlet;
 import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoSwaggerJaxrsConfig;
+import com.github.chenjianjx.srb4jfullsample.webapp.infrahelper.AppPropertiesFactory;
 import com.github.chenjianjx.srb4jfullsample.webapp.root.FoRestDocServlet;
-import org.apache.commons.configuration2.CombinedConfiguration;
-import org.apache.commons.configuration2.FileBasedConfiguration;
-import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
-import org.apache.commons.configuration2.builder.fluent.Parameters;
-import org.apache.commons.configuration2.ex.ConfigurationException;
-import org.apache.commons.configuration2.tree.OverrideCombiner;
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -24,9 +17,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.context.ContextLoaderListener;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.EventListener;
+import java.util.Properties;
 
 /**
  * The webapp starter, based on an embedded jetty
@@ -35,35 +28,25 @@ import java.util.EventListener;
 public class WebAppStartup {
 
     private static final Logger logger = LoggerFactory.getLogger(WebAppStartup.class);
-    public static final String ENVIRONMENT_KEY = "environment";
-    public static final String DEFAULT_ENV = "dev";
-
     private static StartupConfig startupConfig;
-    private static String environment;
+    private static AppPropertiesFactory appPropertiesFactory = new AppPropertiesFactory();
 
     public static void main(String[] args) throws Exception {
-        initializeEnv();
+
 
         loadStartupConfig();
 
         //run migration first
         if (startupConfig.dataMigrationOnStartup) {
             new MigrationRunner().run(startupConfig.jdbcUrl, startupConfig.dbUsername, startupConfig.dbPassword);
+        } else {
+            logger.warn("No data migration will be run during system startup");
         }
 
 
         startServer(startupConfig);
     }
 
-    private static void initializeEnv() {
-        environment = System.getProperty(ENVIRONMENT_KEY);
-        if (StringUtils.isBlank(environment)) {
-            environment = DEFAULT_ENV;
-            System.setProperty(ENVIRONMENT_KEY, environment); //Note: spring context will read this system property
-        }
-
-
-    }
 
     private static void startServer(StartupConfig startupConfig) throws Exception {
         Server server = new Server(startupConfig.port);
@@ -118,48 +101,30 @@ public class WebAppStartup {
         return holder;
     }
 
-    private static StartupConfig loadStartupConfig() throws ConfigurationException, MalformedURLException {
+    private static StartupConfig loadStartupConfig() throws Exception {
 
-        String overridePropFilename = "app.override." + environment + ".properties";
-
-
-        Parameters params = new Parameters();
-
-        FileBasedConfigurationBuilder<FileBasedConfiguration> base =
-                new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
-                        .configure(params.properties().setURL(WebAppStartup.class.getResource("/config/app.properties")));
-
-        FileBasedConfigurationBuilder<FileBasedConfiguration> override =
-                new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
-                        .configure(params.properties().setURL(WebAppStartup.class.getResource("/config/" + overridePropFilename)));
-
-        CombinedConfiguration config = new CombinedConfiguration(new OverrideCombiner());
-        config.addConfiguration(override.getConfiguration());
-        config.addConfiguration(base.getConfiguration());
-
+        Properties properties = appPropertiesFactory.getProperties();
 
         startupConfig = new StartupConfig();
-        startupConfig.environment = environment;
 
-        String dbHost = config.getString("dbHost");
-        int dbPort = config.getInt("dbPort");
-        String dbSchema = config.getString("dbSchema");
+        String dbHost = (String) properties.get("dbHost");
+        int dbPort = Integer.valueOf((String) properties.get("dbPort"));
+        String dbSchema = (String) properties.get("dbSchema");
         startupConfig.jdbcUrl = String.format("jdbc:mysql://%s:%s/%s", dbHost, dbPort, dbSchema);
 
-        startupConfig.dbUsername = config.getString("dbUsername");
-        startupConfig.dbPassword = config.getString("dbPassword");
+        startupConfig.dbUsername = (String) properties.get("dbUsername");
+        startupConfig.dbPassword = (String) properties.get("dbPassword");
 
-        String schemeAndHost = config.getString("schemeAndHost");
+        String schemeAndHost = (String) properties.get("schemeAndHost");
         URL url = new URL(schemeAndHost);
         startupConfig.port = url.getPort();
-
-        startupConfig.dataMigrationOnStartup = config.getBoolean("dataMigrationOnStartup");
+        startupConfig.dataMigrationOnStartup = Boolean.valueOf((String) properties.get("dataMigrationOnStartup"));
 
         return startupConfig;
     }
 
     private static final class StartupConfig {
-        public String environment;
+
 
         public String jdbcUrl;
         public String dbUsername;

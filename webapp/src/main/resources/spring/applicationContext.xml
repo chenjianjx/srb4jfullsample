@@ -5,20 +5,15 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
        ">
 
-    <context:component-scan base-package="com.github.chenjianjx"/>
+    <context:component-scan base-package="com.github.chenjianjx.srb4jfullsample"/>
 
     <bean id="propertyConfigurer"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 
-        <property name="fileEncoding" value="utf-8"/>
-        <property name="locations">
-            <list>
-                <value>classpath:config/app.properties</value>
-                <value>classpath:config/app.override.${env}.properties</value>
-            </list>
+        <property name="properties">
+            <bean class="com.github.chenjianjx.srb4jfullsample.webapp.infrahelper.AppPropertiesFactory"/>
         </property>
     </bean>
-
 
     <import resource="classpath*:spring/**/spring-*.xml"/>
 
