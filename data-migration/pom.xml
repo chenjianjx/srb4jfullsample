@@ -54,7 +54,8 @@
                             <files>
                                 <file>${project.parent.basedir}/webapp/src/main/resources/config/app.properties</file>
                                 <file>
-                                    ${project.parent.basedir}/webapp/src/main/resources/config/app.override.${env}.properties
+                                    <!-- For now let's say this plugin should be only used during local env -->
+                                    ${project.parent.basedir}/webapp/src/main/resources/config/app.override.dev.properties
                                 </file>
                             </files>
                         </configuration>

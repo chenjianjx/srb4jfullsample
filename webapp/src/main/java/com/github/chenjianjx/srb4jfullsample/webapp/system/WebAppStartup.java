@@ -35,8 +35,11 @@ import java.util.EventListener;
 public class WebAppStartup {
 
     private static final Logger logger = LoggerFactory.getLogger(WebAppStartup.class);
+    public static final String ENVIRONMENT_KEY = "environment";
+    public static final String DEFAULT_ENV = "dev";
+
     private static StartupConfig startupConfig;
-    private static String env;
+    private static String environment;
 
     public static void main(String[] args) throws Exception {
         initializeEnv();
@@ -53,10 +56,10 @@ public class WebAppStartup {
     }
 
     private static void initializeEnv() {
-        env = System.getProperty("env");
-        if (StringUtils.isBlank(env)) {
-            env = "dev";
-            System.setProperty("env", env); //Note: spring context will read this system property
+        environment = System.getProperty(ENVIRONMENT_KEY);
+        if (StringUtils.isBlank(environment)) {
+            environment = DEFAULT_ENV;
+            System.setProperty(ENVIRONMENT_KEY, environment); //Note: spring context will read this system property
         }
 
 
@@ -117,7 +120,7 @@ public class WebAppStartup {
 
     private static StartupConfig loadStartupConfig() throws ConfigurationException, MalformedURLException {
 
-        String overridePropFilename = "app.override." + env + ".properties";
+        String overridePropFilename = "app.override." + environment + ".properties";
 
 
         Parameters params = new Parameters();
@@ -136,7 +139,7 @@ public class WebAppStartup {
 
 
         startupConfig = new StartupConfig();
-        startupConfig.env = env;
+        startupConfig.environment = environment;
 
         String dbHost = config.getString("dbHost");
         int dbPort = config.getInt("dbPort");
@@ -156,7 +159,7 @@ public class WebAppStartup {
     }
 
     private static final class StartupConfig {
-        public String env;
+        public String environment;
 
         public String jdbcUrl;
         public String dbUsername;

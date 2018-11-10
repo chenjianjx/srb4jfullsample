@@ -1,3 +1,3 @@
 # srb4jfullsample
 
-[srb4j](https://github.com/chenjianjx/srb4j) generated sample + partner-system-oriented modules
+[srb4j](https://github.com/chenjianjx/srb4j) generated sample
