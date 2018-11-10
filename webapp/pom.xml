@@ -28,6 +28,12 @@
 
 		<dependency>
 			<groupId>com.github.chenjianjx</groupId>
+			<artifactId>srb4jfullsample-data-migration</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.chenjianjx</groupId>
 			<artifactId>srb4jfullsample-impl</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>runtime</scope>
@@ -58,7 +64,6 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -100,9 +105,13 @@
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-multipart</artifactId>
-
 		</dependency>
 
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-configuration2</artifactId>
+		</dependency>
 
 
 		<dependency>

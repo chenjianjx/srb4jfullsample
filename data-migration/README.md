@@ -1,4 +1,9 @@
-# How to run data migration  
+# What is this project for? 
+
+* Run data migration with Maven
+* Provide data migration tool in Java
+
+# How to run data migration with Maven 
 
 ````
 mvn initialize flyway:migrate 

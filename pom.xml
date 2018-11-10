@@ -20,6 +20,7 @@
 	</properties>
 
 	<modules>
+		<module>data-migration</module>
 		<module>impl</module>
 		<module>intf-fo</module>
 		<module>intf-bo</module>
@@ -284,6 +285,12 @@
 				<version>2.2.4</version>
 			</dependency>
 
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-configuration2</artifactId>
+				<version>2.4</version>
+			</dependency>
+
 			<!-- oauth -->
 			<dependency>
 				<groupId>org.apache.oltu.oauth2</groupId>
@@ -314,6 +321,14 @@
 				<groupId>com.restfb</groupId>
 				<artifactId>restfb</artifactId>
 				<version>1.18.1</version>
+			</dependency>
+
+
+			<!--For java-based data migration -->
+			<dependency>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-core</artifactId>
+				<version>5.2.1</version>
 			</dependency>
 
 			<!-- test -->

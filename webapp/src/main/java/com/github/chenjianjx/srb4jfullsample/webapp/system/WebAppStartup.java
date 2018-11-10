@@ -1,9 +1,18 @@
 package com.github.chenjianjx.srb4jfullsample.webapp.system;
 
 
+import com.github.chenjianjx.srb4jfullsample.datamigration.MigrationRunner;
 import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.BoAllInOneServlet;
 import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoSwaggerJaxrsConfig;
 import com.github.chenjianjx.srb4jfullsample.webapp.root.FoRestDocServlet;
+import org.apache.commons.configuration2.CombinedConfiguration;
+import org.apache.commons.configuration2.FileBasedConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.tree.OverrideCombiner;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -15,6 +24,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.context.ContextLoaderListener;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.EventListener;
 
 /**
@@ -24,16 +35,41 @@ import java.util.EventListener;
 public class WebAppStartup {
 
     private static final Logger logger = LoggerFactory.getLogger(WebAppStartup.class);
+    private static StartupConfig startupConfig;
+    private static String env;
 
     public static void main(String[] args) throws Exception {
+        initializeEnv();
+
+        loadStartupConfig();
+
+        //run migration first
+        if (startupConfig.dataMigrationOnStartup) {
+            new MigrationRunner().run(startupConfig.jdbcUrl, startupConfig.dbUsername, startupConfig.dbPassword);
+        }
 
 
-        Server server = new Server(8080);
+        startServer(startupConfig);
+    }
+
+    private static void initializeEnv() {
+        env = System.getProperty("env");
+        if (StringUtils.isBlank(env)) {
+            env = "dev";
+            System.setProperty("env", env); //Note: spring context will read this system property
+        }
+
+
+    }
+
+    private static void startServer(StartupConfig startupConfig) throws Exception {
+        Server server = new Server(startupConfig.port);
         server.setHandler(createHandler());
         server.start();
         logger.info("Server started up");
         server.join();
     }
+
 
     private static Handler createHandler() throws IOException {
         WebAppContext contextHandler = new WebAppContext(new ClassPathResource("webroot").getURI().toString(), "/");
@@ -79,5 +115,56 @@ public class WebAppStartup {
         return holder;
     }
 
+    private static StartupConfig loadStartupConfig() throws ConfigurationException, MalformedURLException {
 
+        String overridePropFilename = "app.override." + env + ".properties";
+
+
+        Parameters params = new Parameters();
+
+        FileBasedConfigurationBuilder<FileBasedConfiguration> base =
+                new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
+                        .configure(params.properties().setURL(WebAppStartup.class.getResource("/config/app.properties")));
+
+        FileBasedConfigurationBuilder<FileBasedConfiguration> override =
+                new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
+                        .configure(params.properties().setURL(WebAppStartup.class.getResource("/config/" + overridePropFilename)));
+
+        CombinedConfiguration config = new CombinedConfiguration(new OverrideCombiner());
+        config.addConfiguration(override.getConfiguration());
+        config.addConfiguration(base.getConfiguration());
+
+
+        startupConfig = new StartupConfig();
+        startupConfig.env = env;
+
+        String dbHost = config.getString("dbHost");
+        int dbPort = config.getInt("dbPort");
+        String dbSchema = config.getString("dbSchema");
+        startupConfig.jdbcUrl = String.format("jdbc:mysql://%s:%s/%s", dbHost, dbPort, dbSchema);
+
+        startupConfig.dbUsername = config.getString("dbUsername");
+        startupConfig.dbPassword = config.getString("dbPassword");
+
+        String schemeAndHost = config.getString("schemeAndHost");
+        URL url = new URL(schemeAndHost);
+        startupConfig.port = url.getPort();
+
+        startupConfig.dataMigrationOnStartup = config.getBoolean("dataMigrationOnStartup");
+
+        return startupConfig;
+    }
+
+    private static final class StartupConfig {
+        public String env;
+
+        public String jdbcUrl;
+        public String dbUsername;
+        public String dbPassword;
+
+        public int port;
+
+        public boolean dataMigrationOnStartup;
+
+    }
 }

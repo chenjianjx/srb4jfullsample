@@ -18,9 +18,25 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
     </dependencies>
-
-
     <build>
         <plugins>
             <!-- load properties from the system's app configuration file -->
@@ -37,7 +53,9 @@
                         <configuration>
                             <files>
                                 <file>${project.parent.basedir}/webapp/src/main/resources/config/app.properties</file>
-                                <file>${project.parent.basedir}/webapp/src/main/resources/config/app.override.${env}.properties</file>
+                                <file>
+                                    ${project.parent.basedir}/webapp/src/main/resources/config/app.override.${env}.properties
+                                </file>
                             </files>
                         </configuration>
                     </execution>
@@ -55,7 +73,7 @@
                     <password>${dbPassword}</password>
                     <url>jdbc:mysql://${dbHost}:${dbPort}/${dbSchema}</url>
                     <locations>
-                        <location>filesystem:sql</location>
+                        <location>classpath:data-migration-flyway-sql</location>
                     </locations>
                 </configuration>
             </plugin>
