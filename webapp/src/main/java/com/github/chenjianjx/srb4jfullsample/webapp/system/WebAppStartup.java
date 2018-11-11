@@ -4,6 +4,7 @@ package com.github.chenjianjx.srb4jfullsample.webapp.system;
 import com.github.chenjianjx.srb4jfullsample.datamigration.MigrationRunner;
 import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.BoAllInOneServlet;
 import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoSwaggerJaxrsConfig;
+import com.github.chenjianjx.srb4jfullsample.webapp.infrahelper.rest.spring.ExitOnInitializationErrorContextLoaderListener;
 import com.github.chenjianjx.srb4jfullsample.webapp.root.FoRestDocServlet;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -81,7 +82,7 @@ public class WebAppStartup {
 
     private static EventListener createSpringContextListener(ServletContextHandler contextHandler) {
         contextHandler.setInitParameter("contextConfigLocation", "classpath:spring/applicationContext.xml");
-        ContextLoaderListener listener = new ContextLoaderListener();
+        ContextLoaderListener listener = new ExitOnInitializationErrorContextLoaderListener();
         return listener;
     }
 
