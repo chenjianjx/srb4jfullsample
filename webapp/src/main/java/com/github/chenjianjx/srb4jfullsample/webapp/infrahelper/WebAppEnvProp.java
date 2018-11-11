@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * the webapp's env-specific properties
+ * some of the webapp's env-specific properties
  * 
  * @author chenjianjx@gmail.com
  *
@@ -16,6 +16,20 @@ public class WebAppEnvProp {
 	private String schemeAndHost;
 
 	private boolean enableSwagger;
+
+	private String smtpHost;
+
+	private int smtpPort;
+
+	@Value("${smtpHost}")
+	public void setSmtpHost(String smtpHost) {
+		this.smtpHost = smtpHost;
+	}
+
+	@Value("${smtpPort}")
+	public void setSmtpPort(int smtpPort) {
+		this.smtpPort = smtpPort;
+	}
 
 	/**
 	 * will end with "/"
@@ -54,4 +68,11 @@ public class WebAppEnvProp {
 		return enableSwagger;
 	}
 
+	public String getSmtpHost() {
+		return smtpHost;
+	}
+
+	public int getSmtpPort() {
+		return smtpPort;
+	}
 }

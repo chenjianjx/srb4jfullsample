@@ -73,6 +73,7 @@ public class WebAppStartup {
         contextHandler.addServlet(foRestSwaggerInitServlet, null);
 
         //add other servlets
+        contextHandler.addServlet(HealthCheckServlet.class, "/health");
         contextHandler.addServlet(FoRestDocServlet.class, "/fo-rest-doc");
         contextHandler.addServlet(BoAllInOneServlet.class, "/bo/portal/*");
 
