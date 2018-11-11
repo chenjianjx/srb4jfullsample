@@ -1,7 +1,6 @@
 package com.github.chenjianjx.srb4jfullsample.democlient.bo.portal;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
@@ -20,11 +19,11 @@ import com.github.chenjianjx.srb4jfullsample.democlient.util.DemoClientUtils;
 public class DemoClientBoPortalTest {
 
 	private static final String BBSADMIN_EMAIL = "bbsadmin@nonexist.com";
-	private static Client mockClient = DemoClientUtils.createRestClient();
+	private static Client httpClient = DemoClientUtils.createRestClient();
 
 	@Test
 	public void loginFormTest() {
-		Response response = mockClient
+		Response response = httpClient
 				.target(DemoClientConstants.BACKEND_BO_PORTAL_URL)
 				.path(DemoClientConstants.BO_LOGIN_PATH).request().get();
 		Assert.assertEquals(200, response.getStatus());
@@ -37,7 +36,7 @@ public class DemoClientBoPortalTest {
 		form.param("email", BBSADMIN_EMAIL);
 		form.param("password", "abc123456");
 
-		Response response = mockClient
+		Response response = httpClient
 				.target(DemoClientConstants.BACKEND_BO_PORTAL_URL)
 				.path(DemoClientConstants.BO_LOGIN_PATH).request()
 				.post(Entity.form(form));
@@ -53,7 +52,7 @@ public class DemoClientBoPortalTest {
 		form.param("email", BBSADMIN_EMAIL);
 		form.param("password", "wrong");
 
-		Response response = mockClient
+		Response response = httpClient
 				.target(DemoClientConstants.BACKEND_BO_PORTAL_URL)
 				.path(DemoClientConstants.BO_LOGIN_PATH).request()
 				.post(Entity.form(form));
