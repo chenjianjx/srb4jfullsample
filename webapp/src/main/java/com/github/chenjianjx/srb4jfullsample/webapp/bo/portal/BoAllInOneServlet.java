@@ -1,21 +1,17 @@
 package com.github.chenjianjx.srb4jfullsample.webapp.bo.portal;
 
-import java.io.IOException;
-import java.util.List;
+import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoAuthManager;
+import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoLocalLoginRequest;
+import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoLoginResult;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoAuthManager;
-import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoLocalLoginRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoLoginResult;
-import com.github.chenjianjx.srb4jfullsample.intf.bo.bbs.BoBbsManager;
-import com.github.chenjianjx.srb4jfullsample.intf.bo.bbs.BoPost;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
+import java.io.IOException;
 
 /**
  * a sample servlet for back office portal to show how bo-portal talks to
@@ -39,7 +35,7 @@ public class BoAllInOneServlet extends HttpServlet {
 				.getRequiredWebApplicationContext(getServletContext());
 
 		BoAuthManager boAuthManager = ctx.getBean(BoAuthManager.class);
-		BoBbsManager boBbsManager = ctx.getBean(BoBbsManager.class);
+
 
 		if (action.endsWith("loginForm")) {
 			gotoLoginPage(req, resp);
@@ -78,19 +74,8 @@ public class BoAllInOneServlet extends HttpServlet {
 			return;
 		}
 
-		if (action.endsWith("bbs")) {
-			FoResponse<List<BoPost>> postListResult = boBbsManager
-					.getAllPostsForBbsAdmin(currentUserId);
-			req.setAttribute("postListResult", postListResult);
-			gotoBbsPage(req, resp);
-			return;
-		}
-		gotoMenuPage(req, resp);
-	}
 
-	private void gotoBbsPage(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		req.getRequestDispatcher("/bo-portal/bbs.jsp").forward(req, resp);
+		gotoMenuPage(req, resp);
 	}
 
 	private void gotoLoginPage(HttpServletRequest req, HttpServletResponse resp)
