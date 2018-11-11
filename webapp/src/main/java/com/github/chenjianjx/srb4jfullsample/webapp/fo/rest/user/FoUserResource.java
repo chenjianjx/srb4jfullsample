@@ -6,7 +6,7 @@ import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoErrorResult;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
 import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoResourceBase;
 import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoRestUtils;
-import com.github.chenjianjx.srb4jfullsample.webapp.infrahelper.WebAppEnvProp;
+import com.github.chenjianjx.srb4jfullsample.webapp.system.WebAppEnvProp;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

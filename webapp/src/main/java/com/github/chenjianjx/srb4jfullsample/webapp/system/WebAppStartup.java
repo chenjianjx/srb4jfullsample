@@ -4,7 +4,6 @@ package com.github.chenjianjx.srb4jfullsample.webapp.system;
 import com.github.chenjianjx.srb4jfullsample.datamigration.MigrationRunner;
 import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.BoAllInOneServlet;
 import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoSwaggerJaxrsConfig;
-import com.github.chenjianjx.srb4jfullsample.webapp.infrahelper.AppPropertiesFactory;
 import com.github.chenjianjx.srb4jfullsample.webapp.root.FoRestDocServlet;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;

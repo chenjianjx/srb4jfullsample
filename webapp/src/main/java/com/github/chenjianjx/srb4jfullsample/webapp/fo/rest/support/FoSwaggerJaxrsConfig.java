@@ -10,7 +10,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.FrPlaceholder;
-import com.github.chenjianjx.srb4jfullsample.webapp.infrahelper.WebAppEnvProp;
+import com.github.chenjianjx.srb4jfullsample.webapp.system.WebAppEnvProp;
 
 /**
  * 

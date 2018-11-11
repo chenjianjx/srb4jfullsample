@@ -1,6 +1,5 @@
 package com.github.chenjianjx.srb4jfullsample.webapp.system;
 
-import com.github.chenjianjx.srb4jfullsample.webapp.infrahelper.WebAppEnvProp;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
@@ -61,7 +60,7 @@ public class HealthCheckServlet extends HttpServlet {
     private boolean checkMailServer(WebApplicationContext ctx) {
 
         try {
-            WebAppEnvProp webAppEnvProp = (WebAppEnvProp) ctx.getBean("webAppEnvProp");
+            WebAppEnvProp webAppEnvProp = (WebAppEnvProp) ctx.getBean(WebAppEnvProp.class);
             Socket socket = new Socket(webAppEnvProp.getSmtpHost(), webAppEnvProp.getSmtpPort());
             socket.close();
         } catch (IOException e) {
