@@ -26,7 +26,6 @@
         <module>intf-fo</module>
         <module>intf-bo</module>
         <module>webapp</module>
-        <module>demo-client</module>
     </modules>
 
 
