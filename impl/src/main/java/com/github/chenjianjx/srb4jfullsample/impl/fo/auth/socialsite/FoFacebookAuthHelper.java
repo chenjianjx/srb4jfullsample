@@ -1,9 +1,5 @@
 package com.github.chenjianjx.srb4jfullsample.impl.fo.auth.socialsite;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import com.github.chenjianjx.srb4jfullsample.impl.biz.client.Client;
 import com.github.chenjianjx.srb4jfullsample.impl.util.tools.lang.MyDuplet;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoAuthTokenResult;
@@ -11,13 +7,18 @@ import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
 import com.github.scribejava.apis.FacebookApi;
 import com.github.scribejava.core.builder.ServiceBuilder;
-import com.github.scribejava.core.model.Token;
-import com.github.scribejava.core.model.Verifier;
+import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
 import com.restfb.Version;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 
@@ -93,12 +94,17 @@ public class FoFacebookAuthHelper implements FoSocialSiteAuthHelper {
 		}
 
 		// exchange the code for token
-		final OAuth20Service service = new ServiceBuilder()
-				.apiKey(facebookClientId).apiSecret(facebookClientSecret)
+		final OAuth20Service service = new ServiceBuilder(facebookClientId)
+				.apiSecret(facebookClientSecret)
 				.scope("email").callback(redirectUri)
 				.build(FacebookApi.instance());
-		Token facebookTokenObj = service.getAccessToken(new Verifier(authCode));
-		String token = facebookTokenObj.getToken();
+		OAuth2AccessToken facebookTokenObj = null;
+		try {
+			facebookTokenObj = service.getAccessToken(authCode);
+		} catch (IOException|InterruptedException|ExecutionException e) {
+			throw new RuntimeException(e);
+		}
+		String token = facebookTokenObj.getAccessToken();
 		// get email by token
 		return this.getEmailFromToken(token, clientType);
 
