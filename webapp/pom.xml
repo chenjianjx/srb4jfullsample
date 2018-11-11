@@ -184,6 +184,11 @@
 			<artifactId>jsp-2.1-glassfish</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>
