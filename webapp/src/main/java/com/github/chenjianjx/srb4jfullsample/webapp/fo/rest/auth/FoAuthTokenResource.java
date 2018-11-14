@@ -455,7 +455,7 @@ public class FoAuthTokenResource extends FoResourceBase {
 		}
 	}
 
-	private static interface AppLayerAuthCommand {
+	private interface AppLayerAuthCommand {
 		FoResponse<FoAuthTokenResult> doAuth(HttpServletRequest servletRequest,
 				OAuthUnauthenticatedTokenRequest oltuRequest);
 	}

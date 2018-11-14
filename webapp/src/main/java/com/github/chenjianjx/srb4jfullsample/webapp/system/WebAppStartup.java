@@ -75,7 +75,7 @@ public class WebAppStartup {
         //add other servlets
         contextHandler.addServlet(HealthCheckServlet.class, "/health");
         contextHandler.addServlet(FoRestDocServlet.class, "/fo-rest-doc");
-        contextHandler.addServlet(BoAllInOneServlet.class, "/bo/portal/*");
+        contextHandler.addServlet(createBoPortalServlet(), "/bo/portal/*");
 
         return contextHandler;
     }
@@ -98,6 +98,15 @@ public class WebAppStartup {
         holder.setServlet(new org.glassfish.jersey.servlet.ServletContainer());
         holder.setInitParameter("jersey.config.server.provider.packages",
                 "io.swagger.jaxrs.listing, com.github.chenjianjx.srb4jfullsample.webapp.fo.rest");
+
+        return holder;
+    }
+
+    private static ServletHolder createBoPortalServlet() {
+        ServletHolder holder = new ServletHolder();
+        holder.setServlet(new org.glassfish.jersey.servlet.ServletContainer());
+        holder.setInitParameter("jersey.config.server.provider.packages",
+                "com.github.chenjianjx.srb4jfullsample.webapp.bo.portal");
 
         return holder;
     }

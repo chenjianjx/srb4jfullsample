@@ -115,11 +115,10 @@
             </dependency>
 
             <dependency>
-                <groupId>org.glassfish.jersey.core</groupId>
-                <artifactId>jersey-client</artifactId>
+                <groupId>org.glassfish.jersey.ext</groupId>
+                <artifactId>jersey-mvc-jsp</artifactId>
                 <version>${jersey.version}</version>
             </dependency>
-
 
             <!--swagger-->
 
