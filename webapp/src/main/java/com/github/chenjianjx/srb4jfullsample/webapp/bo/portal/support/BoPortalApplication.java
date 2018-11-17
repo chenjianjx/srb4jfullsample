@@ -10,10 +10,12 @@ import org.glassfish.jersey.server.mvc.jsp.JspMvcFeature;
  */
 public class BoPortalApplication extends ResourceConfig {
 
+    public static final String JSP_DIR = "/WEB-INF/jsp/bo-portal";
+
     public BoPortalApplication() {
         register(JacksonJaxbJsonProvider.class);
 
-        property(JspMvcFeature.TEMPLATE_BASE_PATH, "/WEB-INF/jsp/bo-portal");
+        property(JspMvcFeature.TEMPLATE_BASE_PATH, JSP_DIR);
         register(JspMvcFeature.class);
 
         packages(BpPackageAnchor.class.getPackage().getName());

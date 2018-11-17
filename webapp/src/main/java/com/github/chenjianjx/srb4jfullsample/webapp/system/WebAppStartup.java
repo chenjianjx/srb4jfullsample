@@ -3,12 +3,14 @@ package com.github.chenjianjx.srb4jfullsample.webapp.system;
 
 import com.github.chenjianjx.srb4jfullsample.datamigration.MigrationRunner;
 import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoPortalApplication;
+import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoSiteMeshFilter;
 import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoRestApplication;
 import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoSwaggerJaxrsConfig;
 import com.github.chenjianjx.srb4jfullsample.webapp.infrahelper.rest.spring.ExitOnInitializationErrorContextLoaderListener;
 import com.github.chenjianjx.srb4jfullsample.webapp.root.FoRestDocServlet;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -17,8 +19,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.context.ContextLoaderListener;
 
+import javax.servlet.DispatcherType;
 import java.io.IOException;
 import java.net.URL;
+import java.util.EnumSet;
 import java.util.EventListener;
 import java.util.Properties;
 
@@ -29,6 +33,7 @@ import java.util.Properties;
 public class WebAppStartup {
 
     private static final Logger logger = LoggerFactory.getLogger(WebAppStartup.class);
+    public static final String BO_PORTAL_MAPPING_URL = "/bo/portal/*";
     private static StartupConfig startupConfig;
     private static AppPropertiesFactory appPropertiesFactory = new AppPropertiesFactory();
 
@@ -65,8 +70,7 @@ public class WebAppStartup {
         contextHandler.addEventListener(createSpringContextListener(contextHandler));
 
         // fo
-        ServletHolder foRestServlet = createFoRestServlet();
-        contextHandler.addServlet(foRestServlet, "/fo/rest/*");
+        contextHandler.addServlet(createFoRestServlet(), "/fo/rest/*");
 
         //swagger
         ServletHolder foRestSwaggerInitServlet = createFoRestSwaggerInitServlet();
@@ -74,8 +78,9 @@ public class WebAppStartup {
         contextHandler.addServlet(foRestSwaggerInitServlet, null);
 
         //bo
-        ServletHolder boPortalServlet = createBoPortalServlet();
-        contextHandler.addServlet(boPortalServlet, "/bo/portal/*");
+        contextHandler.addServlet(createBoPortalServlet(), BO_PORTAL_MAPPING_URL);
+        contextHandler.addFilter(createBoPortalSiteMeshFilter(), BO_PORTAL_MAPPING_URL,
+                EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD));
 
         //add other servlets
         contextHandler.addServlet(HealthCheckServlet.class, "/health");
@@ -112,6 +117,13 @@ public class WebAppStartup {
         holder.setInitParameter("javax.ws.rs.Application", BoPortalApplication.class.getName());
         return holder;
     }
+
+    private static FilterHolder createBoPortalSiteMeshFilter() {
+        FilterHolder holder = new FilterHolder();
+        holder.setFilter(new BoSiteMeshFilter());
+        return holder;
+    }
+
 
     private static StartupConfig loadStartupConfig() throws Exception {
 

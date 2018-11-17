@@ -121,6 +121,13 @@
                 <version>${jersey.version}</version>
             </dependency>
 
+            <!-- web pages -->
+            <dependency>
+                <groupId>org.sitemesh</groupId>
+                <artifactId>sitemesh</artifactId>
+                <version>3.0.1</version>
+            </dependency>
+
             <!--swagger-->
 
             <dependency>
