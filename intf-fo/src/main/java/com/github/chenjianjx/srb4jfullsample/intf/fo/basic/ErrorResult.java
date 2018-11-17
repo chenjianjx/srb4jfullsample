@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * 
  */
 @ApiModel("ErrorResult")
-public class FoErrorResult {
+public class ErrorResult {
 
 	@ApiModelProperty(name = ERROR_FN, required = false, value = "Error code. Compatible with OAuth2")
 	@JsonProperty(ERROR_FN)

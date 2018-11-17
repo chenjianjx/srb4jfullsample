@@ -12,4 +12,5 @@ public class BoResourcePaths {
     public static final String LOGOUT = "/logout";
 
 
+    public static final String CHANGE_PASSWORD = "/user/change-password";
 }

@@ -12,7 +12,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
  * 
  */
 public class FoResponse<T> {
-	private FoErrorResult err;
+	private ErrorResult err;
 
 	private T data;
 
@@ -28,11 +28,11 @@ public class FoResponse<T> {
 		return err == null;
 	}
 
-	public FoErrorResult getErr() {
+	public ErrorResult getErr() {
 		return err;
 	}
 
-	public void setErr(FoErrorResult err) {
+	public void setErr(ErrorResult err) {
 		this.err = err;
 	}
 
@@ -45,7 +45,7 @@ public class FoResponse<T> {
 	public static <T> FoResponse<T> devErrResponse(String errorCode,
 			String devErrMsg, String exceptionId) {
 		FoResponse<T> response = new FoResponse<T>();
-		FoErrorResult err = new FoErrorResult();
+		ErrorResult err = new ErrorResult();
 		err.setErrorCode(errorCode);
 		err.setDevErrMsg(devErrMsg);
 		err.setExceptionId(exceptionId);
@@ -56,7 +56,7 @@ public class FoResponse<T> {
 	public static <T> FoResponse<T> userErrResponse(String errorCode,
 			String userErrMsg) {
 		FoResponse<T> response = new FoResponse<T>();
-		FoErrorResult err = new FoErrorResult();
+		ErrorResult err = new ErrorResult();
 		err.setErrorCode(errorCode);
 		err.setUserErrMsg(userErrMsg);
 		response.setErr(err);

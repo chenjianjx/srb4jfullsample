@@ -9,10 +9,13 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoResourcePaths.CHANGE_PASSWORD;
+import static com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoResourcePaths.LOGIN;
+import static com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoResourcePaths.LOGOUT;
 
 public class BoSessionFilter implements Filter {
 
@@ -20,8 +23,8 @@ public class BoSessionFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        exempUrls.add("/login");
-        exempUrls.add("/logout");
+        exempUrls.add(LOGIN);
+        exempUrls.add(LOGOUT);
     }
 
     @Override
@@ -30,7 +33,7 @@ public class BoSessionFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) resp;
 
 
-        String url = request.getRequestURI().substring(BoConstants.BO_PORTAL_URL_BASE.length());
+        String url = request.getRequestURI().substring(BoPortalConstants.BO_PORTAL_URL_BASE.length());
         if (!url.startsWith("/")) {
             url = "/" + url;
         }
@@ -40,17 +43,26 @@ public class BoSessionFilter implements Filter {
             return;
         }
 
-        HttpSession session = request.getSession(true);
-        String username = (String) session
-                .getAttribute(BoConstants.SESSION_KEY_BO_USERNAME);
+        BoSessionStaffUser sessionStaffUser = BoSessionHelper.getStaffUser(request.getSession());
 
-        if (username == null) {
-            response.sendRedirect(BoUrlHelper.path2Url(BoResourcePaths.LOGIN));
+        if (sessionStaffUser == null) {
+            response.sendRedirect(BoUrlHelper.path2Url(LOGIN));
             return;
-        } else {
-            chain.doFilter(req, resp);
         }
 
+        if (url.equals(CHANGE_PASSWORD)) {
+            chain.doFilter(req, resp);
+            return;
+        }
+
+        //user is there, but must change password
+        if (sessionStaffUser.isMustChangePassword()) {
+            response.sendRedirect(BoUrlHelper.path2Url(CHANGE_PASSWORD));
+            return;
+        }
+
+        //everything is fine
+        chain.doFilter(req, resp);
     }
 
     @Override

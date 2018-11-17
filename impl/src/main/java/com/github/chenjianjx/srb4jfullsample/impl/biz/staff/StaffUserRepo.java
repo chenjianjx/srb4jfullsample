@@ -1,14 +1,11 @@
 package com.github.chenjianjx.srb4jfullsample.impl.biz.staff;
 
 
-import com.github.chenjianjx.srb4jfullsample.impl.biz.user.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectKey;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
-
-import java.util.Calendar;
 
 /**
  * @author chenjianjx@gmail.com

@@ -10,7 +10,7 @@ import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRegisterRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialAuthCodeLoginRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialLoginByTokenRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoErrorResult;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.ErrorResult;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
 import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoResourceBase;
 import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoRestUtils;
@@ -100,7 +100,7 @@ public class FoAuthTokenResource extends FoResourceBase {
 			@ApiImplicitParam(name = LONG_SESSION_PARAM, value = LONG_SESSION_TIP, required = true, dataType = "boolean", paramType = "form") })
 	@ApiResponses(value = {
 			@ApiResponse(code = SC_OK, message = OK_TIP, response = FoAuthTokenResult.class),
-			@ApiResponse(code = SC_BAD_REQUEST, message = OAUTH2_TOKEN_ENDPOINT_ERR_TIP, response = FoErrorResult.class) })
+			@ApiResponse(code = SC_BAD_REQUEST, message = OAUTH2_TOKEN_ENDPOINT_ERR_TIP, response = ErrorResult.class) })
 	public Response localLogin(@Context HttpServletRequest rawRequest,
 			MultivaluedMap<String, String> form) throws OAuthSystemException {
 
@@ -142,7 +142,7 @@ public class FoAuthTokenResource extends FoResourceBase {
 			@ApiImplicitParam(name = LONG_SESSION_PARAM, value = LONG_SESSION_TIP, required = true, dataType = "boolean", paramType = "form") })
 	@ApiResponses(value = {
 			@ApiResponse(code = SC_OK, message = OK_TIP, response = FoAuthTokenResult.class),
-			@ApiResponse(code = SC_BAD_REQUEST, message = OAUTH2_TOKEN_ENDPOINT_ERR_TIP, response = FoErrorResult.class) })
+			@ApiResponse(code = SC_BAD_REQUEST, message = OAUTH2_TOKEN_ENDPOINT_ERR_TIP, response = ErrorResult.class) })
 	public Response socialLoginByToken(
 			@Context HttpServletRequest rawRequest,
 			final @ApiParam(required = true, value = SOCIAL_LOGIN_SOURCE_TIP + "For google, plaease pass the id token; for facebook, please pass the access token") @PathParam(SOCIAL_SITE_SOURCE_PARAM) String source,
@@ -195,7 +195,7 @@ public class FoAuthTokenResource extends FoResourceBase {
 					+ "4. For facebook + web, it is a url of your html client", required = true, dataType = "string", paramType = "form") })
 	@ApiResponses(value = {
 			@ApiResponse(code = SC_OK, message = OK_TIP, response = FoAuthTokenResult.class),
-			@ApiResponse(code = SC_BAD_REQUEST, message = OAUTH2_TOKEN_ENDPOINT_ERR_TIP, response = FoErrorResult.class) })
+			@ApiResponse(code = SC_BAD_REQUEST, message = OAUTH2_TOKEN_ENDPOINT_ERR_TIP, response = ErrorResult.class) })
 	public Response socialLoginByAuthCode(
 			@Context HttpServletRequest rawRequest,
 			final @ApiParam(required = true, value = SOCIAL_LOGIN_SOURCE_TIP) @PathParam(SOCIAL_SITE_SOURCE_PARAM) String source,
@@ -240,7 +240,7 @@ public class FoAuthTokenResource extends FoResourceBase {
 			@ApiImplicitParam(name = "password", value = "The random login code", required = true, dataType = "string", paramType = "form") })
 	@ApiResponses(value = {
 			@ApiResponse(code = SC_OK, message = OK_TIP, response = FoAuthTokenResult.class),
-			@ApiResponse(code = SC_BAD_REQUEST, message = OAUTH2_TOKEN_ENDPOINT_ERR_TIP, response = FoErrorResult.class) })
+			@ApiResponse(code = SC_BAD_REQUEST, message = OAUTH2_TOKEN_ENDPOINT_ERR_TIP, response = ErrorResult.class) })
 	public Response localRandomCodeLogin(
 			@Context HttpServletRequest rawRequest,
 			MultivaluedMap<String, String> form) throws OAuthSystemException {
@@ -276,7 +276,7 @@ public class FoAuthTokenResource extends FoResourceBase {
 			@ApiImplicitParam(name = "password", value = "password", required = true, dataType = "string", paramType = "form") })
 	@ApiResponses(value = {
 			@ApiResponse(code = SC_OK, message = OK_TIP, response = FoAuthTokenResult.class),
-			@ApiResponse(code = SC_BAD_REQUEST, message = OAUTH2_TOKEN_ENDPOINT_ERR_TIP, response = FoErrorResult.class) })
+			@ApiResponse(code = SC_BAD_REQUEST, message = OAUTH2_TOKEN_ENDPOINT_ERR_TIP, response = ErrorResult.class) })
 	public Response localRegister(@Context HttpServletRequest rawRequest,
 			MultivaluedMap<String, String> form) throws OAuthSystemException {
 
@@ -327,7 +327,7 @@ public class FoAuthTokenResource extends FoResourceBase {
 			@ApiImplicitParam(name = "refresh_token", value = "The refresh token", required = true, dataType = "string", paramType = "form") })
 	@ApiResponses(value = {
 			@ApiResponse(code = SC_OK, message = OK_TIP, response = FoAuthTokenResult.class),
-			@ApiResponse(code = SC_BAD_REQUEST, message = OAUTH2_TOKEN_ENDPOINT_ERR_TIP, response = FoErrorResult.class) })
+			@ApiResponse(code = SC_BAD_REQUEST, message = OAUTH2_TOKEN_ENDPOINT_ERR_TIP, response = ErrorResult.class) })
 	public Response refreshToken(@Context HttpServletRequest rawRequest,
 			MultivaluedMap<String, String> form) throws OAuthSystemException {
 
@@ -388,7 +388,7 @@ public class FoAuthTokenResource extends FoResourceBase {
 	@ApiOperation(value = "generate a random login code")
 	@ApiResponses(value = {
 			@ApiResponse(code = SC_OK, message = OK_TIP, response = Void.class),
-			@ApiResponse(code = FO_SC_BIZ_ERROR, message = BIZ_ERR_TIP, response = FoErrorResult.class) })
+			@ApiResponse(code = FO_SC_BIZ_ERROR, message = BIZ_ERR_TIP, response = ErrorResult.class) })
 	public Response randomLoginCode(@Context ContainerRequestContext context,
 			FoGenRandomLoginCodeRequest request) {
 		FoResponse<Void> foResponse = foAuthManager

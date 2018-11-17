@@ -2,7 +2,7 @@ package com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.user;
 
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoChangePasswordRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoUserManager;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoErrorResult;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.ErrorResult;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
 import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoResourceBase;
 import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoRestUtils;
@@ -66,7 +66,7 @@ public class FoUserResource extends FoResourceBase {
 	@ApiImplicitParams({ @ApiImplicitParam(name = ACCESS_TOKEN_HEADER_KEY, value = OAUTH2_ACCESS_TOKEN_NAME_TIP, required = true, dataType = "string", paramType = "header", defaultValue = ACCESS_TOKEN_HEADER_DEFAULT) })
 	@ApiResponses(value = {
 			@ApiResponse(code = SC_OK, message = OK_TIP, response = Void.class),
-			@ApiResponse(code = FO_SC_BIZ_ERROR, message = BIZ_ERR_TIP, response = FoErrorResult.class) })
+			@ApiResponse(code = FO_SC_BIZ_ERROR, message = BIZ_ERR_TIP, response = ErrorResult.class) })
 	public Response changePassword(@Context ContainerRequestContext context,
 			FoChangePasswordRequest request) {
 		FoResponse<Void> foResponse = userManager.changePassword(
@@ -82,7 +82,7 @@ public class FoUserResource extends FoResourceBase {
 	@ApiImplicitParams({ @ApiImplicitParam(name = ACCESS_TOKEN_HEADER_KEY, value = OAUTH2_ACCESS_TOKEN_NAME_TIP, required = true, dataType = "string", paramType = "header", defaultValue = ACCESS_TOKEN_HEADER_DEFAULT) })
 	@ApiResponses(value = {
 			@ApiResponse(code = SC_OK, message = OK_TIP, response = Void.class),
-			@ApiResponse(code = FO_SC_BIZ_ERROR, message = BIZ_ERR_TIP, response = FoErrorResult.class) })
+			@ApiResponse(code = FO_SC_BIZ_ERROR, message = BIZ_ERR_TIP, response = ErrorResult.class) })
 	public Response startEmailVerification(@Context ContainerRequestContext context) {
 		String contextPath = servletRequestProvider.get().getContextPath();
 		String emailVerifyResourceUrl =
@@ -104,7 +104,7 @@ public class FoUserResource extends FoResourceBase {
 		if (foResponse.isSuccessful()) {
 			return Response.status(SC_OK).entity("Email address verified.").build();
 		} else {
-			FoErrorResult errResult = foResponse.getErr();
+			ErrorResult errResult = foResponse.getErr();
 			String userErrorMessage = errResult == null ? "Email address not verified" : errResult.getUserErrMsg();
 			return Response.status(FO_SC_BIZ_ERROR).entity(userErrorMessage).build();
 		}

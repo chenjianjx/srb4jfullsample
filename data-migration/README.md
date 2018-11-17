@@ -6,7 +6,7 @@
 # How to run data migration with Maven 
 
 ````
-mvn clean package
+mvn clean package #so that the sql can appear in classpath
 mvn initialize flyway:migrate 
 ````
 
@@ -16,3 +16,9 @@ mvn flyway:migrate  #won't work
 ````
 
 It's because during "initialize" lifecycle a plugin will be run to load database properties from they system's configuration file, to populate the variables in the pom.xml file, whose values are needed by flyway plugin.
+
+But you can also do everything in a single line: 
+
+````
+mvn clean package flyway:migrate  # You won't need "initialize" because "mvn clean" will invoke "initialize"
+````

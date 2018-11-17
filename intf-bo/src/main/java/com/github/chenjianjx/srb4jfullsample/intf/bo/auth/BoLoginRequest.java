@@ -12,20 +12,20 @@ import org.apache.commons.lang.builder.ToStringStyle;
  *
  */
 
-public class BoLocalLoginRequest {
+public class BoLoginRequest {
 
-	@NotNull(message = "Please input email.")
-	private String email;
+	@NotNull(message = "Please input username.")
+	private String username;
 
 	@NotNull(message = "Please input password.")
 	private String password;
 
-	public String getEmail() {
-		return email;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getPassword() {

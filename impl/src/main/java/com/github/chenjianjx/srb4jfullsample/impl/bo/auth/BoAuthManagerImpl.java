@@ -1,78 +1,67 @@
 package com.github.chenjianjx.srb4jfullsample.impl.bo.auth;
 
-import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.NULL_REQUEST_BEAN_TIP;
+import com.github.chenjianjx.srb4jfullsample.impl.biz.staff.StaffAuthService;
+import com.github.chenjianjx.srb4jfullsample.impl.biz.staff.StaffUser;
+import com.github.chenjianjx.srb4jfullsample.impl.biz.staff.StaffUserRepo;
+import com.github.chenjianjx.srb4jfullsample.impl.util.infrahelp.beanvalidae.MyValidator;
+import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoAuthManager;
+import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoLoginRequest;
+import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoLoginResult;
+import com.github.chenjianjx.srb4jfullsample.intf.bo.basic.BoConstants;
+import com.github.chenjianjx.srb4jfullsample.intf.bo.basic.BoResponse;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
-import org.springframework.stereotype.Service;
-import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.AuthService;
-import com.github.chenjianjx.srb4jfullsample.impl.biz.user.User;
-import com.github.chenjianjx.srb4jfullsample.impl.biz.user.UserRepo;
-import com.github.chenjianjx.srb4jfullsample.impl.util.infrahelp.beanvalidae.MyValidator;
-import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoAuthManager;
-import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoLocalLoginRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoLoginResult;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
-
 /**
- * 
  * @author chenjianjx@gmail.com
- *
  */
 @Service("boAuthManager")
-public class BoAuthManagerImpl implements BoAuthManager {
+public class BoAuthManagerImpl implements BoAuthManager  {
 
-	@Resource
-	MyValidator myValidator;
+    @Resource
+    MyValidator myValidator;
 
-	@Resource
-	UserRepo userRepo;
+    @Resource
+    StaffUserRepo staffUserRepo;
 
-	@Resource
-	AuthService authService;
+    @Resource
+    StaffAuthService staffAuthService;
 
-	@Override
-	public FoResponse<BoLoginResult> localLogin(BoLocalLoginRequest request) {
 
-		String error = myValidator.validateBeanFastFail(request,
-				NULL_REQUEST_BEAN_TIP);
-		if (error != null) {
-			return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT,
-					error);
-		}
+    @Override
+    public BoResponse<BoLoginResult> login(BoLoginRequest request) {
+        String error = myValidator.validateBeanFastFail(request, BoConstants.NULL_REQUEST_BEAN_TIP);
+        if (error != null) {
+            return BoResponse.userErrResponse(BoConstants.FEC_INVALID_INPUT, error);
+        }
 
-		String principal = User.decidePrincipalFromLocal(request.getEmail());
-		User user = userRepo.getUserByPrincipal(principal);
+        StaffUser staffUser = staffUserRepo.getStaffUserByUsername(request.getUsername());
 
-		if (user == null) {
-			return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT,
-					"Invalid Email");
-		}
+        if (staffUser == null) {
+            return BoResponse.userErrResponse(BoConstants.FEC_INVALID_INPUT,
+                    "Invalid Username");
+        }
 
-		// check if bo user
-		if (!isBoUser_ThisMethodShouldBeChanged(user)) {
-			return FoResponse.userErrResponse(FoConstants.FEC_NO_PERMISSION,
-					"You are not a back office user");
-		}
+        // compare password
+        String encodedPassword = staffAuthService.encodePassword(request.getPassword());
 
-		// compare password
-		String encodedPassword = authService.encodePasswordOrRandomCode(request
-				.getPassword());
+        if (!encodedPassword.equals(staffUser.getPassword())) {
+            return BoResponse.userErrResponse(BoConstants.FEC_INVALID_INPUT, "Invalid Password");
+        }
 
-		if (!encodedPassword.equals(user.getPassword())) {
-			return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT,
-					"Invalid Password");
-		}
 
-		BoLoginResult result = new BoLoginResult();
-		result.setUserId(user.getId());
-		return FoResponse.success(result);
-	}
+        BoLoginResult result = new BoLoginResult();
+        result.setUserId(staffUser.getId());
+        result.setUserName(staffUser.getUsername());
 
-	@Deprecated
-	private boolean isBoUser_ThisMethodShouldBeChanged(User user) {
-		return true;
-	}
+        if (!staffUser.isLoggedInOnce()) {
+            return BoResponse.errResponseWithData(BoConstants.BEC_FIRST_LOGIN_MUST_CHANGE_PASSWORD, result);
+        }
+
+
+        return BoResponse.success(result);
+    }
+
 
 }

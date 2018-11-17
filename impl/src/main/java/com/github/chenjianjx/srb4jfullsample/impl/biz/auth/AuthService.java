@@ -90,7 +90,6 @@ public class AuthService {
 	 
 
 	public String encodePasswordOrRandomCode(String raw) {
-		Sha2Crypt.sha256Crypt(MyLangUtils.toUtf8Bytes(raw));
 		return DigestUtils.sha1Hex(raw);
 	}
 

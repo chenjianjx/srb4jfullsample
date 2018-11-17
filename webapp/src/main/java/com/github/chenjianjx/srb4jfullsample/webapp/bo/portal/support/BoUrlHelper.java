@@ -8,7 +8,7 @@ import java.net.URI;
 public class BoUrlHelper {
 
     public static String path2Url(String resourcePath) {
-        String url = BoConstants.BO_PORTAL_URL_BASE + "/" + StringUtils.stripStart(resourcePath, "/");
+        String url = BoPortalConstants.BO_PORTAL_URL_BASE + "/" + StringUtils.stripStart(resourcePath, "/");
         return url;
     }
 
