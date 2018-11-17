@@ -1,1 +1,1 @@
-this is the dashboard
+<div> This is the dashboard</div>

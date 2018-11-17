@@ -1,5 +1,6 @@
 package com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.home;
 
+import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoResourcePaths;
 import org.glassfish.jersey.server.mvc.Viewable;
 import org.springframework.stereotype.Controller;
 
@@ -17,10 +18,9 @@ import java.util.Map;
 public class BoHomeController {
 
     @GET
-    public Viewable index() {
+    @Path(BoResourcePaths.DASHBOARD)
+    public Viewable dashboard() {
         Map<String, String> model = new HashMap<>();
-        model.put("hello", "Hello");
-        model.put("world", "World");
         return new Viewable("/home/dashboard", model);
     }
 }

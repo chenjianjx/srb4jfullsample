@@ -3,6 +3,7 @@ package com.github.chenjianjx.srb4jfullsample.webapp.system;
 
 import com.github.chenjianjx.srb4jfullsample.datamigration.MigrationRunner;
 import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoPortalApplication;
+import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoSessionFilter;
 import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoSiteMeshFilter;
 import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoRestApplication;
 import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoSwaggerJaxrsConfig;
@@ -81,6 +82,9 @@ public class WebAppStartup {
         contextHandler.addServlet(createBoPortalServlet(), BO_PORTAL_MAPPING_URL);
         contextHandler.addFilter(createBoPortalSiteMeshFilter(), BO_PORTAL_MAPPING_URL,
                 EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD));
+        contextHandler.addFilter(BoSessionFilter.class, BO_PORTAL_MAPPING_URL,
+                EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD));
+
 
         //add other servlets
         contextHandler.addServlet(HealthCheckServlet.class, "/health");
