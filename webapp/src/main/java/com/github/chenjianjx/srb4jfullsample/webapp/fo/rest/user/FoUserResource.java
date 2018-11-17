@@ -13,7 +13,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +44,7 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
  * @author chenjianjx@gmail.com
  *
  */
-@Service
+@Controller
 @Path("/user")
 @Api(value = "/user")
 @Produces(MediaType.APPLICATION_JSON)

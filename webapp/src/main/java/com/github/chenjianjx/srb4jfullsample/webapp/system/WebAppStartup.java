@@ -2,7 +2,8 @@ package com.github.chenjianjx.srb4jfullsample.webapp.system;
 
 
 import com.github.chenjianjx.srb4jfullsample.datamigration.MigrationRunner;
-import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.BoAllInOneServlet;
+import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoPortalApplication;
+import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoRestApplication;
 import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoSwaggerJaxrsConfig;
 import com.github.chenjianjx.srb4jfullsample.webapp.infrahelper.rest.spring.ExitOnInitializationErrorContextLoaderListener;
 import com.github.chenjianjx.srb4jfullsample.webapp.root.FoRestDocServlet;
@@ -40,7 +41,7 @@ public class WebAppStartup {
         if (startupConfig.dataMigrationOnStartup) {
             new MigrationRunner().run(startupConfig.jdbcUrl, startupConfig.dbUsername, startupConfig.dbPassword);
         } else {
-            logger.warn("No data migration will be run during system startup");
+            logger.warn("No data migration will be run during system startup causes it's disabled in this environment");
         }
 
 
@@ -63,19 +64,22 @@ public class WebAppStartup {
         //add the spring listener
         contextHandler.addEventListener(createSpringContextListener(contextHandler));
 
-        //add load-on-startup servlets
+        // fo
         ServletHolder foRestServlet = createFoRestServlet();
-        foRestServlet.setInitOrder(1);
         contextHandler.addServlet(foRestServlet, "/fo/rest/*");
 
+        //swagger
         ServletHolder foRestSwaggerInitServlet = createFoRestSwaggerInitServlet();
-        foRestSwaggerInitServlet.setInitOrder(2);
+        foRestSwaggerInitServlet.setInitOrder(1);
         contextHandler.addServlet(foRestSwaggerInitServlet, null);
+
+        //bo
+        ServletHolder boPortalServlet = createBoPortalServlet();
+        contextHandler.addServlet(boPortalServlet, "/bo/portal/*");
 
         //add other servlets
         contextHandler.addServlet(HealthCheckServlet.class, "/health");
         contextHandler.addServlet(FoRestDocServlet.class, "/fo-rest-doc");
-        contextHandler.addServlet(createBoPortalServlet(), "/bo/portal/*");
 
         return contextHandler;
     }
@@ -94,20 +98,18 @@ public class WebAppStartup {
     }
 
     private static ServletHolder createFoRestServlet() {
+
         ServletHolder holder = new ServletHolder();
         holder.setServlet(new org.glassfish.jersey.servlet.ServletContainer());
-        holder.setInitParameter("jersey.config.server.provider.packages",
-                "io.swagger.jaxrs.listing, com.github.chenjianjx.srb4jfullsample.webapp.fo.rest");
-
+        holder.setInitParameter("javax.ws.rs.Application", FoRestApplication.class.getName());
         return holder;
     }
+
 
     private static ServletHolder createBoPortalServlet() {
         ServletHolder holder = new ServletHolder();
         holder.setServlet(new org.glassfish.jersey.servlet.ServletContainer());
-        holder.setInitParameter("jersey.config.server.provider.packages",
-                "com.github.chenjianjx.srb4jfullsample.webapp.bo.portal");
-
+        holder.setInitParameter("javax.ws.rs.Application", BoPortalApplication.class.getName());
         return holder;
     }
 

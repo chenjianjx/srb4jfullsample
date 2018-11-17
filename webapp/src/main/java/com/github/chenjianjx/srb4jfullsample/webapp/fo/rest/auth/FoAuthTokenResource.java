@@ -1,5 +1,53 @@
 package com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.auth;
 
+import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoAuthManager;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoAuthTokenResult;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoGenRandomLoginCodeRequest;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoLocalLoginRequest;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRandomCodeLoginRequest;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRefreshTokenRequest;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRegisterRequest;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialAuthCodeLoginRequest;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialLoginByTokenRequest;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoErrorResult;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
+import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoResourceBase;
+import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoRestUtils;
+import com.github.chenjianjx.srb4jfullsample.webapp.infrahelper.rest.OAuth2RequestWrapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import org.apache.commons.lang.StringUtils;
+import org.apache.oltu.oauth2.as.request.OAuthUnauthenticatedTokenRequest;
+import org.apache.oltu.oauth2.as.response.OAuthASResponse;
+import org.apache.oltu.oauth2.common.OAuth;
+import org.apache.oltu.oauth2.common.error.OAuthError;
+import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
+import org.apache.oltu.oauth2.common.message.OAuthResponse;
+import org.apache.oltu.oauth2.common.message.types.GrantType;
+import org.springframework.stereotype.Controller;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.ACCESS_TOKEN_HEADER_DEFAULT;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.ACCESS_TOKEN_HEADER_KEY;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.BIZ_ERR_TIP;
@@ -22,55 +70,6 @@ import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.SO
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.SOCIAL_SITE_SOURCE_PARAM;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.oltu.oauth2.as.request.OAuthUnauthenticatedTokenRequest;
-import org.apache.oltu.oauth2.as.response.OAuthASResponse;
-import org.apache.oltu.oauth2.common.OAuth;
-import org.apache.oltu.oauth2.common.error.OAuthError;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.apache.oltu.oauth2.common.message.OAuthResponse;
-import org.apache.oltu.oauth2.common.message.types.GrantType;
-import org.springframework.stereotype.Service;
-
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoAuthManager;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoAuthTokenResult;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoGenRandomLoginCodeRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoLocalLoginRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRandomCodeLoginRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRefreshTokenRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRegisterRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialAuthCodeLoginRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialLoginByTokenRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoErrorResult;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
-import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoResourceBase;
-import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoRestUtils;
-import com.github.chenjianjx.srb4jfullsample.webapp.infrahelper.rest.OAuth2RequestWrapper;
 
 /**
  * rest resource for authentication
@@ -78,7 +77,7 @@ import com.github.chenjianjx.srb4jfullsample.webapp.infrahelper.rest.OAuth2Reque
  * @author chenjianjx@gmail.com
  *
  */
-@Service
+@Controller
 @Path("/token")
 @Api(value = "/token")
 @Produces(MediaType.APPLICATION_JSON)

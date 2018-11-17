@@ -6,6 +6,6 @@ package com.github.chenjianjx.srb4jfullsample.webapp.fo.rest;
  * @author chenjianjx@gmail.com
  *
  */
-public interface FrPlaceholder {
+public interface FrPackageAnchor {
 
 }

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import org.apache.commons.io.IOUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.FrPlaceholder;
+import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.FrPackageAnchor;
 import com.github.chenjianjx.srb4jfullsample.webapp.system.WebAppEnvProp;
 
 /**
@@ -72,7 +72,7 @@ public class FoSwaggerJaxrsConfig extends HttpServlet {
 		swaggerConfig.setHost(host);
 		swaggerConfig.setBasePath(basePath);
 		swaggerConfig.setPrettyPrint(true);
-		swaggerConfig.setResourcePackage(FrPlaceholder.class.getPackage()
+		swaggerConfig.setResourcePackage(FrPackageAnchor.class.getPackage()
 				.getName());
 		swaggerConfig.setScan(true);
 
