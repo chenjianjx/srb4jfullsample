@@ -6,6 +6,7 @@
 # How to run data migration with Maven 
 
 ````
+mvn clean package
 mvn initialize flyway:migrate 
 ````
 

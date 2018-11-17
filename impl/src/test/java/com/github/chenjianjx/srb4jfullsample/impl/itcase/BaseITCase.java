@@ -3,6 +3,7 @@ package com.github.chenjianjx.srb4jfullsample.impl.itcase;
 import com.github.chenjianjx.srb4jfullsample.datamigration.MigrationRunner;
 import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerClient;
+import com.spotify.docker.client.DockerClient.ListContainersParam;
 import com.spotify.docker.client.DockerClient.LogsParam;
 import com.spotify.docker.client.LogStream;
 import com.spotify.docker.client.exceptions.DockerException;
@@ -66,11 +67,13 @@ public class BaseITCase {
 
         logger.info("Mysql docker image is ready");
 
-        Optional<Container> runningContainer = docker.listContainers().stream().filter(c -> c.names().get(0).contains(MYSQL_CONTAINER_NAME)).findFirst();
-        if (runningContainer.isPresent()) {
-            logger.info("Mysql docker container is already running. Killing it.");
-            docker.killContainer(runningContainer.get().id());
-            docker.removeContainer(runningContainer.get().id());
+        Optional<Container> container = docker.listContainers(ListContainersParam.allContainers()).stream()
+                .filter(c -> c.names().get(0).contains(MYSQL_CONTAINER_NAME)).findFirst();
+        if (container.isPresent()) {
+            if ("running".equals(container.get().state())) {
+                docker.killContainer(container.get().id());
+            }
+            docker.removeContainer(container.get().id());
         }
 
         final Map<String, List<PortBinding>> portBindings = new HashMap<>();
