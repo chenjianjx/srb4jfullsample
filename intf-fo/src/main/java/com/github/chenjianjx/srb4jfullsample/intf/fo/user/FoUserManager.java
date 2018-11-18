@@ -1,5 +1,6 @@
-package com.github.chenjianjx.srb4jfullsample.intf.fo.auth;
+package com.github.chenjianjx.srb4jfullsample.intf.fo.user;
 
+import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoChangePasswordRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
 
 /**
@@ -15,8 +16,7 @@ public interface FoUserManager {
 	 * @param request
 	 * @return
 	 */
-	FoResponse<Void> changePassword(Long currentUserId,
-			FoChangePasswordRequest request);
+	FoResponse<Void> changePassword(Long currentUserId, FoChangePasswordRequest request);
 
 	/**
 	 * start email verification.  An email containing the email verification link will be sent
@@ -28,4 +28,6 @@ public interface FoUserManager {
 	 * @param digest the key information in the verification link
      */
 	FoResponse<Void> verifyEmail(String digest);
+
+
 }

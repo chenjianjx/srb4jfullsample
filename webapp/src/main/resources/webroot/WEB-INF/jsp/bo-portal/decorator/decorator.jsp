@@ -9,10 +9,9 @@
 
     <body>
         <header>
-            <%@ include file="/WEB-INF/jsp/bo-portal/common/nav.jsp" %>
+            <%@ include file="/WEB-INF/jsp/bo-portal/common/header.jsp" %>
         </header>
 
-        <hr/>
 
         <section>
             <div><font color="red"><c:out value="${it.err.userErrMsg}"/></font><div>

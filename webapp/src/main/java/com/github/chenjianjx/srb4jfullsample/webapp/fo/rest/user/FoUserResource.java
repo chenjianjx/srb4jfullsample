@@ -1,7 +1,7 @@
 package com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.user;
 
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoChangePasswordRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoUserManager;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.user.FoUserManager;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.ErrorResult;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
 import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoResourceBase;

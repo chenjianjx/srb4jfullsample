@@ -7,8 +7,8 @@ import com.github.chenjianjx.srb4jfullsample.impl.bo.common.BoManagerImplBase;
 import com.github.chenjianjx.srb4jfullsample.impl.util.infrahelp.beanvalidae.MyValidator;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.basic.BoConstants;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.basic.BoResponse;
-import com.github.chenjianjx.srb4jfullsample.intf.bo.user.BoChangePasswordRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.bo.user.BoStaffUserManager;
+import com.github.chenjianjx.srb4jfullsample.intf.bo.staffuser.BoChangePasswordRequest;
+import com.github.chenjianjx.srb4jfullsample.intf.bo.staffuser.BoStaffUserManager;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

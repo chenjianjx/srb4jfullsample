@@ -3,8 +3,8 @@ package com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.staffuser;
 
 import com.github.chenjianjx.srb4jfullsample.intf.bo.basic.BoConstants;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.basic.BoResponse;
-import com.github.chenjianjx.srb4jfullsample.intf.bo.user.BoChangePasswordRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.bo.user.BoStaffUserManager;
+import com.github.chenjianjx.srb4jfullsample.intf.bo.staffuser.BoChangePasswordRequest;
+import com.github.chenjianjx.srb4jfullsample.intf.bo.staffuser.BoStaffUserManager;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.ErrorResult;
 import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoModelHelper;
 import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoSessionHelper;
@@ -39,7 +39,7 @@ import static com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoS
 public class BoStaffUserController {
 
 
-    private static final String CHANGE_PASSWORD_FORM_VIEW = "/user/changePassword";
+    private static final String CHANGE_PASSWORD_FORM_VIEW = "/staffuser/changePassword";
 
     @Resource
     BoStaffUserManager boStaffUserManager;

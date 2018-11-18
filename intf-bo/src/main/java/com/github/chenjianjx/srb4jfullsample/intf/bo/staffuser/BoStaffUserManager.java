@@ -1,7 +1,5 @@
-package com.github.chenjianjx.srb4jfullsample.intf.bo.user;
+package com.github.chenjianjx.srb4jfullsample.intf.bo.staffuser;
 
-import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoLoginRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoLoginResult;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.basic.BoResponse;
 
 /**

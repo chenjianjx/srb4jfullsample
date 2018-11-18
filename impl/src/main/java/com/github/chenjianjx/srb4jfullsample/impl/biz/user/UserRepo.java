@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.SelectKey;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 
  * @author chenjianjx@gmail.com
@@ -33,4 +35,6 @@ public interface UserRepo {
 	@Update("update User set password = #{password}, emailVerified = #{emailVerified}, updatedBy = #{updatedBy}, updatedAt = #{updatedAt}  where id = #{id}")
 	public void updateUser(User newUser);
 
+	@Select("select * from User order by id")
+	List<User> getAllUsers();
 }

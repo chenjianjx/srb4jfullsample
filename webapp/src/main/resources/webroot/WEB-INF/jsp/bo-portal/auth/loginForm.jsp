@@ -8,7 +8,9 @@
 	<ul>
 		<li>Username: <input name="username" value="${it.username}"/> </li>
 		<li>Password: <input name="password" type="password" value="${it.password}"/> </li>
-		<li><input type="submit" value="Login"/></li>
+
 	</ul>
+
+    <input type="submit" value="Login"/>
 
 </form>

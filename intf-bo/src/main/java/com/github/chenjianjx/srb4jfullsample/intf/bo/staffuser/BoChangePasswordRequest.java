@@ -1,4 +1,4 @@
-package com.github.chenjianjx.srb4jfullsample.intf.bo.user;
+package com.github.chenjianjx.srb4jfullsample.intf.bo.staffuser;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
