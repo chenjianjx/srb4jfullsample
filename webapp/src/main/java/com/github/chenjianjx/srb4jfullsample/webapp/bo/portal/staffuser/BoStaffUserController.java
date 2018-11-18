@@ -6,7 +6,8 @@ import com.github.chenjianjx.srb4jfullsample.intf.bo.basic.BoResponse;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.staffuser.BoChangePasswordRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.staffuser.BoStaffUserManager;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.ErrorResult;
-import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoModelHelper;
+import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoMvcModel;
+import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoPortalAlert.BoAlertType;
 import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoSessionHelper;
 import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoSessionStaffUser;
 import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoUrlHelper;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -63,19 +65,19 @@ public class BoStaffUserController {
     @Path(CHANGE_PASSWORD)
     public Object changePassword(@FormParam("currentPassword") String currentPassword,
                                  @FormParam("newPassword") String newPassword,
-                                 @FormParam("newPasswordRepeat") String newPasswordRepeat,
+                                 @FormParam("confirmPassword") String confirmPassword,
                                  @Context HttpServletRequest servletRequest) throws MalformedURLException, URISyntaxException {
 
         BoSessionStaffUser sessionStaffUser = BoSessionHelper.getStaffUser(servletRequest.getSession());
 
-        Map<String, Object> model = new LinkedHashMap<>();
+        BoMvcModel model = BoMvcModel.newInstance(servletRequest);
         model.put("currentPassword", currentPassword);
         model.put("newPassword", newPassword);
-        model.put("newPasswordRepeat", newPasswordRepeat);
+        model.put("confirmPassword", confirmPassword);
 
-        if (!StringUtils.equals(newPassword, newPasswordRepeat)) {
+        if (!StringUtils.equals(newPassword, confirmPassword)) {
             ErrorResult err = BoResponse.userErrResponse(BoConstants.FEC_INVALID_INPUT, "The new passwords don't match").getErr();
-            BoModelHelper.addError(model, err);
+            model.setError(err);
             return new Viewable(CHANGE_PASSWORD_FORM_VIEW, model);
         }
 
@@ -86,15 +88,20 @@ public class BoStaffUserController {
         BoResponse<Void> response = boStaffUserManager.changePassword(getSessionStaffUserId(servletRequest.getSession()), request);
 
         if (response.isSuccessful()) {
+
+            HttpSession session = servletRequest.getSession(true);
+
             //reset the session staff user
             BoSessionStaffUser newSessionStaffUser = new BoSessionStaffUser();
             newSessionStaffUser.setUserId(sessionStaffUser.getUserId());
             newSessionStaffUser.setUsername(sessionStaffUser.getUsername());
-            BoSessionHelper.setStaffUser(servletRequest.getSession(true), newSessionStaffUser);
+            BoSessionHelper.setStaffUser(session, newSessionStaffUser);
+
+            BoSessionHelper.setFlashScopeAlert(session, BoAlertType.success, "Password changed.");
 
             return Response.seeOther(BoUrlHelper.path2URI(DASHBOARD)).build();
         } else {
-            BoModelHelper.addError(model, response.getErr());
+            model.setError(response.getErr());
             return new Viewable(CHANGE_PASSWORD_FORM_VIEW, model);
         }
 

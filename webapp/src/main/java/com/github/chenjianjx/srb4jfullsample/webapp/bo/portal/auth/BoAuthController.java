@@ -7,9 +7,10 @@ import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoLoginResult;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.basic.BoConstants;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.ErrorResult;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
+import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.staffuser.BoChangePasswordReason;
+import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoMvcModel;
 import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoSessionHelper;
 import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoSessionStaffUser;
-import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.staffuser.BoChangePasswordReason;
 import org.glassfish.jersey.server.mvc.Viewable;
 import org.springframework.stereotype.Controller;
 
@@ -26,9 +27,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.util.Map;
 
-import static com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoModelHelper.initErrorModel;
 import static com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoResourcePaths.CHANGE_PASSWORD;
 import static com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoResourcePaths.DASHBOARD;
 import static com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoResourcePaths.LOGIN;
@@ -48,7 +47,7 @@ public class BoAuthController {
     @Path(LOGIN)
     public Viewable loginForm(@Context HttpServletRequest servletRequest) {
         invalidateSession(servletRequest);
-        return new Viewable(LOGIN_FORM_VIEW, null);
+        return new Viewable(LOGIN_FORM_VIEW, BoMvcModel.newInstance(servletRequest));
     }
 
     @POST
@@ -89,7 +88,7 @@ public class BoAuthController {
 
             }
 
-            Map<String, Object> model = initErrorModel(err);
+            BoMvcModel model = BoMvcModel.newInstance(servletRequest).setError(err);
             model.put("username", username);  //let the form render the value the user has input
             model.put("password", password);
             return new Viewable(LOGIN_FORM_VIEW, model);

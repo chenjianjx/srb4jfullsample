@@ -4,6 +4,7 @@ package com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.frontuser;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.basic.BoResponse;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.frontuser.BoFrontUserManager;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.user.FoUser;
+import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoMvcModel;
 import org.glassfish.jersey.server.mvc.Viewable;
 import org.springframework.stereotype.Controller;
 
@@ -37,7 +38,7 @@ public class BoFrontUserController {
     public Viewable frontUserList(@Context HttpServletRequest servletRequest) {
         BoResponse<List<FoUser>> response = boFrontUserManager.getAllUsers(getSessionStaffUserId(servletRequest.getSession()));
 
-        Map<String, Object> model = new LinkedHashMap<>();
+        BoMvcModel model = BoMvcModel.newInstance(servletRequest);
         model.put("users", response.getData());
 
         return new Viewable(USER_LIST_PAGE, model);
