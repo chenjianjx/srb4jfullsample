@@ -79,11 +79,16 @@ public class WebAppStartup {
         contextHandler.addServlet(foRestSwaggerInitServlet, null);
 
         //bo
-        contextHandler.addServlet(createBoPortalServlet(), BO_PORTAL_MAPPING_URL);
-        contextHandler.addFilter(createBoPortalSiteMeshFilter(), BO_PORTAL_MAPPING_URL,
-                EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD));
-        contextHandler.addFilter(BoSessionFilter.class, BO_PORTAL_MAPPING_URL,
-                EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD));
+        if (startupConfig.enableBackOfficePortal) {
+            logger.warn("Bo portal site will be enabled");
+            contextHandler.addServlet(createBoPortalServlet(), BO_PORTAL_MAPPING_URL);
+            contextHandler.addFilter(createBoPortalSiteMeshFilter(), BO_PORTAL_MAPPING_URL,
+                    EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD));
+            contextHandler.addFilter(BoSessionFilter.class, BO_PORTAL_MAPPING_URL,
+                    EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD));
+        } else {
+            logger.warn("Bo portal site will NOT be enabled");
+        }
 
 
         //add other servlets
@@ -148,6 +153,8 @@ public class WebAppStartup {
         startupConfig.port = url.getPort();
         startupConfig.dataMigrationOnStartup = Boolean.valueOf((String) properties.get("dataMigrationOnStartup"));
 
+        startupConfig.enableBackOfficePortal = Boolean.valueOf((String) properties.get("enableBackOfficePortal"));
+
         return startupConfig;
     }
 
@@ -161,6 +168,8 @@ public class WebAppStartup {
         public int port;
 
         public boolean dataMigrationOnStartup;
+
+        public boolean enableBackOfficePortal;
 
     }
 }
