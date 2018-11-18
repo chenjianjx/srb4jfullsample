@@ -7,6 +7,8 @@ import com.github.chenjianjx.srb4jfullsample.intf.bo.basic.BoResponse;
  */
 public interface BoStaffUserManager {
 
-    public BoResponse<Void> changePassword(Long currentStaffUserId, BoChangePasswordRequest request);
+    String USER_NAME_REGEX = "[a-z][a-z0-9_]{2,9}";
+
+    BoResponse<Void> changePassword(Long currentStaffUserId, BoChangePasswordRequest request);
 
 }

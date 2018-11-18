@@ -1,4 +1,7 @@
-package com.github.chenjianjx.srb4jfullsample.impl.util.tools.lang;
+package com.github.chenjianjx.srb4jfullsample.utils.lang;
+
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
@@ -8,9 +11,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.List;
-
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * some methods that commons-lang doesn't have yet

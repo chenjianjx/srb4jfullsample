@@ -1,4 +1,7 @@
-package com.github.chenjianjx.srb4jfullsample.impl.util.infrahelp.mybatis;
+package com.github.chenjianjx.srb4jfullsample.utils.infrahelp.mybatis;
+
+import org.apache.ibatis.type.BaseTypeHandler;
+import org.apache.ibatis.type.JdbcType;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -7,9 +10,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-
-import org.apache.ibatis.type.BaseTypeHandler;
-import org.apache.ibatis.type.JdbcType;
 
 /**
  * 

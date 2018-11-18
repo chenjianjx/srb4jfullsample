@@ -4,7 +4,7 @@ import com.github.chenjianjx.srb4jfullsample.impl.biz.staff.StaffUser;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.User;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.UserRepo;
 import com.github.chenjianjx.srb4jfullsample.impl.bo.common.BoManagerImplBase;
-import com.github.chenjianjx.srb4jfullsample.impl.util.tools.lang.MyLangUtils;
+import com.github.chenjianjx.srb4jfullsample.utils.lang.MyLangUtils;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.basic.BoResponse;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.frontuser.BoFrontUserManager;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.user.FoUser;

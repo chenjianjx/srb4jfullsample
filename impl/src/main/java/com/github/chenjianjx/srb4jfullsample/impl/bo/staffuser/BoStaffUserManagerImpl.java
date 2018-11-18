@@ -4,7 +4,8 @@ import com.github.chenjianjx.srb4jfullsample.impl.biz.staff.StaffAuthService;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.staff.StaffUser;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.staff.StaffUserRepo;
 import com.github.chenjianjx.srb4jfullsample.impl.bo.common.BoManagerImplBase;
-import com.github.chenjianjx.srb4jfullsample.impl.util.infrahelp.beanvalidae.MyValidator;
+import com.github.chenjianjx.srb4jfullsample.utils.infrahelp.beanvalidate.MyValidator;
+import com.github.chenjianjx.srb4jfullsample.utils.lang.MyCodecUtils;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.basic.BoConstants;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.basic.BoResponse;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.staffuser.BoChangePasswordRequest;
@@ -46,15 +47,13 @@ public class BoStaffUserManagerImpl extends BoManagerImplBase implements BoStaff
         }
 
         // now compare password
-        String encodedCurrentPassword = staffAuthService.encodePassword(request.getCurrentPassword());
-
-        if (!encodedCurrentPassword.equals(currentStaffUser.getPassword())) {
+        if (!MyCodecUtils.isPasswordDjangoMatches(request.getCurrentPassword(), currentStaffUser.getPassword())) {
             return BoResponse.userErrResponse(
                     BoConstants.FEC_INVALID_INPUT,
                     "The current password you input is wrong");
         }
 
-        String encodedNewPassword = staffAuthService.encodePassword(request.getNewPassword());
+        String encodedNewPassword = MyCodecUtils.encodePasswordLikeDjango(request.getNewPassword());
         StaffUser newStaffUser = staffUserRepo.getStaffUserById(currentStaffUserId);
         newStaffUser.setPassword(encodedNewPassword);
         newStaffUser.setUpdatedBy(newStaffUser.getUsername());

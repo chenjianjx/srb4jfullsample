@@ -1,7 +1,7 @@
 package com.github.chenjianjx.srb4jfullsample.impl.fo.auth.socialsite;
 
 import com.github.chenjianjx.srb4jfullsample.impl.biz.client.Client;
-import com.github.chenjianjx.srb4jfullsample.impl.util.tools.lang.MyDuplet;
+import com.github.chenjianjx.srb4jfullsample.utils.lang.MyDuplet;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoAuthTokenResult;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
@@ -15,7 +15,7 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.apache.ApacheHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NoHttpResponseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

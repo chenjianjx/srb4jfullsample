@@ -1,4 +1,4 @@
-package com.github.chenjianjx.srb4jfullsample.impl.util.infrahelp.beanvalidae;
+package com.github.chenjianjx.srb4jfullsample.utils.infrahelp.beanvalidate;
 
 /*
  * JBoss, Home of Professional Open Source
@@ -16,8 +16,12 @@ package com.github.chenjianjx.srb4jfullsample.impl.util.infrahelp.beanvalidae;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import java.net.IDN;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +29,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Resource;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-
-import org.springframework.stereotype.Component;
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
 /**
  * 
@@ -51,14 +51,14 @@ public class MyValidator {
 	 * Regular expression for the local part of an email address (everything
 	 * before '@')
 	 */
-	private final Pattern localEmailPattern = java.util.regex.Pattern.compile(
+	private final Pattern localEmailPattern = Pattern.compile(
 			ATOM + "+(\\." + ATOM + "+)*", CASE_INSENSITIVE);
 
 	/**
 	 * Regular expression for the domain part of an email address (everything
 	 * after '@')
 	 */
-	private final Pattern emailDomainPattern = java.util.regex.Pattern.compile(
+	private final Pattern emailDomainPattern = Pattern.compile(
 			DOMAIN + "|" + IP_DOMAIN, CASE_INSENSITIVE);
 
 	/**

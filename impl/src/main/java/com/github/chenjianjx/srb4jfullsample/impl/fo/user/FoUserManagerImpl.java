@@ -7,12 +7,13 @@ import com.github.chenjianjx.srb4jfullsample.impl.biz.user.User;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.UserRepo;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.UserService;
 import com.github.chenjianjx.srb4jfullsample.impl.fo.common.FoManagerImplBase;
-import com.github.chenjianjx.srb4jfullsample.impl.util.infrahelp.beanvalidae.MyValidator;
+import com.github.chenjianjx.srb4jfullsample.utils.infrahelp.beanvalidate.MyValidator;
+import com.github.chenjianjx.srb4jfullsample.utils.lang.MyCodecUtils;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoChangePasswordRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.user.FoUserManager;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
-import org.apache.commons.lang.StringUtils;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.user.FoUserManager;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -63,17 +64,13 @@ public class FoUserManagerImpl extends FoManagerImplBase implements
 			return buildNotLoginErr();
 		}
 
-		// now compare password
-		String encodedCurrentPassword = authService
-				.encodePasswordOrRandomCode(request.getCurrentPassword());
-
-		if (!encodedCurrentPassword.equals(currentUser.getPassword())) {
+		if (!MyCodecUtils.isPasswordDjangoMatches(request.getCurrentPassword(), currentUser.getPassword())) {
 			return FoResponse.userErrResponse(
 					FoConstants.FEC_OAUTH2_INVALID_REQUEST,
 					"The current password you input is wrong");
 		}
 
-		String newPassword = authService.encodePasswordOrRandomCode(request
+		String newPassword = MyCodecUtils.encodePasswordLikeDjango(request
 				.getNewPassword());
 
 		User user = userRepo.getUserById(currentUserId);

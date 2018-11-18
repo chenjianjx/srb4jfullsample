@@ -1,6 +1,6 @@
 package com.github.chenjianjx.srb4jfullsample.impl.autotask.auth;
 
-import static org.apache.commons.lang.time.DateFormatUtils.format;
+import static org.apache.commons.lang3.time.DateFormatUtils.format;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.AccessTokenRepo;
 import com.github.chenjianjx.srb4jfullsample.impl.common.ImplConstants;
-import com.github.chenjianjx.srb4jfullsample.impl.util.tools.lang.MyLangUtils;
+import com.github.chenjianjx.srb4jfullsample.utils.lang.MyLangUtils;
 
 /**
  * auto tasks for auth module

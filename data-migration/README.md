@@ -23,3 +23,9 @@ But you can also do everything in a single line:
 ````
 mvn clean package flyway:migrate  # You won't need "initialize" because "mvn clean" will invoke "initialize"
 ````
+
+# To generate a password for a staff user
+
+````
+mvn clean package exec:java -Dexec.mainClass="com.github.chenjianjx.srb4jfullsample.datagen.StaffUserPasswordGenerator"
+````

@@ -1,7 +1,7 @@
 package com.github.chenjianjx.srb4jfullsample.intf.fo.basic;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * the generic response object for front office interfaces. Its error fields are

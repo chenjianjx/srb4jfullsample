@@ -3,12 +3,13 @@ package com.github.chenjianjx.srb4jfullsample.impl.bo.auth;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.staff.StaffAuthService;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.staff.StaffUser;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.staff.StaffUserRepo;
-import com.github.chenjianjx.srb4jfullsample.impl.util.infrahelp.beanvalidae.MyValidator;
+import com.github.chenjianjx.srb4jfullsample.utils.infrahelp.beanvalidate.MyValidator;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoAuthManager;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoLoginRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoLoginResult;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.basic.BoConstants;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.basic.BoResponse;
+import com.github.chenjianjx.srb4jfullsample.utils.lang.MyCodecUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -44,9 +45,7 @@ public class BoAuthManagerImpl implements BoAuthManager  {
         }
 
         // compare password
-        String encodedPassword = staffAuthService.encodePassword(request.getPassword());
-
-        if (!encodedPassword.equals(staffUser.getPassword())) {
+        if (!MyCodecUtils.isPasswordDjangoMatches(request.getPassword(), staffUser.getPassword())) {
             return BoResponse.userErrResponse(BoConstants.FEC_INVALID_INPUT, "Invalid Password");
         }
 

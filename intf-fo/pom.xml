@@ -20,11 +20,6 @@
 			<artifactId>swagger-jersey2-jaxrs</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-		</dependency>
-
 	</dependencies>
 
 </project>

@@ -25,7 +25,13 @@
 
         <dependency>
             <groupId>com.github.chenjianjx</groupId>
-            <artifactId>srb4jfullsample-impl</artifactId>
+            <artifactId>srb4jfullsample-intf-bo</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.chenjianjx</groupId>
+            <artifactId>srb4jfullsample-utils</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 
@@ -83,6 +89,12 @@
                         <location>classpath:data-migration-flyway-sql</location>
                     </locations>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.6.0</version>
             </plugin>
         </plugins>
     </build>

@@ -1,7 +1,8 @@
-package com.github.chenjianjx.srb4jfullsample.impl.util.tools.lang;
+package com.github.chenjianjx.srb4jfullsample.utils.lang;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -25,7 +25,11 @@
             <artifactId>srb4jfullsample-intf-bo</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.github.chenjianjx</groupId>
+            <artifactId>srb4jfullsample-utils</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>javax.mail</groupId>
@@ -83,10 +87,6 @@
             <artifactId>guava</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>

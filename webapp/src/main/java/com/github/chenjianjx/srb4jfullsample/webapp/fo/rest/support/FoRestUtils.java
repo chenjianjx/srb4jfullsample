@@ -9,7 +9,7 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
 
 import com.github.chenjianjx.srb4jfullsample.webapp.system.WebAppEnvProp;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.error.OAuthError.ResourceResponse;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;

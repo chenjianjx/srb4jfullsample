@@ -11,7 +11,7 @@ import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoPortalAl
 import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoSessionHelper;
 import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoSessionStaffUser;
 import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoUrlHelper;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.server.mvc.Viewable;
 import org.springframework.stereotype.Controller;
 

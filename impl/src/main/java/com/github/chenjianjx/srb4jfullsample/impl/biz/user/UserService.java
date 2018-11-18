@@ -2,7 +2,7 @@ package com.github.chenjianjx.srb4jfullsample.impl.biz.user;
 
 import com.github.chenjianjx.srb4jfullsample.impl.support.config.AppProperties;
 import com.github.chenjianjx.srb4jfullsample.impl.support.mail.MailEngine;
-import com.github.chenjianjx.srb4jfullsample.impl.util.tools.lang.MyLangUtils;
+import com.github.chenjianjx.srb4jfullsample.utils.lang.MyLangUtils;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.github.chenjianjx.srb4jfullsample.impl.util.tools.lang.MyLangUtils.toUtf8Bytes;
+import static com.github.chenjianjx.srb4jfullsample.utils.lang.MyLangUtils.toUtf8Bytes;
 
 /**
  * Created by chenjianjx@gmail.com on 4/11/18.
