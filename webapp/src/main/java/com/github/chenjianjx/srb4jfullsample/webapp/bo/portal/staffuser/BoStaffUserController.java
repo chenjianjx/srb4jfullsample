@@ -39,7 +39,7 @@ import static com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoS
 public class BoStaffUserController {
 
 
-    private static final String CHANGE_PASSWORD_FORM_VIEW = "/user/change-password";
+    private static final String CHANGE_PASSWORD_FORM_VIEW = "/user/changePassword";
 
     @Resource
     BoStaffUserManager boStaffUserManager;
@@ -47,12 +47,12 @@ public class BoStaffUserController {
     @GET
     @Path(CHANGE_PASSWORD)
     public Viewable changePasswordForm(@Context HttpServletRequest servletRequest) {
-        BoSessionStaffUser staffUser = BoSessionHelper.getStaffUser(servletRequest.getSession());
+        BoSessionStaffUser sessionStaffUser = BoSessionHelper.getStaffUser(servletRequest.getSession());
 
         Map<String, Object> model = new LinkedHashMap<>();
-        model.put("username", staffUser.getUsername());
+        model.put("username", sessionStaffUser.getUsername());
 
-        if (staffUser.isMustChangePassword() && staffUser.getChangePasswordReason() == BoChangePasswordReason.FIRST_TIME_LOGIN) {
+        if (sessionStaffUser.isMustChangePassword() && sessionStaffUser.getChangePasswordReason() == BoChangePasswordReason.FIRST_TIME_LOGIN) {
             model.put("changeReason", "You have to change the password for the first time login");
         }
 
@@ -65,6 +65,8 @@ public class BoStaffUserController {
                                  @FormParam("newPassword") String newPassword,
                                  @FormParam("newPasswordRepeat") String newPasswordRepeat,
                                  @Context HttpServletRequest servletRequest) throws MalformedURLException, URISyntaxException {
+
+        BoSessionStaffUser sessionStaffUser = BoSessionHelper.getStaffUser(servletRequest.getSession());
 
         Map<String, Object> model = new LinkedHashMap<>();
         model.put("currentPassword", currentPassword);
@@ -84,7 +86,13 @@ public class BoStaffUserController {
         BoResponse<Void> response = boStaffUserManager.changePassword(getSessionStaffUserId(servletRequest.getSession()), request);
 
         if (response.isSuccessful()) {
-            return Response.seeOther(BoUrlHelper.path2URI(DASHBOARD));
+            //reset the session staff user
+            BoSessionStaffUser newSessionStaffUser = new BoSessionStaffUser();
+            newSessionStaffUser.setUserId(sessionStaffUser.getUserId());
+            newSessionStaffUser.setUsername(sessionStaffUser.getUsername());
+            BoSessionHelper.setStaffUser(servletRequest.getSession(true), newSessionStaffUser);
+
+            return Response.seeOther(BoUrlHelper.path2URI(DASHBOARD)).build();
         } else {
             BoModelHelper.addError(model, response.getErr());
             return new Viewable(CHANGE_PASSWORD_FORM_VIEW, model);

@@ -4,11 +4,11 @@ package com.github.chenjianjx.srb4jfullsample.webapp.system;
 import com.github.chenjianjx.srb4jfullsample.datamigration.MigrationRunner;
 import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoPortalApplication;
 import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoSessionFilter;
-import com.github.chenjianjx.srb4jfullsample.webapp.bo.portal.support.BoSiteMeshFilter;
 import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoRestApplication;
 import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoSwaggerJaxrsConfig;
 import com.github.chenjianjx.srb4jfullsample.webapp.infrahelper.rest.spring.ExitOnInitializationErrorContextLoaderListener;
 import com.github.chenjianjx.srb4jfullsample.webapp.root.FoRestDocServlet;
+import com.opensymphony.sitemesh.webapp.SiteMeshFilter;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -124,7 +124,7 @@ public class WebAppStartup {
 
     private static FilterHolder createBoPortalSiteMeshFilter() {
         FilterHolder holder = new FilterHolder();
-        holder.setFilter(new BoSiteMeshFilter());
+        holder.setFilter(new SiteMeshFilter());
         return holder;
     }
 

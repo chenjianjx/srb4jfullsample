@@ -3,13 +3,16 @@
 <h2>Change Password</h2>
 
 <form action="/bo/portal/user/change-password" method="post">
-	
-	<ul>
-		<li>Current Password: <input name="password" type="password" value="${model.oldPassword}"/> </li>
-		<li>New Password: <input name="password" type="password" value="${model.newPassword}"/> </li>
-		<li>Repeat New Password: <input name="password" type="password" value="${model.newPasswordRepeat}"/> </li>
+	<c:if test="${it.changeReason != null}">
+	    <div><c:out value="${it.changeReason}"/></div>
+	</c:if>
 
-		<li><input type="submit" value="Submit"/></li>
+	<ul>
+	    <li>Username: <c:out value="${sessionStaffUser.username}"/> </li>
+		<li>Current Password: <input name="currentPassword" type="password" value="${it.currentPassword}"/> </li>
+		<li>New Password: <input name="newPassword" type="password" value="${it.newPassword}"/> </li>
+		<li>Repeat New Password: <input name="newPasswordRepeat" type="password" value="${it.newPasswordRepeat}"/> </li>
 	</ul>
+	    <input type="submit" value="Submit"/>
 
 </form>

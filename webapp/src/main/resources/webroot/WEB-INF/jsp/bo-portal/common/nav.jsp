@@ -1,10 +1,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
+
 <nav>
-  <a href="/bo/portal/logout">Log out</a>
+    <ul>
+        <li> <a href="/bo/portal/user/change-password">Change Password</a> </li>
+        <li> <a href="/bo/portal/logout">Log out</a> </li>
+    </ul>
 </nav>
 
-<div>Hello, <c:out value="${staffUser.username}"/> </div>
-
-<p><font color="red"><c:out value="${model.err.errorCode}"/></font><p>
-<p><font color="red"><c:out value="${model.err.userErrMsg}"/></font><p>
+<c:if test="${sessionStaffUser != null}">
+    <div>Hello, <c:out value="${sessionStaffUser.username}"/> </div>
+</c:if>

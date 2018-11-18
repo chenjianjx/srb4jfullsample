@@ -5,7 +5,7 @@ import javax.servlet.http.HttpSession;
 
 public class BoSessionHelper {
 
-    private static final String SESSION_KEY_STAFF_USER = "staffUser";
+    private static final String SESSION_KEY_STAFF_USER = "sessionStaffUser";
 
     /**
      * will make sure only a valid object is returned

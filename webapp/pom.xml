@@ -161,9 +161,10 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.sitemesh</groupId>
+			<groupId>opensymphony</groupId>
 			<artifactId>sitemesh</artifactId>
 		</dependency>
+
 
 		<dependency>
 			<groupId>io.swagger</groupId>

@@ -23,6 +23,12 @@
             <artifactId>flyway-core</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.chenjianjx</groupId>
+            <artifactId>srb4jfullsample-impl</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.slf4j</groupId>

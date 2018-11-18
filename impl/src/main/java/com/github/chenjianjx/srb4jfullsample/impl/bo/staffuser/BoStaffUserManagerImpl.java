@@ -17,7 +17,7 @@ import java.util.Calendar;
 /**
  * @author chenjianjx@gmail.com
  */
-@Service("boAuthManager")
+@Service("boStaffUserManager")
 public class BoStaffUserManagerImpl extends BoManagerImplBase implements BoStaffUserManager {
 
     @Resource

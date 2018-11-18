@@ -83,6 +83,7 @@ public class BoAuthController {
                 staffUser.setUserId(loginResult.getUserId());
                 staffUser.setMustChangePassword(true);
                 staffUser.setChangePasswordReason(BoChangePasswordReason.FIRST_TIME_LOGIN);
+                BoSessionHelper.setStaffUser(servletRequest.getSession(true), staffUser);
 
                 return Response.seeOther(path2URI(CHANGE_PASSWORD)).build();
 
