@@ -18,10 +18,10 @@ import java.util.List;
 @Repository
 public interface UserRepo {
 
-	@Insert("insert into User(principal, password, source, email, emailVerified, createdAt, createdBy) "
-			+ "values (#{principal}, #{password}, #{source}, #{email}, #{emailVerified}, #{createdAt}, #{createdBy})")
+	@Insert("insert into User(principal, password, source, email, emailVerified, createdBy) "
+			+ "values (#{principal}, #{password}, #{source}, #{email}, #{emailVerified}, #{createdBy})")
 	@SelectKey(statement = "select last_insert_id() as id", keyProperty = "id", keyColumn = "id", before = false, resultType = long.class)
-	public void saveNewUser(User user);
+	public long saveNewUser(User user);
 
 	@Select("select * from User where  principal = #{principal}")
 	public User getUserByPrincipal(String principal);
@@ -32,7 +32,7 @@ public interface UserRepo {
 	@Select("select * from User where  id = #{id}")
 	public User getUserById(long id);
 
-	@Update("update User set password = #{password}, emailVerified = #{emailVerified}, updatedBy = #{updatedBy}, updatedAt = #{updatedAt}  where id = #{id}")
+	@Update("update User set password = #{password}, emailVerified = #{emailVerified}, updatedBy = #{updatedBy}  where id = #{id}")
 	public void updateUser(User newUser);
 
 	@Select("select * from User order by id")

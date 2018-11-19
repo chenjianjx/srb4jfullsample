@@ -87,7 +87,7 @@ public class User extends EntityBase implements Serializable {
 	}
 
 	/**
-	 * you don't have to call this method. this is for some reflection-based
+	 * you don't call this method. this is for some reflection-based
 	 * framework to call.
 	 * 
 	 * @param principal

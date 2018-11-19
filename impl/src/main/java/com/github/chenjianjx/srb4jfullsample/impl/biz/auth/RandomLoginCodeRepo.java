@@ -23,10 +23,10 @@ public interface RandomLoginCodeRepo {
 	 * 
 	 * @param code
 	 */
-	@Insert("insert into RandomLoginCode(codeStr, userId, expiresAt,createdAt, createdBy) "
-			+ "values (#{codeStr},  #{userId}, #{expiresAt}, #{createdAt}, #{createdBy})")
+	@Insert("insert into RandomLoginCode(codeStr, userId, expiresAt, createdBy) "
+			+ "values (#{codeStr},  #{userId}, #{expiresAt}, #{createdBy})")
 	@SelectKey(statement = "select last_insert_id() as id", keyProperty = "id", keyColumn = "id", before = false, resultType = long.class)
-	public void saveNewCode(RandomLoginCode code);
+	public long saveNewCode(RandomLoginCode code);
 
 	@Select("select * from RandomLoginCode where  userId = #{userId}")
 	public RandomLoginCode getByUserId(long userId);

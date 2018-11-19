@@ -4,6 +4,7 @@ package com.github.chenjianjx.srb4jfullsample.impl.itcase.biz.user;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.EmailVerificationDigest;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.EmailVerificationDigestRepo;
 import com.github.chenjianjx.srb4jfullsample.impl.itcase.BaseITCase;
+import com.github.chenjianjx.srb4jfullsample.utils.lang.MyLangUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,28 +29,38 @@ public class EmailVerificationDigestRepoITCase extends BaseITCase {
 
 	@Test
 	public void crudTest() throws Exception {
-		// insert
-		long userId = System.currentTimeMillis();
+		EmailVerificationDigest forInsert = new EmailVerificationDigest();
 
-		String digestStr = "test-digest-" + System.currentTimeMillis();
-		EmailVerificationDigest t = buildDigest(userId, digestStr);
-		repo.saveNewDigest(t);
-		Assert.assertNotNull(t.getId());
-		Assert.assertNotNull(t.getCreatedAt());
-		System.out.println(t);
+		forInsert.setDigestStr("someDigest");
+		forInsert.setUserId(1l);
+		forInsert.setExpiresAt(MyLangUtils.newCalendar(1l));
 
-		// get by userId
-		t = repo.getByUserId(userId);
-		Assert.assertNotNull(t);
+		forInsert.setCreatedBy("someCreatedBy");
+		forInsert.setUpdatedAt(new GregorianCalendar());
+		forInsert.setUpdatedBy("someUpdatedBy");
 
-		// get by digest str
-		t = repo.getByDigestStr(digestStr);
-		Assert.assertEquals(userId, t.getUserId());
+		//save
+		long digestId = repo.saveNewDigest(forInsert);
+		Assert.assertTrue(digestId > 0);
 
-		// delete by userId
-		repo.deleteByUserId(userId);
-		t = repo.getByUserId(userId);
-		Assert.assertNull(t);
+
+		//retrieve it
+		EmailVerificationDigest postInsert = repo.getByUserId(1l);
+		System.out.println("postInsert: " + postInsert);
+
+		Assert.assertEquals(digestId, postInsert.getId());
+		Assert.assertEquals("someDigest", postInsert.getDigestStr());
+		Assert.assertEquals(1l, postInsert.getUserId());
+		Assert.assertEquals(MyLangUtils.newCalendar(1l), postInsert.getExpiresAt());
+
+		Assert.assertNotNull(postInsert.getCreatedAt());
+		Assert.assertEquals("someCreatedBy", postInsert.getCreatedBy());
+		Assert.assertNull(postInsert.getUpdatedAt());  //ignored during inserting
+		Assert.assertNull(postInsert.getUpdatedBy());  //ignored during inserting
+
+		//delete
+		repo.deleteByUserId(1l);
+		Assert.assertNull(repo.getByUserId(1l));
 	}
 
 	@Test(expected = DuplicateKeyException.class)

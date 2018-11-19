@@ -7,7 +7,7 @@ import com.github.chenjianjx.srb4jfullsample.impl.biz.user.User;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.UserRepo;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.UserService;
 import com.github.chenjianjx.srb4jfullsample.impl.fo.common.FoManagerImplBase;
-import com.github.chenjianjx.srb4jfullsample.utils.infrahelp.beanvalidate.MyValidator;
+import com.github.chenjianjx.srb4jfullsample.impl.support.beanvalidate.MyValidator;
 import com.github.chenjianjx.srb4jfullsample.utils.lang.MyCodecUtils;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoChangePasswordRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;

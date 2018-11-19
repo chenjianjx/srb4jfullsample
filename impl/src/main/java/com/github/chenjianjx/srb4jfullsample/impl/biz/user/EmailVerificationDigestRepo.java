@@ -23,10 +23,10 @@ public interface EmailVerificationDigestRepo {
 	 * 
 	 * @param digest
 	 */
-	@Insert("insert into EmailVerificationDigest(digestStr, userId, expiresAt,createdAt, createdBy) "
-			+ "values (#{digestStr},  #{userId}, #{expiresAt}, #{createdAt}, #{createdBy})")
+	@Insert("insert into EmailVerificationDigest(digestStr, userId, expiresAt, createdBy) "
+			+ "values (#{digestStr},  #{userId}, #{expiresAt}, #{createdBy})")
 	@SelectKey(statement = "select last_insert_id() as id", keyProperty = "id", keyColumn = "id", before = false, resultType = long.class)
-	void saveNewDigest(EmailVerificationDigest digest);
+	long saveNewDigest(EmailVerificationDigest digest);
 
 	@Select("select * from EmailVerificationDigest where  userId = #{userId}")
 	EmailVerificationDigest getByUserId(long userId);

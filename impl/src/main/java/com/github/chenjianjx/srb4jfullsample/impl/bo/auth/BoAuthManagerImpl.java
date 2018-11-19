@@ -3,7 +3,7 @@ package com.github.chenjianjx.srb4jfullsample.impl.bo.auth;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.staff.StaffAuthService;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.staff.StaffUser;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.staff.StaffUserRepo;
-import com.github.chenjianjx.srb4jfullsample.utils.infrahelp.beanvalidate.MyValidator;
+import com.github.chenjianjx.srb4jfullsample.impl.support.beanvalidate.MyValidator;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoAuthManager;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoLoginRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoLoginResult;

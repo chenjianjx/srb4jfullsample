@@ -10,7 +10,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
-import com.github.chenjianjx.srb4jfullsample.utils.infrahelp.beanvalidate.MyValidator;
+import com.github.chenjianjx.srb4jfullsample.impl.support.beanvalidate.MyValidator;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
