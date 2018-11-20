@@ -42,7 +42,7 @@
                 <input type="text" id="username" name="username" value="${it.username}"
                     class="form-control" placeholder="Username" required="required" autofocus="autofocus">
                 <label for="username">Username</label>
-
+                <my:fieldError field="username"/>
               </div>
             </div>
             <div class="form-group">
@@ -51,7 +51,7 @@
                 <input type="password" name="password" type="password" value="${it.password}"
                     id="inputPassword" class="form-control" required="required"  placeholder="Password" >
                 <label for="inputPassword">Password</label>
-
+                <my:fieldError field="password"/>
               </div>
             </div>
             <input class="btn btn-primary btn-block" value="Login" type="submit"/>

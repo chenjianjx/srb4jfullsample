@@ -2,8 +2,10 @@
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
 
 
-
-<%@ attribute name="it"    rtexprvalue="true"  required="true" type="java.lang.String"  description="the root MVC model" %>
 <%@ attribute name="field"    rtexprvalue="true"  required="true" type="java.lang.String"  description="field name" %>
 
-<c:out value="${it}"/>
+                <c:if test="${not empty it.err.fieldUserErrors && not empty it.err.fieldUserErrors[field]}">
+                    <div class="invalid-feedback-show">
+                        <c:out value="${it.err.fieldUserErrors[field]}"/>
+                    </div>
+                </c:if>

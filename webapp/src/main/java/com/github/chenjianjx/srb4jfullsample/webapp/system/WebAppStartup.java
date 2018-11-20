@@ -14,6 +14,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,15 +58,17 @@ public class WebAppStartup {
 
     private static void startServer(StartupConfig startupConfig) throws Exception {
         Server server = new Server(startupConfig.port);
-        server.setHandler(createHandler());
+        server.setHandler(createHandler(server));
         server.start();
         logger.info("Server started up");
         server.join();
     }
 
 
-    private static Handler createHandler() throws IOException {
+    private static Handler createHandler(Server server) throws IOException {
         WebAppContext contextHandler = new WebAppContext(new ClassPathResource("webroot").getURI().toString(), "/");
+        initAnnotationConfiguration(server, contextHandler);
+
 
         //add the spring listener
         contextHandler.addEventListener(createSpringContextListener(contextHandler));
@@ -95,7 +98,30 @@ public class WebAppStartup {
         contextHandler.addServlet(HealthCheckServlet.class, "/health");
         contextHandler.addServlet(FoRestDocServlet.class, "/fo-rest-doc");
 
+
         return contextHandler;
+    }
+
+    /**
+     * copied from  https://www.eclipse.org/jetty/documentation/9.4.x/embedded-examples.html#embedded-webapp-jsp
+     */
+    private static void initAnnotationConfiguration(Server server, WebAppContext contextHandler) {
+        // This webapp will use jsps and jstl. We need to enable the
+        // AnnotationConfiguration in order to correctly
+        // set up the jsp container
+        Configuration.ClassList classlist = Configuration.ClassList
+                .setServerDefault( server );
+        classlist.addBefore(
+                "org.eclipse.jetty.webapp.JettyWebXmlConfiguration",
+                "org.eclipse.jetty.annotations.AnnotationConfiguration" );
+
+        // Set the ContainerIncludeJarPattern so that jetty examines these
+        // container-path jars for tlds, web-fragments etc.
+        // If you omit the jar that contains the jstl .tlds, the jsp engine will
+        // scan for them instead.
+        contextHandler.setAttribute(
+                "org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern",
+                ".*/[^/]*servlet-api-[^/]*\\.jar$|.*/javax.servlet.jsp.jstl-.*\\.jar$|.*/[^/]*taglibs.*\\.jar$" );
     }
 
     private static EventListener createSpringContextListener(ServletContextHandler contextHandler) {
