@@ -4,6 +4,7 @@ import com.github.chenjianjx.srb4jfullsample.impl.biz.staff.StaffAuthService;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.staff.StaffUser;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.staff.StaffUserRepo;
 import com.github.chenjianjx.srb4jfullsample.impl.support.beanvalidate.MyValidator;
+import com.github.chenjianjx.srb4jfullsample.impl.support.beanvalidate.ValidationError;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoAuthManager;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoLoginRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.bo.auth.BoLoginResult;
@@ -32,21 +33,21 @@ public class BoAuthManagerImpl implements BoAuthManager  {
 
     @Override
     public BoResponse<BoLoginResult> login(BoLoginRequest request) {
-        String error = myValidator.validateBeanFastFail(request, BoConstants.NULL_REQUEST_BEAN_TIP);
+        ValidationError error = myValidator.validateBean(request, BoConstants.NULL_REQUEST_BEAN_TIP);
         if (error != null) {
-            return BoResponse.userErrResponse(BoConstants.FEC_INVALID_INPUT, error);
+            return BoResponse.userErrResponse(BoConstants.FEC_INVALID_INPUT, error.getNonFieldError(), error.getFieldErrors());
         }
 
         StaffUser staffUser = staffUserRepo.getStaffUserByUsername(request.getUsername());
 
         if (staffUser == null) {
             return BoResponse.userErrResponse(BoConstants.FEC_INVALID_INPUT,
-                    "Invalid Username");
+                    "Invalid Username", null);
         }
 
         // compare password
         if (!MyCodecUtils.isPasswordDjangoMatches(request.getPassword(), staffUser.getPassword())) {
-            return BoResponse.userErrResponse(BoConstants.FEC_INVALID_INPUT, "Invalid Password");
+            return BoResponse.userErrResponse(BoConstants.FEC_INVALID_INPUT, "Invalid Password", null);
         }
 
 

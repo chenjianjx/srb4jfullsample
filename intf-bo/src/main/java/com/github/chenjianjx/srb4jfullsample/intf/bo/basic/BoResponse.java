@@ -3,6 +3,8 @@ package com.github.chenjianjx.srb4jfullsample.intf.bo.basic;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.ErrorResult;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
 
+import java.util.Map;
+
 /**
  * the generic response object for back office interfaces.
  * Since {@link FoResponse}'s data structure can also work on BO, then why not just extend it?
@@ -17,11 +19,12 @@ public class BoResponse<T> extends FoResponse<T> {
         return r;
     }
 
-    public static <T> BoResponse<T> userErrResponse(String errorCode, String userErrMsg) {
+    public static <T> BoResponse<T> userErrResponse(String errorCode, String nonFieldUserError, Map<String, String> fieldUserErrors) {
         BoResponse<T> response = new BoResponse<T>();
         ErrorResult err = new ErrorResult();
         err.setErrorCode(errorCode);
-        err.setUserErrMsg(userErrMsg);
+        err.setNonFieldUserError(nonFieldUserError);
+        err.setFieldUserErrors(fieldUserErrors);
         response.setErr(err);
         return response;
     }

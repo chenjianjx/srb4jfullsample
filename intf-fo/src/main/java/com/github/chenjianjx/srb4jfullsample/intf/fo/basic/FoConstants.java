@@ -25,11 +25,13 @@ public interface FoConstants {
 	/* the names of error fields in response */
 	String ERROR_FN = "error";
 
-	String SUCC_FN = "successful";
-
 	String EXCEPTION_ID_FN = "exception_id";
 
 	String ERROR_DESC_FOR_USER_FN = "error_description_for_user";
+
+	String NON_FIELD_ERROR_FOR_USER_FN ="non_field_error_for_user";
+
+	String FIELD_ERRORS_FOR_USER_FN = "field_errors_for_user";
 
 	String ERROR_DESC_FN = "error_description";
 

@@ -11,8 +11,7 @@ import com.github.chenjianjx.srb4jfullsample.impl.biz.user.UserRepo;
 import com.github.chenjianjx.srb4jfullsample.impl.fo.auth.socialsite.FoSocialSiteAuthHelper;
 import com.github.chenjianjx.srb4jfullsample.impl.fo.common.FoManagerImplBase;
 import com.github.chenjianjx.srb4jfullsample.impl.support.beanvalidate.MyValidator;
-import com.github.chenjianjx.srb4jfullsample.utils.lang.MyCodecUtils;
-import com.github.chenjianjx.srb4jfullsample.utils.lang.MyDuplet;
+import com.github.chenjianjx.srb4jfullsample.impl.support.beanvalidate.ValidationError;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoAuthManager;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoAuthTokenResult;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoGenRandomLoginCodeRequest;
@@ -24,6 +23,8 @@ import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialAuthCodeLoginR
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialLoginByTokenRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
+import com.github.chenjianjx.srb4jfullsample.utils.lang.MyCodecUtils;
+import com.github.chenjianjx.srb4jfullsample.utils.lang.MyDuplet;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -220,11 +221,9 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
     @Override
     public FoResponse<Void> generateRandomLoginCode(
             FoGenRandomLoginCodeRequest request) {
-        String error = myValidator.validateBeanFastFail(request,
-                NULL_REQUEST_BEAN_TIP);
-        if (error != null) {
-            return FoResponse.userErrResponse(
-                    FoConstants.FEC_OAUTH2_INVALID_REQUEST, error);
+        ValidationError error = myValidator.validateBean(request, FoConstants.NULL_REQUEST_BEAN_TIP);
+        if (error.hasErrors()) {
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, error.getNonFieldError(), error.getFieldErrors());
         }
 
         String principalName = User
