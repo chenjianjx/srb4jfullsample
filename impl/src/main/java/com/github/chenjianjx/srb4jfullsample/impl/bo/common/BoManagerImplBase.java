@@ -30,7 +30,6 @@ public class BoManagerImplBase {
     }
 
     public static <T> BoResponse<T> buildNotLoginErr() {
-        return BoResponse.userErrResponse(BoConstants.FEC_NOT_LOGIN_YET,
-                "You have not login yet");
+        return BoResponse.userErrResponse(BoConstants.FEC_NOT_LOGIN_YET, "You have not login yet", null);
     }
 }

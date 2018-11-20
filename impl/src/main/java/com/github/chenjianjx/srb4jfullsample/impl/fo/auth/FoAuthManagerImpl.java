@@ -65,25 +65,21 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
     @Override
     public FoResponse<FoAuthTokenResult> localOauth2Login(
             FoLocalLoginRequest request) {
-        String error = myValidator.validateBeanFastFail(request,
-                NULL_REQUEST_BEAN_TIP);
-        if (error != null) {
-            return FoResponse.userErrResponse(
-                    FoConstants.FEC_OAUTH2_INVALID_REQUEST, error);
+        ValidationError error = myValidator.validateBean(request, NULL_REQUEST_BEAN_TIP);
+        if (error.hasErrors()) {
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, error.getNonFieldError(), error.getFieldErrors());
         }
 
         String principal = User.decidePrincipalFromLocal(request.getEmail());
         User user = userRepo.getUserByPrincipal(principal);
 
         if (user == null) {
-            return FoResponse.userErrResponse(
-                    FoConstants.FEC_OAUTH2_INVALID_REQUEST, "invalid email");
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "invalid email", null);
         }
 
         // now compare password
         if (!MyCodecUtils.isPasswordDjangoMatches(request.getPassword(), user.getPassword())) {
-            return FoResponse.userErrResponse(
-                    FoConstants.FEC_OAUTH2_INVALID_REQUEST, "invalid password");
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "invalid password", null);
         }
 
         // ok, do the token
@@ -94,19 +90,16 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
     public FoResponse<FoAuthTokenResult> localRandomCodeLogin(
             FoRandomCodeLoginRequest request) {
 
-        String error = myValidator.validateBeanFastFail(request,
-                NULL_REQUEST_BEAN_TIP);
-        if (error != null) {
-            return FoResponse.userErrResponse(
-                    FoConstants.FEC_OAUTH2_INVALID_REQUEST, error);
+        ValidationError error = myValidator.validateBean(request, NULL_REQUEST_BEAN_TIP);
+        if (error.hasErrors()) {
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, error.getNonFieldError(), error.getFieldErrors());
         }
 
         String principal = User.decidePrincipalFromLocal(request.getEmail());
         User user = userRepo.getUserByPrincipal(principal);
 
         if (user == null) {
-            return FoResponse.userErrResponse(
-                    FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Invalid email.");
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Invalid email.", null);
         }
 
         // now compare the codes
@@ -114,15 +107,11 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
                 .getRandomCode());
         RandomLoginCode rlc = randomCodeRepo.getByUserId(user.getId());
         if (rlc == null || !encodedCode.equals(rlc.getCodeStr())) {
-            return FoResponse.userErrResponse(
-                    FoConstants.FEC_OAUTH2_INVALID_REQUEST,
-                    "Invalid random code.");
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Invalid random code.", null);
         }
 
         if (rlc.hasExpired()) {
-            return FoResponse.userErrResponse(
-                    FoConstants.FEC_OAUTH2_INVALID_REQUEST,
-                    "Random code expired.");
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Random code expired.", null);
         }
 
         // ok, do the token
@@ -156,17 +145,14 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
     @Override
     public FoResponse<FoAuthTokenResult> localRegister(FoRegisterRequest request) {
 
-        String error = myValidator.validateBeanFastFail(request,
-                NULL_REQUEST_BEAN_TIP);
-        if (error != null) {
-            return FoResponse.userErrResponse(
-                    FoConstants.FEC_OAUTH2_INVALID_REQUEST, error);
+        ValidationError error = myValidator.validateBean(request, NULL_REQUEST_BEAN_TIP);
+        if (error.hasErrors()) {
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, error.getNonFieldError(), error.getFieldErrors());
         }
 
         String email = request.getEmail();
         if (!myValidator.isEmailValid(email)) {
-            return FoResponse.userErrResponse(
-                    FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Invalid Email");
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Invalid Email", null);
         }
 
         // validate user existence
@@ -174,8 +160,7 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 
         if (existingUser != null) {
             String err = "This email already exists";
-            return FoResponse.userErrResponse(
-                    FoConstants.FEC_OAUTH2_INVALID_REQUEST, err);
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, err, null);
         }
 
         // save it
@@ -231,8 +216,7 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
         User user = userRepo.getUserByPrincipal(principalName);
 
         if (user == null) {
-            return FoResponse.userErrResponse(
-                    FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Invalid email.");
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Invalid email.", null);
         }
 
         String randomCodeStr = authService.generateRandomLoginCode();
@@ -255,11 +239,10 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
     public FoResponse<FoAuthTokenResult> socialLoginByToken(
             FoSocialLoginByTokenRequest request) {
 
-        String error = myValidator.validateBeanFastFail(request,
-                NULL_REQUEST_BEAN_TIP);
-        if (error != null) {
+        ValidationError error = myValidator.validateBean(request, NULL_REQUEST_BEAN_TIP);
+        if (error.hasErrors()) {
             return FoResponse.devErrResponse(
-                    FoConstants.FEC_OAUTH2_INVALID_REQUEST, error, null);
+                    FoConstants.FEC_OAUTH2_INVALID_REQUEST, error.getAllErrorsAsString(), null);
         }
         String source = request.getSource();
         if (!User.isValidSocialAccountSource(source)) {
@@ -282,11 +265,11 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
     public FoResponse<FoAuthTokenResult> socialLoginByAuthCode(
             FoSocialAuthCodeLoginRequest request) {
 
-        String error = myValidator.validateBeanFastFail(request,
+        ValidationError error = myValidator.validateBean(request,
                 NULL_REQUEST_BEAN_TIP);
-        if (error != null) {
+        if (error.hasErrors()) {
             return FoResponse.devErrResponse(
-                    FoConstants.FEC_OAUTH2_INVALID_REQUEST, error, null);
+                    FoConstants.FEC_OAUTH2_INVALID_REQUEST, error.getAllErrorsAsString(), null);
         }
         String source = request.getSource();
         if (!User.isValidSocialAccountSource(source)) {
@@ -345,8 +328,7 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
             } else {
                 //A user who has the same email, but not the same source, exists
                 String err = "A user with the same email (" + email + ") already exists.";
-                return FoResponse.userErrResponse(
-                        FoConstants.FEC_OAUTH2_INVALID_REQUEST, err);
+                return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, err, null);
             }
         }
         // ok, do the token
@@ -357,11 +339,11 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
     public FoResponse<FoAuthTokenResult> oauth2RefreshToken(
             FoRefreshTokenRequest request) {
 
-        String error = myValidator.validateBeanFastFail(request,
+        ValidationError error = myValidator.validateBean(request,
                 NULL_REQUEST_BEAN_TIP);
-        if (error != null) {
+        if (error.hasErrors()) {
             return FoResponse.devErrResponse(
-                    FoConstants.FEC_OAUTH2_INVALID_REQUEST, error, null);
+                    FoConstants.FEC_OAUTH2_INVALID_REQUEST, error.getAllErrorsAsString(), null);
         }
 
         String refreshToken = request.getRefreshToken();

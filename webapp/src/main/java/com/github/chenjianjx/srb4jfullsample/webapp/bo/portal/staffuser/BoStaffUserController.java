@@ -76,7 +76,7 @@ public class BoStaffUserController {
         model.put("confirmPassword", confirmPassword);
 
         if (!StringUtils.equals(newPassword, confirmPassword)) {
-            ErrorResult err = BoResponse.userErrResponse(BoConstants.FEC_INVALID_INPUT, "The new passwords don't match").getErr();
+            ErrorResult err = BoResponse.userErrResponse(BoConstants.FEC_INVALID_INPUT, "The new passwords don't match", null).getErr();
             model.setError(err);
             return new Viewable(CHANGE_PASSWORD_FORM_VIEW, model);
         }

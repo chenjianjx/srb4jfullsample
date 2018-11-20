@@ -1,6 +1,5 @@
 package com.github.chenjianjx.srb4jfullsample.impl.bo.auth;
 
-import com.github.chenjianjx.srb4jfullsample.impl.biz.staff.StaffAuthService;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.staff.StaffUser;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.staff.StaffUserRepo;
 import com.github.chenjianjx.srb4jfullsample.impl.support.beanvalidate.MyValidator;
@@ -19,7 +18,7 @@ import javax.annotation.Resource;
  * @author chenjianjx@gmail.com
  */
 @Service("boAuthManager")
-public class BoAuthManagerImpl implements BoAuthManager  {
+public class BoAuthManagerImpl implements BoAuthManager {
 
     @Resource
     MyValidator myValidator;
@@ -27,14 +26,11 @@ public class BoAuthManagerImpl implements BoAuthManager  {
     @Resource
     StaffUserRepo staffUserRepo;
 
-    @Resource
-    StaffAuthService staffAuthService;
-
 
     @Override
     public BoResponse<BoLoginResult> login(BoLoginRequest request) {
         ValidationError error = myValidator.validateBean(request, BoConstants.NULL_REQUEST_BEAN_TIP);
-        if (error != null) {
+        if (error.hasErrors()) {
             return BoResponse.userErrResponse(BoConstants.FEC_INVALID_INPUT, error.getNonFieldError(), error.getFieldErrors());
         }
 

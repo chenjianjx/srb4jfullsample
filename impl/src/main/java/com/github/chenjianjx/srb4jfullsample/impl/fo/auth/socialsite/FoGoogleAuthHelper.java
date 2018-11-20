@@ -121,7 +121,7 @@ public class FoGoogleAuthHelper implements FoSocialSiteAuthHelper {
 		} catch (NoHttpResponseException e) {
 			FoResponse<FoAuthTokenResult> errResp = FoResponse.userErrResponse(
 					FoConstants.FEC_ERR_BUT_CAN_RETRY,
-					"Google didn't response. Please try again.");
+					"Google didn't response. Please try again.", null);
 			return MyDuplet.newInstance(null, errResp);
 		} catch (IOException e) {
 			throw new RuntimeException(e);

@@ -309,7 +309,7 @@ public class FoAuthTokenResource extends FoResourceBase {
 		Long userId = getUserId(context);
 		if (userId == null) {
 			FoResponse<Void> foResponse = FoResponse.userErrResponse(
-					FoConstants.FEC_NOT_LOGIN_YET, "You have not login yet");
+					FoConstants.FEC_NOT_LOGIN_YET, "You have not login yet", null);
 			return FoRestUtils.fromFoResponse(foResponse, context);
 		} else {
 			return FoRestUtils

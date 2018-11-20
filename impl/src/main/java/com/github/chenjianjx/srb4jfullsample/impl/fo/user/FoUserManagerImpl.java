@@ -8,6 +8,7 @@ import com.github.chenjianjx.srb4jfullsample.impl.biz.user.UserRepo;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.UserService;
 import com.github.chenjianjx.srb4jfullsample.impl.fo.common.FoManagerImplBase;
 import com.github.chenjianjx.srb4jfullsample.impl.support.beanvalidate.MyValidator;
+import com.github.chenjianjx.srb4jfullsample.impl.support.beanvalidate.ValidationError;
 import com.github.chenjianjx.srb4jfullsample.utils.lang.MyCodecUtils;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoChangePasswordRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
@@ -52,11 +53,10 @@ public class FoUserManagerImpl extends FoManagerImplBase implements
 	public FoResponse<Void> changePassword(Long currentUserId,
 			FoChangePasswordRequest request) {
 
-		String error = myValidator.validateBeanFastFail(request,
-				NULL_REQUEST_BEAN_TIP);
-		if (error != null) {
+		ValidationError error = myValidator.validateBean(request, NULL_REQUEST_BEAN_TIP);
+		if (error.hasErrors()) {
 			return FoResponse.userErrResponse(
-					FoConstants.FEC_OAUTH2_INVALID_REQUEST, error);
+					FoConstants.FEC_OAUTH2_INVALID_REQUEST, error.getNonFieldError(), error.getFieldErrors());
 		}
 
 		User currentUser = getCurrentUserConsideringInvalidId(currentUserId);
@@ -67,7 +67,7 @@ public class FoUserManagerImpl extends FoManagerImplBase implements
 		if (!MyCodecUtils.isPasswordDjangoMatches(request.getCurrentPassword(), currentUser.getPassword())) {
 			return FoResponse.userErrResponse(
 					FoConstants.FEC_OAUTH2_INVALID_REQUEST,
-					"The current password you input is wrong");
+					"The current password you input is wrong", null);
 		}
 
 		String newPassword = MyCodecUtils.encodePasswordLikeDjango(request
@@ -93,7 +93,7 @@ public class FoUserManagerImpl extends FoManagerImplBase implements
 		User user = currentUser;
 		if (user.isEmailVerified()) {
 			return FoResponse.userErrResponse(
-					FoConstants.FEC_ILLEGAL_STATUS, "Your email is already verified.");
+					FoConstants.FEC_ILLEGAL_STATUS, "Your email is already verified.", null);
 		}
 
 		EmailVerificationDigest digest = userService.saveNewEmailVerificationDigestForUser(user);
@@ -113,18 +113,18 @@ public class FoUserManagerImpl extends FoManagerImplBase implements
 	public FoResponse<Void> verifyEmail(String digestStr) {
 		digestStr = StringUtils.trimToNull(digestStr);
 		if (digestStr == null) {
-			return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, "Invalid request");
+			return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, "Invalid request", null);
 		}
 
 		EmailVerificationDigest digest = emailVerificationDigestRepo.getByDigestStr(digestStr);
 		if (digest == null) {
-			return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, "Invalid request");
+			return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, "Invalid request", null);
 		}
 
 		User user = userRepo.getUserById(digest.getUserId());
 
 		if (user == null) {
-			return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, "Invalid request");
+			return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, "Invalid request", null);
 		}
 
 		if (user.isEmailVerified()) {
@@ -133,7 +133,7 @@ public class FoUserManagerImpl extends FoManagerImplBase implements
 		}
 
 		if (digest.hasExpired()) {
-			return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, "The link has expired.");
+			return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, "The link has expired.", null);
 		}
 
 		user.setEmailVerified(true);
