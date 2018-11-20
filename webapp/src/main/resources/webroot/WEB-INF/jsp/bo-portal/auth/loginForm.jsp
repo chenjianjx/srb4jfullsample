@@ -40,7 +40,7 @@
               <div class="form-label-group">
 
                 <input type="text" id="username" name="username" value="${it.username}"
-                    class="form-control" placeholder="Username" required="required" autofocus="autofocus">
+                    class="form-control <my:fieldValid field='username'/>" placeholder="Username" required="required" autofocus="autofocus">
                 <label for="username">Username</label>
                 <my:fieldError field="username"/>
               </div>
@@ -49,7 +49,7 @@
               <div class="form-label-group">
 
                 <input type="password" name="password" type="password" value="${it.password}"
-                    id="inputPassword" class="form-control" required="required"  placeholder="Password" >
+                    id="inputPassword" class="form-control <my:fieldValid field='password'/>" required="required"  placeholder="Password" >
                 <label for="inputPassword">Password</label>
                 <my:fieldError field="password"/>
               </div>

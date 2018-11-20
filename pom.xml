@@ -105,6 +105,13 @@
                 <groupId>org.glassfish.jersey.ext</groupId>
                 <artifactId>jersey-spring3</artifactId>
                 <version>${jersey.version}</version>
+                <exclusions>
+                    <!-- Conflicts with ASM jars brought in by jetty 9-->
+                    <exclusion>
+                        <groupId>org.glassfish.hk2.external</groupId>
+                        <artifactId>asm-all-repackaged</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -141,14 +148,24 @@
                 <version>${swagger.version}</version>
             </dependency>
 
+            <!-- This will force swagger2html to use this higer version of parboild -->
+            <dependency>
+                <groupId>org.parboiled</groupId>
+                <artifactId>parboiled-java</artifactId>
+                <version>1.2.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm-util</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
             <dependency>
                 <groupId>com.github.chenjianjx</groupId>
                 <artifactId>swagger2html</artifactId>
                 <version>2.0.0</version>
             </dependency>
-
-
-
 
 
             <!-- Spring -->
