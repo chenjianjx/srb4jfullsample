@@ -1,3 +1,5 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="my"   tagdir="/WEB-INF/tags/mytaglib"%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -29,23 +31,27 @@
         <div class="card-header">Login</div>
         <div class="card-body">
 
-          <form action="/bo/portal/login" method="post">
+          <form action="/bo/portal/login" method="post" class="needs-validation" novalidate>
             <div class="form-group">
                 <%@ include file="/WEB-INF/jsp/bo-portal/common/form-errors.jsp" %>
             </div>
 
             <div class="form-group">
               <div class="form-label-group">
+
                 <input type="text" id="username" name="username" value="${it.username}"
                     class="form-control" placeholder="Username" required="required" autofocus="autofocus">
                 <label for="username">Username</label>
+
               </div>
             </div>
             <div class="form-group">
               <div class="form-label-group">
+
                 <input type="password" name="password" type="password" value="${it.password}"
-                    id="inputPassword" class="form-control" placeholder="Password" required="required">
+                    id="inputPassword" class="form-control" required="required"  placeholder="Password" >
                 <label for="inputPassword">Password</label>
+
               </div>
             </div>
             <input class="btn btn-primary btn-block" value="Login" type="submit"/>
