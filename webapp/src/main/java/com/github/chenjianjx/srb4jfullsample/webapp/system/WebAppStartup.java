@@ -68,6 +68,15 @@ public class WebAppStartup {
     private static Handler createHandler(Server server) throws IOException {
         WebAppContext contextHandler = new WebAppContext(new ClassPathResource("webroot").getURI().toString(), "/");
         initAnnotationConfiguration(server, contextHandler);
+//        contextHandler.setResourceBase(".");
+//        contextHandler.setWelcomeFiles(new String[]{"index.jsp"});
+
+        // Create Example of mapping jsp to path spec
+        ServletHolder holderAltMapping = new ServletHolder();
+        holderAltMapping.setName("index");
+        holderAltMapping.setForcedPath("/index.jsp");
+        contextHandler.addServlet(holderAltMapping, "/");
+
 
 
         //add the spring listener
@@ -110,10 +119,10 @@ public class WebAppStartup {
         // AnnotationConfiguration in order to correctly
         // set up the jsp container
         Configuration.ClassList classlist = Configuration.ClassList
-                .setServerDefault( server );
+                .setServerDefault(server);
         classlist.addBefore(
                 "org.eclipse.jetty.webapp.JettyWebXmlConfiguration",
-                "org.eclipse.jetty.annotations.AnnotationConfiguration" );
+                "org.eclipse.jetty.annotations.AnnotationConfiguration");
 
         // Set the ContainerIncludeJarPattern so that jetty examines these
         // container-path jars for tlds, web-fragments etc.
@@ -121,7 +130,7 @@ public class WebAppStartup {
         // scan for them instead.
         contextHandler.setAttribute(
                 "org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern",
-                ".*/[^/]*servlet-api-[^/]*\\.jar$|.*/javax.servlet.jsp.jstl-.*\\.jar$|.*/[^/]*taglibs.*\\.jar$" );
+                ".*/[^/]*servlet-api-[^/]*\\.jar$|.*/javax.servlet.jsp.jstl-.*\\.jar$|.*/[^/]*taglibs.*\\.jar$");
     }
 
     private static EventListener createSpringContextListener(ServletContextHandler contextHandler) {
