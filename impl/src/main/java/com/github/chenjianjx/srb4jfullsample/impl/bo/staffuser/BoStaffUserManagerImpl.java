@@ -49,7 +49,7 @@ public class BoStaffUserManagerImpl extends BoManagerImplBase implements BoStaff
         if (!MyCodecUtils.isPasswordDjangoMatches(request.getCurrentPassword(), currentStaffUser.getPassword())) {
             return BoResponse.userErrResponse(
                     BoConstants.FEC_INVALID_INPUT, null,
-                    ImmutableMap.of("currentPassword",  "The current password you input is wrong"));
+                    ImmutableMap.of("currentPassword",  "Current password is wrong"));
         }
 
         String encodedNewPassword = MyCodecUtils.encodePasswordLikeDjango(request.getNewPassword());

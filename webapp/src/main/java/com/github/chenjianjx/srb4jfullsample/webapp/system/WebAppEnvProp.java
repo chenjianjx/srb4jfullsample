@@ -15,8 +15,6 @@ public class WebAppEnvProp {
 
 	private String schemeAndHost;
 
-	private boolean enableSwagger;
-
 	private String smtpHost;
 
 	private int smtpPort;
@@ -40,7 +38,7 @@ public class WebAppEnvProp {
 		schemeAndHost = StringUtils.trimToNull(schemeAndHost);
 		if (schemeAndHost == null) {
 			throw new IllegalStateException(
-					"Pleaset set schemeAndHost property");
+					"Please set schemeAndHost property");
 		}
 		if (!schemeAndHost.endsWith("/")) {
 			schemeAndHost = schemeAndHost + "/";
@@ -49,24 +47,11 @@ public class WebAppEnvProp {
 		this.schemeAndHost = schemeAndHost;
 	}
 
-	@Value("${enableSwagger}")
-	public void setEnableSwagger(String enableSwaggerStr) {
-		enableSwaggerStr = StringUtils.trimToNull(enableSwaggerStr);
-		if (enableSwaggerStr == null) {
-			throw new IllegalStateException(
-					"Pleaset set enableSwagger property");
-		}
-
-		enableSwagger = Boolean.valueOf(enableSwaggerStr);
-	}
 
 	public String getSchemeAndHost() {
 		return schemeAndHost;
 	}
 
-	public boolean isEnableSwagger() {
-		return enableSwagger;
-	}
 
 	public String getSmtpHost() {
 		return smtpHost;

@@ -12,10 +12,10 @@ import javax.validation.constraints.NotNull;
 
 public class BoChangePasswordRequest {
 
-    @NotNull(message = "Please input current password.")
+    @NotNull(message = "Please input current password")
     private String currentPassword;
 
-    @NotNull(message = "Please input a new password.")
+    @NotNull(message = "Please input a new password")
     private String newPassword;
 
 

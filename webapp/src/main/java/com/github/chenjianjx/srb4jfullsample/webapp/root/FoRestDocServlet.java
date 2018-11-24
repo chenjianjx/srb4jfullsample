@@ -1,21 +1,20 @@
 package com.github.chenjianjx.srb4jfullsample.webapp.root;
 
-import java.io.IOException;
-import java.io.StringWriter;
+import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoRestUtils;
+import com.github.chenjianjx.srb4jfullsample.webapp.system.WebAppEnvProp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.swagger2html.Swagger2Html;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support.FoRestUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-import com.github.chenjianjx.srb4jfullsample.webapp.system.WebAppEnvProp;
-import org.swagger2html.Swagger2Html;
+import java.io.IOException;
+import java.io.StringWriter;
 
 /**
  * 
@@ -45,13 +44,6 @@ public class FoRestDocServlet extends HttpServlet {
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse resp)
 			throws ServletException, IOException {
-
-		if (!props.isEnableSwagger()) {
-			resp.getWriter()
-					.println(
-							"The doc has been disabled because swagger has been disabled.");
-			return;
-		}
 
 		if (restDoc == null) {
 			restDoc = genDoc(request);

@@ -14,10 +14,10 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class BoLoginRequest {
 
-	@NotNull(message = "Please input username.")
+	@NotNull(message = "Please input username")
 	private String username;
 
-	@NotNull(message = "Please input password.")
+	@NotNull(message = "Please input password")
 	private String password;
 
 	public String getUsername() {

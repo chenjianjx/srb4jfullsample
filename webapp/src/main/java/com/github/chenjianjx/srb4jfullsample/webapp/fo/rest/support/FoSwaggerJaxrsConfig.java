@@ -1,16 +1,15 @@
 package com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.support;
 
+import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.FrPackageAnchor;
+import com.github.chenjianjx.srb4jfullsample.webapp.system.WebAppEnvProp;
 import io.swagger.jaxrs.config.BeanConfig;
-
-import java.io.IOException;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.http.HttpServlet;
 import org.apache.commons.io.IOUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-import com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.FrPackageAnchor;
-import com.github.chenjianjx.srb4jfullsample.webapp.system.WebAppEnvProp;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.http.HttpServlet;
+import java.io.IOException;
 
 /**
  * 
@@ -33,10 +32,6 @@ public class FoSwaggerJaxrsConfig extends HttpServlet {
 		WebApplicationContext ctx = WebApplicationContextUtils
 				.getRequiredWebApplicationContext(getServletContext());
 		WebAppEnvProp props = ctx.getBean(WebAppEnvProp.class);
-
-		if (!props.isEnableSwagger()) {
-			return;
-		}
 
 		String contextPath = servletConfig.getServletContext().getContextPath();
 		String basePath = FoRestUtils.getResourceBasePath(props, contextPath);

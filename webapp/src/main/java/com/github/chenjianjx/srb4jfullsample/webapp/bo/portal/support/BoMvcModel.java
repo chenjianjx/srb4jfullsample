@@ -30,5 +30,4 @@ public class BoMvcModel extends LinkedHashMap<String, Object> {
         return this;
     }
 
-
 }

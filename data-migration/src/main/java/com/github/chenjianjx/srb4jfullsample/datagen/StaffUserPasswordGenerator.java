@@ -23,6 +23,10 @@ public class StaffUserPasswordGenerator {
         String username = null;
         while (username == null) {
             username = StringUtils.trimToNull(scanner.nextLine());
+            if (username == null) {
+                continue;
+            }
+
             if (!username.matches(BoStaffUserManager.USER_NAME_REGEX)) {
                 System.err.println("The username is not valid.");
                 System.out.println();

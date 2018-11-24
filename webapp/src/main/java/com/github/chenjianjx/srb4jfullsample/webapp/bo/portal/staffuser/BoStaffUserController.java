@@ -101,7 +101,14 @@ public class BoStaffUserController {
 
             return Response.seeOther(BoUrlHelper.path2URI(DASHBOARD)).build();
         } else {
-            model.setError(response.getErr());
+            ErrorResult err = response.getErr();
+            if (StringUtils.isBlank(confirmPassword)) {
+                Map<String, String> fieldErrors = err.getFieldUserErrors() == null ? new LinkedHashMap<>() : new LinkedHashMap<>(err.getFieldUserErrors());
+                fieldErrors.put("confirmPassword", "Please repeat the new password");
+                err.setFieldUserErrors(fieldErrors);
+            }
+
+            model.setError(err);
             return new Viewable(CHANGE_PASSWORD_FORM_VIEW, model);
         }
 

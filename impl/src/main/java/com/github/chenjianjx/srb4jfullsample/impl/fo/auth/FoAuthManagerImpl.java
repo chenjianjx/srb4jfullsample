@@ -74,12 +74,12 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
         User user = userRepo.getUserByPrincipal(principal);
 
         if (user == null) {
-            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "invalid email", null);
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Invalid email", null);
         }
 
         // now compare password
         if (!MyCodecUtils.isPasswordDjangoMatches(request.getPassword(), user.getPassword())) {
-            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "invalid password", null);
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Invalid password", null);
         }
 
         // ok, do the token
@@ -152,7 +152,7 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 
         String email = request.getEmail();
         if (!myValidator.isEmailValid(email)) {
-            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Invalid Email", null);
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Please input a valid email", null);
         }
 
         // validate user existence
