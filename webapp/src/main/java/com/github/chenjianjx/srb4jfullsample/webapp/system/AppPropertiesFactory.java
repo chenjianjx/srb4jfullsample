@@ -23,7 +23,7 @@ public class AppPropertiesFactory implements FactoryBean<Properties> {
     private static final Logger logger = LoggerFactory.getLogger(AppPropertiesFactory.class);
 
     private static String environment;
-    private static final String ENVIRONMENT_KEY = "environment";
+    private static final String ENVIRONMENT_KEY = "srb4jfullsample_environment";
     private static final String DEFAULT_ENV = "dev";
 
     private Properties properties;
@@ -65,7 +65,7 @@ public class AppPropertiesFactory implements FactoryBean<Properties> {
     }
 
     private static void decideEnvironment() {
-        environment = System.getProperty(ENVIRONMENT_KEY);
+        environment = System.getenv(ENVIRONMENT_KEY);
         if (StringUtils.isBlank(environment)) {
             environment = DEFAULT_ENV;
             System.setProperty(ENVIRONMENT_KEY, environment); //Note: spring context will read this system property

@@ -263,9 +263,7 @@ public class WebAppStartup {
         startupConfig.dbUsername = (String) properties.get("dbUsername");
         startupConfig.dbPassword = (String) properties.get("dbPassword");
 
-        String schemeAndHost = (String) properties.get("schemeAndHost");
-        URL url = new URL(schemeAndHost);
-        startupConfig.port = url.getPort();
+        startupConfig.port = Integer.parseInt((String) properties.get("port"));
         startupConfig.dataMigrationOnStartup = Boolean.valueOf((String) properties.get("dataMigrationOnStartup"));
 
         startupConfig.enableBackOfficePortal = Boolean.valueOf((String) properties.get("enableBackOfficePortal"));
