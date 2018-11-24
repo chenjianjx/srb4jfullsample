@@ -9,55 +9,20 @@
 	</appender>
 
 
-
-	<appender name="smtp-appender" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="file" value="${user.home}/logs/srb4jfullsample/smtp.log" />
-		<param name="append" value="true" />
-		<param name="encoding" value="UTF-8" />
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d %t %-5p %c - %m%n" />
-		</layout>
-	</appender>
-
-
-	<appender name="auto-task-appender" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="file" value="${user.home}/logs/srb4jfullsample/robot.log" />
-		<param name="append" value="true" />
-		<param name="encoding" value="UTF-8" />
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d %t %-5p %c - %m%n" />
-		</layout>
-	</appender>
-
-	<appender name="root-appender" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="file" value="${user.home}/logs/srb4jfullsample/root.log" />
-		<param name="append" value="true" />
-		<param name="encoding" value="UTF-8" />
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d %t %-5p %c - %m%n" />
-		</layout>
-	</appender>
-
-
-
 	<logger name="autoTaskLogger" additivity="false">
 		<level value="info" />
-		<appender-ref ref="auto-task-appender" />
+		<appender-ref ref="console" />
 	</logger>
-
-
 
 
 	<logger name="smtpLogger" additivity="false">
 		<level value="info" />
-		<appender-ref ref="smtp-appender" />
+		<appender-ref ref="console" />
 	</logger>
-
 
 
 	<root>
 		<level value="info" />
-		<appender-ref ref="root-appender" />
 		<appender-ref ref="console" />
 	</root>
 

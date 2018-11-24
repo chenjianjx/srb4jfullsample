@@ -41,8 +41,7 @@ public class AuthTasks {
 	}
 
 	private class StaleTokenScavengerTask extends TimerTask {
-
-		//You have these hours to refres an expired token
+		
 		private static final int HOURS = 8;
 
 		@Override
