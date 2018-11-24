@@ -3,5 +3,3 @@
 .settings
 .classpath
 .DS_Store
-src/main/resources/config/app.override.fakeprod.properties
-src/main/resources/config/app.override.aws.properties
