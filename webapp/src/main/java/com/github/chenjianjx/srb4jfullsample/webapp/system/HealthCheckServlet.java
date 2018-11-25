@@ -84,7 +84,7 @@ public class HealthCheckServlet extends HttpServlet {
         }
 
         public boolean isOverall() {
-            return dataSourceConnection && smtpServerConnection;
+            return dataSourceConnection;
         }
 
         public boolean isSmtpServerConnection() {
