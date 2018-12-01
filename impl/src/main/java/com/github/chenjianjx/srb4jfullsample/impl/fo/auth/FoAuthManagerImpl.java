@@ -127,6 +127,8 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
         result.setExpiresIn(accessToken.getLifespan());
         result.defaultTokenType();
         result.setUserPrincipal(user.getPrincipal());
+        result.setEmailVerified(user.isEmailVerified());
+        result.setCanVerifyEmail(!user.isEmailVerified());
         return FoResponse.success(result);
     }
 

@@ -34,6 +34,14 @@ public class FoAuthTokenResult {
 	@JsonProperty("user_principal")
 	private String userPrincipal;
 
+	@ApiModelProperty("email_verified")
+	@JsonProperty("email_verified")
+	private boolean emailVerified;
+
+	@ApiModelProperty("can_verify_email")
+	@JsonProperty("can_verify_email")
+	private boolean canVerifyEmail;
+
 	public String getRefreshToken() {
 		return refreshToken;
 	}
@@ -79,4 +87,19 @@ public class FoAuthTokenResult {
 		this.userPrincipal = userPrincipal;
 	}
 
+	public boolean isEmailVerified() {
+		return emailVerified;
+	}
+
+	public void setEmailVerified(boolean emailVerified) {
+		this.emailVerified = emailVerified;
+	}
+
+	public boolean isCanVerifyEmail() {
+		return canVerifyEmail;
+	}
+
+	public void setCanVerifyEmail(boolean canVerifyEmail) {
+		this.canVerifyEmail = canVerifyEmail;
+	}
 }
