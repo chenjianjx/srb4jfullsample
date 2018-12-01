@@ -70,8 +70,7 @@ public class FoUserManagerImpl extends FoManagerImplBase implements
 					"The current password you input is wrong", null);
 		}
 
-		String newPassword = MyCodecUtils.encodePasswordLikeDjango(request
-				.getNewPassword());
+		String newPassword = MyCodecUtils.encodePasswordLikeDjango(request.getNewPassword());
 
 		User user = userRepo.getUserById(currentUserId);
 		user.setPassword(newPassword);

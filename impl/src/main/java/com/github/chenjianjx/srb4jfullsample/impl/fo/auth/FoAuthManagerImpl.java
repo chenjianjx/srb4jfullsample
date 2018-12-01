@@ -1,10 +1,6 @@
 package com.github.chenjianjx.srb4jfullsample.impl.fo.auth;
 
-import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.AccessToken;
-import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.AccessTokenRepo;
-import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.AuthService;
-import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.RandomLoginCode;
-import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.RandomLoginCodeRepo;
+import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.*;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.client.Client;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.User;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.UserRepo;
@@ -12,15 +8,7 @@ import com.github.chenjianjx.srb4jfullsample.impl.fo.auth.socialsite.FoSocialSit
 import com.github.chenjianjx.srb4jfullsample.impl.fo.common.FoManagerImplBase;
 import com.github.chenjianjx.srb4jfullsample.impl.support.beanvalidate.MyValidator;
 import com.github.chenjianjx.srb4jfullsample.impl.support.beanvalidate.ValidationError;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoAuthManager;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoAuthTokenResult;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoGenRandomLoginCodeRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoLocalLoginRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRandomCodeLoginRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRefreshTokenRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoRegisterRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialAuthCodeLoginRequest;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoSocialLoginByTokenRequest;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.*;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
 import com.github.chenjianjx.srb4jfullsample.utils.lang.MyCodecUtils;
@@ -70,16 +58,18 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
             return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, error.getNonFieldError(), error.getFieldErrors());
         }
 
-        String principal = User.decidePrincipalFromLocal(request.getEmail());
-        User user = userRepo.getUserByPrincipal(principal);
-
+        User user = userRepo.getUserByEmail(request.getEmail());
         if (user == null) {
-            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Invalid email", null);
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "User not found", null);
+        }
+
+        if (!user.isLocal()) {
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, pleaseSocialLoginTip(user.getSource()), null);
         }
 
         // now compare password
         if (!MyCodecUtils.isPasswordDjangoMatches(request.getPassword(), user.getPassword())) {
-            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Invalid password", null);
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Password wrong", null);
         }
 
         // ok, do the token
@@ -99,19 +89,17 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
         User user = userRepo.getUserByPrincipal(principal);
 
         if (user == null) {
-            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Invalid email.", null);
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "User not found", null);
         }
 
         // now compare the codes
-        String encodedCode = MyCodecUtils.encodePasswordLikeDjango(request
-                .getRandomCode());
         RandomLoginCode rlc = randomCodeRepo.getByUserId(user.getId());
-        if (rlc == null || !encodedCode.equals(rlc.getCodeStr())) {
-            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Invalid random code.", null);
+        if (rlc == null || !MyCodecUtils.isPasswordDjangoMatches(request.getRandomCode(), rlc.getCodeStr())) {
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Invalid login code.", null);
         }
 
         if (rlc.hasExpired()) {
-            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Random code expired.", null);
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Login code expired.", null);
         }
 
         // ok, do the token
@@ -211,13 +199,15 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
             return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, error.getNonFieldError(), error.getFieldErrors());
         }
 
-        String principalName = User
-                .decidePrincipalFromLocal(request.getEmail());
-        User user = userRepo.getUserByPrincipal(principalName);
-
+        User user = userRepo.getUserByEmail(request.getEmail());
         if (user == null) {
-            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "Invalid email.", null);
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "User not found", null);
         }
+
+        if (!user.isLocal()) {
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, pleaseSocialLoginTip(user.getSource()), null);
+        }
+
 
         String randomCodeStr = authService.generateRandomLoginCode();
         RandomLoginCode randomCodeObj = authService.saveNewRandomCodeForUser(
@@ -234,6 +224,7 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
 
         return FoResponse.success(null);
     }
+
 
     @Override
     public FoResponse<FoAuthTokenResult> socialLoginByToken(
@@ -366,6 +357,10 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
         // ok, do the token
         return buildAuthTokenResponse(at, user);
 
+    }
+
+    private String pleaseSocialLoginTip(String source) {
+        return String.format("You are a %s user, please login with %s", source, source);
     }
 
 }

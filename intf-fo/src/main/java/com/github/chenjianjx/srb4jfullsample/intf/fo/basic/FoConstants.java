@@ -86,8 +86,7 @@ public interface FoConstants {
 
 	/* some validation constants */
 	String PASSWORD_PATTERN = "((?=.*\\d)(?=.*[a-zA-Z]).{6,20})";	
-	//String PASSWORD_ERR_TIP = "Password should contain at least 1 digit and 1 English letter, 6-20 characters long and should only digits, English letters and punctuations.";
-	String PASSWORD_ERR_TIP = "Password too weak.";
+	String PASSWORD_ERR_TIP = "Password should contain at least 1 digit and 1 English letter, and be 6-20 characters long.";
 	String NULL_REQUEST_BEAN_TIP = "Please input the required fields.";
 	String SOCIAL_LOGIN_CLIENT_TYPE_TIP = "The client type, including 'desktop', 'web' and 'mobile'.";
 	String SOCIAL_LOGIN_SOURCE_TIP = "Currently it supports: 'google' and 'facebook' .";

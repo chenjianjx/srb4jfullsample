@@ -103,4 +103,8 @@ public class User extends EntityBase implements Serializable {
 	public void setEmailVerified(boolean emailVerified) {
 		this.emailVerified = emailVerified;
 	}
+
+	public boolean isLocal() {
+		return SOURCE_LOCAL.equals(this.source);
+	}
 }
