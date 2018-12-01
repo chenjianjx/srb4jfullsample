@@ -1,9 +1,8 @@
 package com.github.chenjianjx.srb4jfullsample.intf.fo.auth;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * A response object containing OAuth2 auth token fields
@@ -33,14 +32,6 @@ public class FoAuthTokenResult {
 	@ApiModelProperty("user_principal")
 	@JsonProperty("user_principal")
 	private String userPrincipal;
-
-	@ApiModelProperty("email_verified")
-	@JsonProperty("email_verified")
-	private boolean emailVerified;
-
-	@ApiModelProperty("can_verify_email")
-	@JsonProperty("can_verify_email")
-	private boolean canVerifyEmail;
 
 	public String getRefreshToken() {
 		return refreshToken;
@@ -87,19 +78,4 @@ public class FoAuthTokenResult {
 		this.userPrincipal = userPrincipal;
 	}
 
-	public boolean isEmailVerified() {
-		return emailVerified;
-	}
-
-	public void setEmailVerified(boolean emailVerified) {
-		this.emailVerified = emailVerified;
-	}
-
-	public boolean isCanVerifyEmail() {
-		return canVerifyEmail;
-	}
-
-	public void setCanVerifyEmail(boolean canVerifyEmail) {
-		this.canVerifyEmail = canVerifyEmail;
-	}
 }
