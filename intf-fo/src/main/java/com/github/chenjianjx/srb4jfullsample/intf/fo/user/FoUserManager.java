@@ -30,4 +30,5 @@ public interface FoUserManager {
 	FoResponse<Void> verifyEmail(String digest);
 
 
+    FoResponse<FoUser> getCurrentUser(Long currentUserId);
 }

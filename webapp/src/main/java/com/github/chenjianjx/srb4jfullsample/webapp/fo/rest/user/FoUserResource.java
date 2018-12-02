@@ -1,6 +1,7 @@
 package com.github.chenjianjx.srb4jfullsample.webapp.fo.rest.user;
 
 import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoChangePasswordRequest;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.user.FoUser;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.user.FoUserManager;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.ErrorResult;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
@@ -59,6 +60,19 @@ public class FoUserResource extends FoResourceBase {
 
 	@Context
 	javax.inject.Provider<HttpServletRequest> servletRequestProvider;
+
+	@GET
+	@Path("/profile/me")
+	@ApiOperation(value = "Get the profile of the current user")
+	@ApiImplicitParams({ @ApiImplicitParam(name = ACCESS_TOKEN_HEADER_KEY, value = OAUTH2_ACCESS_TOKEN_NAME_TIP, required = true, dataType = "string", paramType = "header", defaultValue = ACCESS_TOKEN_HEADER_DEFAULT) })
+	@ApiResponses(value = {
+			@ApiResponse(code = SC_OK, message = OK_TIP, response = FoUser.class),
+			@ApiResponse(code = FO_SC_BIZ_ERROR, message = BIZ_ERR_TIP, response = ErrorResult.class) })
+	public Response changePassword(@Context ContainerRequestContext context) {
+		FoResponse<FoUser> foResponse = userManager.getCurrentUser(getUserId(context));
+		return FoRestUtils.fromFoResponse(foResponse, context);
+	}
+
 
 	@POST
 	@Path("/password/update/local")
