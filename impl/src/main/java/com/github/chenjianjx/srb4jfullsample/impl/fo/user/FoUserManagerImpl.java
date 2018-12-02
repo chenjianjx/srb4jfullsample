@@ -1,6 +1,5 @@
 package com.github.chenjianjx.srb4jfullsample.impl.fo.user;
 
-import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.AuthService;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.*;
 import com.github.chenjianjx.srb4jfullsample.impl.fo.common.FoManagerImplBase;
 import com.github.chenjianjx.srb4jfullsample.impl.support.beanvalidate.MyValidator;
@@ -32,9 +31,7 @@ public class FoUserManagerImpl extends FoManagerImplBase implements
 
     @Resource
     MyValidator myValidator;
-
-    @Resource
-    AuthService authService;
+    
 
     @Resource
     UserRepo userRepo;
