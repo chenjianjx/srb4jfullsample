@@ -31,7 +31,7 @@ public class FoUserManagerImpl extends FoManagerImplBase implements
 
     @Resource
     MyValidator myValidator;
-    
+
 
     @Resource
     UserRepo userRepo;
@@ -55,6 +55,11 @@ public class FoUserManagerImpl extends FoManagerImplBase implements
         User currentUser = getCurrentUserConsideringInvalidId(currentUserId);
         if (currentUser == null) {
             return buildNotLoginErr();
+        }
+
+        if(!currentUser.isLocal()){
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST,
+                    String.format("You are a %s user and cannot change password", currentUser.getSource()), null);
         }
 
         if (!MyCodecUtils.isPasswordDjangoMatches(request.getCurrentPassword(), currentUser.getPassword())) {
