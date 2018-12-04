@@ -98,4 +98,8 @@ public interface FoConstants {
 	String PATH_EMAIL_VERIFICATION_PROCESS_VERIFY = "/email-verification-process/verify"; //please prepend "/user" for the whole path
 	String EMAIL_VERIFICATION_DIGEST_PARAM_NAME = "d";
 	int EMAIL_VERIFICATION_DIGEST_LIFESPAN = 3600 * 24 * 14;
+
+
+	/**forget password related*/
+	int FORGET_PASSWORD_VERIFY_CODE_LIFESPAN = 60 * 10;
 }

@@ -98,16 +98,6 @@ public class AuthService {
 
     }
 
-    public String generateRandomLoginCode() {
-        SecureRandom random = new SecureRandom();
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < 6; i++) {
-            int randNum = random.nextInt(10);
-            sb.append(randNum);
-        }
-        return sb.toString();
-    }
-
     public void setRandomCodeRepo(RandomLoginCodeRepo randomCodeRepo) {
         this.randomCodeRepo = randomCodeRepo;
     }

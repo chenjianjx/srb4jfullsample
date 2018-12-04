@@ -345,7 +345,7 @@ public class FoAuthTokenResource extends FoResourceBase {
 			return Response.status(res.getResponseStatus())
 					.entity(res.getBody()).build();
 		}
-		OAuthResponse oltuResponse = null;
+		OAuthResponse oltuResponse;
 
 		/*
 		 * the following fields will not be null since they have been validated

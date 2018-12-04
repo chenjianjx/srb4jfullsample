@@ -1,4 +1,4 @@
-package com.github.chenjianjx.srb4jfullsample.intf.fo.auth;
+package com.github.chenjianjx.srb4jfullsample.intf.fo.user;
 
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
 import io.swagger.annotations.ApiModel;

@@ -1,6 +1,6 @@
 package com.github.chenjianjx.srb4jfullsample.intf.fo.user;
 
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoChangePasswordRequest;
+
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
 
 /**
@@ -31,4 +31,27 @@ public interface FoUserManager {
 
 
     FoResponse<FoUser> getCurrentUser(Long currentUserId);
+
+
+	/**
+	 * generate verification code for local user's "forget password flow" and send it to the user's email address
+	 *
+	 *
+	 * @param request
+	 * @return
+	 */
+	FoResponse<Void> startForgetPasswordFlow(FoGenForgetPasswordVerifyCodeRequest request);
+
+
+	/**
+	 * validate the verification code for "forget password flow"
+	 *
+	 */
+	FoResponse<Void> validateForgetPasswordVerifyCode(FoValidateForgetPasswordVerifyCodeRequest request);
+
+	/**
+	 * The final step of "forget-password"
+	 *
+	 */
+	FoResponse<Void> resetPassword(FoResetPasswordRequest request);
 }

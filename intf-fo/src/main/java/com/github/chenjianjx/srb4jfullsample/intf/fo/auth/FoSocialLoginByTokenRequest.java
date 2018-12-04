@@ -2,6 +2,7 @@ package com.github.chenjianjx.srb4jfullsample.intf.fo.auth;
 
 import javax.validation.constraints.NotNull;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -15,9 +16,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class FoSocialLoginByTokenRequest {
 
 	@NotNull(message = "social source not specified")
+	@ApiModelProperty(required = true)
 	private String source;
 
 	@NotNull(message = "social site token cannot be empty")
+	@ApiModelProperty(required = true)
 	private String token;
 
 	private String clientType;

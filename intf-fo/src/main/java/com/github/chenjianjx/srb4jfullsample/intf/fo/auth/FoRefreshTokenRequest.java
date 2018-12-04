@@ -2,6 +2,7 @@ package com.github.chenjianjx.srb4jfullsample.intf.fo.auth;
 
 import javax.validation.constraints.NotNull;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -15,6 +16,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class FoRefreshTokenRequest {
 
 	@NotNull(message = "Please specify refresh token.")
+	@ApiModelProperty(required = true)
 	private String refreshToken;
 
 	public String getRefreshToken() {

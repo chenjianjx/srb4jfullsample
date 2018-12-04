@@ -1,23 +1,22 @@
-package com.github.chenjianjx.srb4jfullsample.intf.fo.auth;
+package com.github.chenjianjx.srb4jfullsample.intf.fo.user;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * 
  * @author chenjianjx@gmail.com
  *
  */
-@ApiModel(value = "GenRandomLoginCodeRequest", description = "generate random login code")
-public class FoGenRandomLoginCodeRequest {
+@ApiModel(value = "GenForgetPasswordVerifyRequest", description = "generate verification code for 'forget password flow'")
+public class FoGenForgetPasswordVerifyCodeRequest {
 
-	@NotNull(message = "Please input email")
-	@ApiModelProperty(value = "the user's email", required = true)
+	@NotNull(message = "please input email")
+	@ApiModelProperty(required = true)
 	private String email;
 
 	public String getEmail() {

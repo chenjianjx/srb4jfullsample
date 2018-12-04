@@ -4,6 +4,7 @@ import com.github.chenjianjx.srb4jfullsample.impl.biz.auth.*;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.client.Client;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.User;
 import com.github.chenjianjx.srb4jfullsample.impl.biz.user.UserRepo;
+import com.github.chenjianjx.srb4jfullsample.impl.common.ImplHelper;
 import com.github.chenjianjx.srb4jfullsample.impl.fo.auth.socialsite.FoSocialSiteAuthHelper;
 import com.github.chenjianjx.srb4jfullsample.impl.fo.common.FoManagerImplBase;
 import com.github.chenjianjx.srb4jfullsample.impl.support.beanvalidate.MyValidator;
@@ -64,7 +65,7 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
         }
 
         if (!user.isLocal()) {
-            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, pleaseSocialLoginTip(user.getSource()), null);
+            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, ImplHelper.pleaseSocialLoginTip(user.getSource()), null);
         }
 
         // now compare password
@@ -196,20 +197,20 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
             FoGenRandomLoginCodeRequest request) {
         ValidationError error = myValidator.validateBean(request, FoConstants.NULL_REQUEST_BEAN_TIP);
         if (error.hasErrors()) {
-            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, error.getNonFieldError(), error.getFieldErrors());
+            return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, error.getNonFieldError(), error.getFieldErrors());
         }
 
         User user = userRepo.getUserByEmail(request.getEmail());
         if (user == null) {
-            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, "User not found", null);
+            return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, "User not found", null);
         }
 
         if (!user.isLocal()) {
-            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST, pleaseSocialLoginTip(user.getSource()), null);
+            return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, ImplHelper.pleaseSocialLoginTip(user.getSource()), null);
         }
 
 
-        String randomCodeStr = authService.generateRandomLoginCode();
+        String randomCodeStr = ImplHelper.generateRandomDigitCode();
         RandomLoginCode randomCodeObj = authService.saveNewRandomCodeForUser(
                 user, randomCodeStr);
 
@@ -357,10 +358,6 @@ public class FoAuthManagerImpl extends FoManagerImplBase implements
         // ok, do the token
         return buildAuthTokenResponse(at, user);
 
-    }
-
-    private String pleaseSocialLoginTip(String source) {
-        return String.format("You are a %s user, please login with %s", source, source);
     }
 
 }

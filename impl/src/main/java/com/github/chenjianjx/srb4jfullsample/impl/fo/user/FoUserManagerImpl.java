@@ -4,11 +4,9 @@ import com.github.chenjianjx.srb4jfullsample.impl.biz.user.*;
 import com.github.chenjianjx.srb4jfullsample.impl.fo.common.FoManagerImplBase;
 import com.github.chenjianjx.srb4jfullsample.impl.support.beanvalidate.MyValidator;
 import com.github.chenjianjx.srb4jfullsample.impl.support.beanvalidate.ValidationError;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.auth.FoChangePasswordRequest;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants;
 import com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoResponse;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.user.FoUser;
-import com.github.chenjianjx.srb4jfullsample.intf.fo.user.FoUserManager;
+import com.github.chenjianjx.srb4jfullsample.intf.fo.user.*;
 import com.github.chenjianjx.srb4jfullsample.utils.lang.MyCodecUtils;
 import com.github.chenjianjx.srb4jfullsample.utils.lang.MyLangUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
+import static com.github.chenjianjx.srb4jfullsample.impl.common.ImplHelper.generateRandomDigitCode;
+import static com.github.chenjianjx.srb4jfullsample.impl.common.ImplHelper.pleaseSocialLoginTip;
 import static com.github.chenjianjx.srb4jfullsample.intf.fo.basic.FoConstants.NULL_REQUEST_BEAN_TIP;
 
 /**
@@ -42,6 +42,9 @@ public class FoUserManagerImpl extends FoManagerImplBase implements
     @Resource
     EmailVerificationDigestRepo emailVerificationDigestRepo;
 
+    @Resource
+    ForgetPasswordVerifyCodeRepo forgetPasswordVerifyCodeRepo;
+
     @Override
     public FoResponse<Void> changePassword(Long currentUserId,
                                            FoChangePasswordRequest request) {
@@ -49,7 +52,7 @@ public class FoUserManagerImpl extends FoManagerImplBase implements
         ValidationError error = myValidator.validateBean(request, NULL_REQUEST_BEAN_TIP);
         if (error.hasErrors()) {
             return FoResponse.userErrResponse(
-                    FoConstants.FEC_OAUTH2_INVALID_REQUEST, error.getNonFieldError(), error.getFieldErrors());
+                    FoConstants.FEC_INVALID_INPUT, error.getNonFieldError(), error.getFieldErrors());
         }
 
         User currentUser = getCurrentUserConsideringInvalidId(currentUserId);
@@ -57,14 +60,14 @@ public class FoUserManagerImpl extends FoManagerImplBase implements
             return buildNotLoginErr();
         }
 
-        if(!currentUser.isLocal()){
-            return FoResponse.userErrResponse(FoConstants.FEC_OAUTH2_INVALID_REQUEST,
+        if (!currentUser.isLocal()) {
+            return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT,
                     String.format("You are a %s user and cannot change password", currentUser.getSource()), null);
         }
 
         if (!MyCodecUtils.isPasswordDjangoMatches(request.getCurrentPassword(), currentUser.getPassword())) {
             return FoResponse.userErrResponse(
-                    FoConstants.FEC_OAUTH2_INVALID_REQUEST,
+                    FoConstants.FEC_INVALID_INPUT,
                     "The current password you input is wrong", null);
         }
 
@@ -147,4 +150,94 @@ public class FoUserManagerImpl extends FoManagerImplBase implements
         FoUser foUser = MyLangUtils.copyPropertiesToNewObject(FoUser.class, currentUser);
         return FoResponse.success(foUser);
     }
+
+    @Override
+    public FoResponse<Void> startForgetPasswordFlow(FoGenForgetPasswordVerifyCodeRequest request) {
+        ValidationError error = myValidator.validateBean(request, FoConstants.NULL_REQUEST_BEAN_TIP);
+        if (error.hasErrors()) {
+            return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, error.getNonFieldError(), error.getFieldErrors());
+        }
+
+        User user = userRepo.getUserByEmail(request.getEmail());
+        if (user == null) {
+            return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, "User not found", null);
+        }
+
+        if (!user.isLocal()) {
+            return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, pleaseSocialLoginTip(user.getSource()), null);
+        }
+
+
+        String codeStr = generateRandomDigitCode();
+        ForgetPasswordVerifyCode codeObj = userService.saveNewForgetPasswordVerifyCodeForUser(user, codeStr);
+
+        // send the email
+        try {
+            userService.sendEmailForForgetPasswordVerifyCodeAsync(user, codeObj,
+                    codeStr);
+        } catch (Exception e) {
+            logger.error("fail to send forget-password-verification-code asynchronously  for user "
+                    + user.getPrincipal(), e);
+        }
+
+        return FoResponse.success(null);
+    }
+
+    @Override
+    public FoResponse<Void> validateForgetPasswordVerifyCode(FoValidateForgetPasswordVerifyCodeRequest request) {
+        ValidationError error = myValidator.validateBean(request, NULL_REQUEST_BEAN_TIP);
+        if (error.hasErrors()) {
+            return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, error.getNonFieldError(), error.getFieldErrors());
+        }
+        return bizValidateForgetPasswordVerifyCode(request);
+    }
+
+
+    @Override
+    public FoResponse<Void> resetPassword(FoResetPasswordRequest request) {
+
+        ValidationError error = myValidator.validateBean(request, NULL_REQUEST_BEAN_TIP);
+        if (error.hasErrors()) {
+            return FoResponse.userErrResponse(
+                    FoConstants.FEC_INVALID_INPUT, error.getNonFieldError(), error.getFieldErrors());
+        }
+
+        FoResponse<Void> verifyCodeValidationResponse = bizValidateForgetPasswordVerifyCode(request);
+        if (!verifyCodeValidationResponse.isSuccessful()) {
+            throw new IllegalStateException("Must have passed the verification code validation");
+        }
+
+        String newPassword = MyCodecUtils.encodePasswordLikeDjango(request.getNewPassword());
+
+        String principal = User.decidePrincipalFromLocal(request.getEmail());
+        User user = userRepo.getUserByPrincipal(principal);
+        user.setPassword(newPassword);
+        user.setUpdatedBy(user.getPrincipal());
+        userRepo.updateUser(user);
+
+        return FoResponse.success(null);
+    }
+
+
+    private FoResponse<Void> bizValidateForgetPasswordVerifyCode(FoValidateForgetPasswordVerifyCodeRequest request) {
+        String principal = User.decidePrincipalFromLocal(request.getEmail());
+        User user = userRepo.getUserByPrincipal(principal);
+
+        if (user == null) {
+            return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, "User not found", null);
+        }
+
+        // now compare the codes
+        ForgetPasswordVerifyCode verifyCodeFromDb = forgetPasswordVerifyCodeRepo.getByUserId(user.getId());
+        if (verifyCodeFromDb == null || !MyCodecUtils.isPasswordDjangoMatches(request.getVerifyCode(), verifyCodeFromDb.getCodeStr())) {
+            return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, "Invalid verification code.", null);
+        }
+
+        if (verifyCodeFromDb.hasExpired()) {
+            return FoResponse.userErrResponse(FoConstants.FEC_INVALID_INPUT, "Verification code expired.", null);
+        }
+
+        return FoResponse.success(null);
+    }
+
 }

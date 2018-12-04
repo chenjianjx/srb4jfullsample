@@ -1,10 +1,10 @@
-package com.github.chenjianjx.srb4jfullsample.intf.fo.auth;
-
-import javax.validation.constraints.NotNull;
+package com.github.chenjianjx.srb4jfullsample.intf.fo.user;
 
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -13,15 +13,15 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  *
  */
 
-public class FoRandomCodeLoginRequest {
+public class FoValidateForgetPasswordVerifyCodeRequest {
 
 	@NotNull(message = "Please input email.")
 	@ApiModelProperty(required = true)
 	private String email;
 
-	@NotNull(message = "Please input the random code you received.")
+	@NotNull(message = "Please input the verification code you received.")
 	@ApiModelProperty(required = true)
-	private String randomCode;
+	private String verifyCode;
 
 	public String getEmail() {
 		return email;
@@ -31,12 +31,12 @@ public class FoRandomCodeLoginRequest {
 		this.email = email;
 	}
 
-	public String getRandomCode() {
-		return randomCode;
+	public String getVerifyCode() {
+		return verifyCode;
 	}
 
-	public void setRandomCode(String randomCode) {
-		this.randomCode = randomCode;
+	public void setVerifyCode(String verifyCode) {
+		this.verifyCode = verifyCode;
 	}
 
 	@Override

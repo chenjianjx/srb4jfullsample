@@ -49,7 +49,7 @@ public class AuthTasks {
 			long someTimeAgo = System.currentTimeMillis() - 3600 * 1000 * HOURS;
 			String dataStr = toDateStr(someTimeAgo);
 			autoTaskLogger
-					.info("Going to revoke stale acess tokens expired before "
+					.info("Going to revoke stale access tokens expired before "
 							+ dataStr);
 			int numOfRows = accessTokenRepo
 					.deleteTokensExpiresBefore(new java.sql.Timestamp(
