@@ -130,7 +130,7 @@ public class FoUserResource extends FoResourceBase {
     /*Forget password flow*/
 
     @POST
-    @Path("/forget-password-process/new")
+    @Path("/password/forget-password-verify-code/new")
     @ApiOperation(value = "Start a 'forget-password' process. After calling this the user will receive an email containing a verification code for him to reset password")
     @ApiResponses(value = {
             @ApiResponse(code = SC_OK, message = OK_TIP, response = Void.class),
@@ -142,7 +142,7 @@ public class FoUserResource extends FoResourceBase {
 
 
     @POST
-    @Path("/forget-password-process/verify")
+    @Path("/password/forget-password-verify-code/validate")
     @ApiOperation(value = "Call this endpoint to validate the verification code user received in their email")
     @ApiResponses(value = {
             @ApiResponse(code = SC_OK, message = OK_TIP, response = Void.class),
@@ -153,7 +153,7 @@ public class FoUserResource extends FoResourceBase {
     }
 
     @POST
-    @Path("/forget-password-process/password/reset")
+    @Path("/password/forget-password-flow/update")
     @ApiOperation(value = "The final step of the forget-password-flow:  reset password")
     @ApiResponses(value = {
             @ApiResponse(code = SC_OK, message = OK_TIP, response = Void.class),
