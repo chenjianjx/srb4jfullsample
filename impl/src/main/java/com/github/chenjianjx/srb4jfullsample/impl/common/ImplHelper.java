@@ -11,7 +11,7 @@ public class ImplHelper {
      * @return
      */
     public static String pleaseSocialLoginTip(String source) {
-        return String.format("You are a %s user, please login with %s", source, source);
+        return String.format("%s user please login with %s", source, source);
     }
 
     public static String generateRandomDigitCode() {
