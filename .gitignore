@@ -9,7 +9,6 @@
 *.iml
 target
 **/app.override.aws.properties
-**/app.override.alicloud.properties
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
