@@ -5,3 +5,11 @@
 **/.project
 **/.classpath
 **/.settings
+**/*.iml
+*.iml
+target
+**/app.override.aws.properties
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

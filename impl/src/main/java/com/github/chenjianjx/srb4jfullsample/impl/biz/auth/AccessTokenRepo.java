@@ -19,10 +19,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AccessTokenRepo {
 
-	@Insert("insert into AccessToken(tokenStr, lifespan,  userId, expiresAt,refreshTokenStr, createdAt, createdBy) "
-			+ "values (#{tokenStr}, #{lifespan}, #{userId}, #{expiresAt}, #{refreshTokenStr}, #{createdAt}, #{createdBy})")
+	@Insert("insert into AccessToken(tokenStr, lifespan,  userId, expiresAt,refreshTokenStr, createdBy) "
+			+ "values (#{tokenStr}, #{lifespan}, #{userId}, #{expiresAt}, #{refreshTokenStr}, #{createdBy})")
 	@SelectKey(statement = "select last_insert_id() as id", keyProperty = "id", keyColumn = "id", before = false, resultType = long.class)
-	public void saveNewToken(AccessToken accessToken);
+	public long saveNewToken(AccessToken accessToken);
 
 	@Select("select * from AccessToken where  tokenStr = #{tokenStr}")
 	public AccessToken getByTokenStr(String tokenStr);
@@ -36,7 +36,7 @@ public interface AccessTokenRepo {
 	@Delete("delete from AccessToken where  expiresAt < #{timestamp}")
 	public int deleteTokensExpiresBefore(Timestamp timestamp);
 
-	@Update("update AccessToken set tokenStr = #{tokenStr}, lifespan=#{lifespan}, expiresAt = #{expiresAt}, refreshTokenStr = #{refreshTokenStr} where id = #{id}")
+	@Update("update AccessToken set tokenStr = #{tokenStr}, lifespan=#{lifespan}, expiresAt = #{expiresAt}, refreshTokenStr = #{refreshTokenStr}, updatedBy = #{updatedBy} where id = #{id}")
 	public void updateAccessToken(AccessToken newToken);
 
 }
