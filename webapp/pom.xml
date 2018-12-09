@@ -180,6 +180,7 @@
 		</dependency>
 
 		<dependency>
+			<!--anchor of swagger2html-->
 			<groupId>com.github.chenjianjx</groupId>
 			<artifactId>swagger2html</artifactId>
 		</dependency>
