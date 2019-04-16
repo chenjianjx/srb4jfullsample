@@ -47,7 +47,7 @@ public class FoFacebookAuthHelper implements FoSocialSiteAuthHelper {
 			String token, String clientType) {
 		String accessToken = token;
 		FacebookClient facebookClient = new DefaultFacebookClient(accessToken,
-				Version.VERSION_2_5);
+				Version.VERSION_2_11);
 		com.restfb.types.User user = facebookClient.fetchObject("me",
 				com.restfb.types.User.class,
 				Parameter.with("fields", "id,name,email"));
